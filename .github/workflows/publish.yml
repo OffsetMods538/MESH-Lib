@@ -26,7 +26,6 @@ jobs:
         with:
           cache-read-only: false
 
-
       - name: Build with Gradle
         run: ./gradlew build
         env:
@@ -39,6 +38,12 @@ jobs:
           VERSION_NAME: ${{ github.event.release.name }}
           VERSION_IS_PRERELEASE: ${{ github.event.release.prerelease }}
           VERSION_CHANGELOG: ${{ github.event.release.body }}
+
+      - name: Publish to Maven
+        run: ./gradlew publishMavenPublicationToOffsetMonkey538Repository
+        env:
+          MAVEN_USERNAME: ${{ secrets.MAVEN_USERNAME }}
+          MAVEN_PASSWORD: ${{ secrets.MAVEN_PASSWORD }}
 
       - name: Upload to GitHub
         uses: softprops/action-gh-release@v2

@@ -24,7 +24,6 @@ jobs:
         with:
           cache-read-only: false
 
-
       - name: Build with Gradle
         run: ./gradlew build
         env:
