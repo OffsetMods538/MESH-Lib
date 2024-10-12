@@ -18,7 +18,7 @@ public class ExampleMain implements DedicatedServerModInitializer {
     @Override
     public void onInitializeServer() {
         // Ignore if "meshEnableExamples" isn't set
-        if (System.getProperty("meshEnableExamples").isEmpty()) return;
+        if (System.getProperty("meshEnableExamples", "").isEmpty()) return;
 
 
         LOGGER.warn("MESH examples enabled!");
