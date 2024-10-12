@@ -14,8 +14,11 @@
 	},
 	"license": "MIT",
 	"icon": "assets/mesh-lib/icon.png",
-	"environment": "*",
+	"environment": "server",
 	"entrypoints": {
+		"server": [
+			"top.offsetmonkey538.meshlib.example.ExampleMain"
+		]
 	},
 	"mixins": [
 		"mesh-lib.mixins.json"
