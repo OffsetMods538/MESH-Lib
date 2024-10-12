@@ -19,7 +19,6 @@ outlet {
 	mcVersionRange = project.supported_minecraft_versions
 	allowedReleaseTypes = Set.of(ReleaseType.RELEASE)
 	propertiesData = [
-			'fapi_version': outlet.fapiVersion(project.minecraft_version),
 			'yarn_version': outlet.yarnVersion(project.minecraft_version),
 			'loader_version': outlet.loaderVersion()
 	]
@@ -84,9 +83,6 @@ dependencies {
 	// DevAuth
 	modRuntimeOnly "me.djtheredstoner:DevAuth-fabric:${devauth_version}"
 
-	// Fabric API
-	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fapi_version}"
-
 	// Netty
 	includeApi "io.netty:netty-codec-http:${project.netty_version}"
 
@@ -144,10 +140,6 @@ modrinth {
 	syncBodyFrom = rootProject.file("README.md").text
 	def changelogEnv = System.getenv("VERSION_CHANGELOG")
 	if (changelogEnv != null) changelog = changelogEnv
-
-	dependencies {
-		required.project "fabric-api"
-	}
 }
 
 tasks.modrinth.dependsOn(tasks.modrinthSyncBody)

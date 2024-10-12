@@ -24,7 +24,6 @@
 		"mesh-lib.mixins.json"
 	],
 	"depends": {
-		"fabric-api": "*",
 		"minecraft": "${supportedMinecraftVersions}"
 	}
 }
