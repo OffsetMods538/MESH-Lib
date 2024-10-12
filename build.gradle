@@ -81,8 +81,12 @@ dependencies {
 
 	// DevAuth
 	modRuntimeOnly "me.djtheredstoner:DevAuth-fabric:${devauth_version}"
+
 	// Fabric API
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fapi_version}"
+
+	// Netty
+	includeApi "io.netty:netty-codec-http:${project.netty_version}"
 
 	// Uncomment for including a module of fabric api
 	// includeModImplementation fabricApi.module("fabric-api-base", project.fapi_version)
