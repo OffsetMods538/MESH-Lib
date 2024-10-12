@@ -25,18 +25,10 @@ outlet {
 
 
 loom {
-	splitEnvironmentSourceSets()
-
-	mods {
-		modid {
-			sourceSet sourceSets.main
-			sourceSet sourceSets.client
-		}
-	}
-
-	accessWidenerPath = file("src/main/resources/mesh-lib.accesswidener")
-
 	runs {
+		client {
+			runDir "run/client"
+		}
 		server {
 			runDir "run/server"
 		}
@@ -62,6 +54,12 @@ configurations {
 
 	include.extendsFrom        includeImplementation
 	implementation.extendsFrom includeImplementation
+
+
+	includeApi
+
+	include.extendsFrom includeApi
+	api.extendsFrom     includeApi
 }
 
 repositories {
@@ -111,6 +109,11 @@ tasks.withType(JavaCompile).configureEach {
 
 java {
 	withSourcesJar()
+	withJavadocJar()
+}
+
+tasks.named("javadoc", Javadoc) {
+	options.addFileOption('-add-stylesheet', project.file("javadoc-stylesheet.css"))
 }
 
 jar {
