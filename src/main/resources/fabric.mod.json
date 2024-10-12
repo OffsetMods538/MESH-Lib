@@ -1,0 +1,38 @@
+{
+	"schemaVersion": 1,
+	"id": "mesh-lib",
+	"version": "${modVersion}",
+	"name": "MESH Lib",
+	"description": "Easy to use library for hosting an HTTP server on the Minecraft server's port",
+	"authors": [
+		"OffsetMonkey538"
+	],
+	"contact": {
+		"sources": "https://github.com/OffsetMods538/MESH-Lib",
+		"issues": "https://github.com/OffsetMods538/MESH-Lib/issues",
+		"homepage": "https://modrinth.com/mod/mesh-lib"
+	},
+	"license": "MIT",
+	"icon": "assets/mesh-lib/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"top.offsetmonkey538.meshlib.MESHLib"
+		],
+		"client": [
+			"top.offsetmonkey538.meshlib.MESHLibClient"
+		]
+	},
+	"mixins": [
+		"mesh-lib.mixins.json",
+		{
+			"config": "mesh-lib.client.mixins.json",
+			"environment": "client"
+		}
+	],
+	"accessWidener": "mesh-lib.accesswidener",
+	"depends": {
+		"fabric-api": "*",
+		"minecraft": "${supportedMinecraftVersions}"
+	}
+}
