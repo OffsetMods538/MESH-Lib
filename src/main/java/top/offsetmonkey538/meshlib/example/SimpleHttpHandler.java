@@ -21,10 +21,16 @@ public class SimpleHttpHandler implements HttpHandler {
 
     @Override
     public void handleRequest(@NotNull ChannelHandlerContext ctx, @NotNull FullHttpRequest request) throws Exception {
+        // Write "Hello, World!" to a buffer, encoded in UTF-8
         final ByteBuf content = Unpooled.copiedBuffer("Hello, World!", StandardCharsets.UTF_8);
+        // Create a response with said buffer
         final FullHttpResponse response = new DefaultFullHttpResponse(HTTP_1_1, OK, content);
 
+        // Set the "CONTENT_TYPE" header to tell the browser that this is plain text encoded in UTF-8
         response.headers().set(CONTENT_TYPE, "text/plain; charset=UTF-8");
+
+
+        // Send the response and close the connection
         ctx.writeAndFlush(response).addListener(ChannelFutureListener.CLOSE);
     }
 }
