@@ -21,7 +21,7 @@ public class SimpleHttpHandler implements HttpHandler {
 
     @Override
     public void handleRequest(@NotNull ChannelHandlerContext ctx, @NotNull FullHttpRequest request) throws Exception {
-        final ByteBuf content = Unpooled.copiedBuffer("Hello, Wrghwrgwrgwgwgorld!", StandardCharsets.UTF_8);
+        final ByteBuf content = Unpooled.copiedBuffer("Hello, World!", StandardCharsets.UTF_8);
         final FullHttpResponse response = new DefaultFullHttpResponse(HTTP_1_1, OK, content);
 
         response.headers().set(CONTENT_TYPE, "text/plain; charset=UTF-8");
