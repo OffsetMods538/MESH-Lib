@@ -16,6 +16,7 @@ public class HttpHandlerRegistryImpl implements HttpHandlerRegistry {
     @Override
     public void register(@NotNull String id, @NotNull HttpHandler handler) throws IllegalArgumentException {
         if (id.isEmpty()) throw new IllegalArgumentException("Id may not be empty!");
+        if (handlers.containsKey(id)) throw new IllegalArgumentException("Handler with id '" + id + "' already registered!");
 
         handlers.put(id, handler);
     }

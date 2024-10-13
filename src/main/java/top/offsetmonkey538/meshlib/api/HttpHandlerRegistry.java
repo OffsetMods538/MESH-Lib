@@ -24,7 +24,7 @@ public interface HttpHandlerRegistry {
      *
      * @param id your handler or mod's id
      * @param handler the {@link HttpHandler} to be registered
-     * @throws IllegalArgumentException when the provided id is empty
+     * @throws IllegalArgumentException when the provided id is empty or a handler with this id is already registered
      * @see HttpHandler
      */
     void register(@NotNull String id, @NotNull HttpHandler handler) throws IllegalArgumentException;
