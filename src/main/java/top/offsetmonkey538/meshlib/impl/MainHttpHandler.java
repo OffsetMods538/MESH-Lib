@@ -1,16 +1,12 @@
 package top.offsetmonkey538.meshlib.impl;
 
-import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
-import io.netty.handler.codec.http.DefaultFullHttpResponse;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import top.offsetmonkey538.meshlib.api.HttpHandlerRegistry;
 
 import static io.netty.handler.codec.http.HttpResponseStatus.BAD_REQUEST;
-import static io.netty.handler.codec.http.HttpResponseStatus.NOT_FOUND;
-import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 import static top.offsetmonkey538.meshlib.MESHLib.LOGGER;
 import static top.offsetmonkey538.meshlib.api.HttpHandler.sendError;
 
@@ -28,21 +24,8 @@ public class MainHttpHandler extends SimpleChannelInboundHandler<FullHttpRequest
             return;
         }
 
-        // Get first part of URI, which is the id for a handler
-        final String uri = request.uri();
-        if ("/".equals(uri)) {
-            LOGGER.warn("Request was made to root domain! Ignoring...");
-            ctx.writeAndFlush(new DefaultFullHttpResponse(HTTP_1_1, NOT_FOUND)).addListener(ChannelFutureListener.CLOSE);
-            return;
-        }
-        final String handlerId = uri.split("/")[1];
+        final String handlerId = request.uri().split("/")[1];
 
-        // Call handler if found
-        if (!HttpHandlerRegistry.INSTANCE.has(handlerId)) {
-            LOGGER.warn("Handler with id '{}' not registered! Ignoring...", handlerId);
-            ctx.writeAndFlush(new DefaultFullHttpResponse(HTTP_1_1, NOT_FOUND)).addListener(ChannelFutureListener.CLOSE);
-            return;
-        }
         HttpHandlerRegistry.INSTANCE.get(handlerId).handleRequest(ctx, request);
     }
 

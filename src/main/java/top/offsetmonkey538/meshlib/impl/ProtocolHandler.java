@@ -6,6 +6,7 @@ import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.ChannelPipeline;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpServerCodec;
+import top.offsetmonkey538.meshlib.api.HttpHandlerRegistry;
 
 import static top.offsetmonkey538.meshlib.MESHLib.LOGGER;
 import static top.offsetmonkey538.meshlib.MESHLib.MOD_ID;
@@ -34,18 +35,34 @@ public class ProtocolHandler extends ChannelInboundHandlerAdapter {
         final boolean isHttp = firstLine.toString().contains("HTTP");
 
 
-        final ChannelPipeline pipeline = ctx.pipeline();
-
         // If it's an http request, add the correct handlers
         if (isHttp) {
+            final String uri = firstLine.toString().split(" ")[1];
+            if (uri.equals("/")) {
+                LOGGER.debug("Request was made to root domain! Passing on...");
+                forward(ctx, request);
+                return;
+            }
 
+            final String handlerId = uri.split("/")[1];
+            if (!HttpHandlerRegistry.INSTANCE.has(handlerId)) {
+                LOGGER.debug("Handler with id '{}' not registered! Passing on...", handlerId);
+                forward(ctx, request);
+                return;
+            }
+
+            final ChannelPipeline pipeline = ctx.pipeline();
             pipeline.addAfter(MOD_ID, MOD_ID + "/codec", new HttpServerCodec());
             pipeline.addAfter(MOD_ID + "/codec", MOD_ID + "/aggregator", new HttpObjectAggregator(65536));
             pipeline.addAfter(MOD_ID + "/aggregator", MOD_ID + "/handler", new MainHttpHandler());
         }
 
+        forward(ctx, request);
+    }
+
+    private void forward(ChannelHandlerContext ctx, Object request) {
         // This handler can be removed from this context now
-        pipeline.remove(MOD_ID);
+        ctx.pipeline().remove(MOD_ID);
 
         // Forward to the next handler. If this wasn't an http request and the http handlers weren't added above,
         //  it'll go to minecraft, otherwise it will go through the handlers added above, ending up in the MainHttpHandler
