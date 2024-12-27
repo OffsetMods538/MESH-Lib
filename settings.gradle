@@ -8,3 +8,10 @@ pluginManagement {
 		gradlePluginPortal()
 	}
 }
+
+rootProject.name = "mesh-lib"
+
+
+include "common"
+
+include "fabric"

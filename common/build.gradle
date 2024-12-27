@@ -1,0 +1,73 @@
+plugins {
+	id 'com.gradleup.shadow' version '9.0.0-beta4'
+	id 'maven-publish'
+}
+
+version = "${rootProject.mod_version}"
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	// Netty
+	api("io.netty:netty-codec-http:${project.netty_version}")
+}
+
+processResources {
+	final Map properties = Map<String, String>.of(
+			"modVersion",                 project.mod_version,
+			"supportedMinecraftVersions", project.supported_minecraft_versions
+	)
+
+	inputs.properties(properties)
+
+	filesMatching("fabric.mod.json") {
+		expand(properties)
+	}
+
+	exclude ".cache/**"
+}
+
+//modrinth {
+//	token = System.getenv("MODRINTH_TOKEN")
+//	projectId = "mesh-lib"
+//	def customVersionName = System.getenv("VERSION_NAME")
+//	if (customVersionName != null) versionName = customVersionName
+//	versionNumber = "${project.version}"
+//	versionType = "alpha"
+//	def isPreRelease = System.getenv("VERSION_IS_PRERELEASE")
+//	versionType = !"false".equals(isPreRelease) ? "beta" : "release"
+//	uploadFile = remapJar.archiveFile
+//	//additionalFiles = [sourcesJar.archiveFile, javadocJar.archiveFile]
+//	additionalFiles = [sourcesJar.archiveFile]
+//	gameVersions = outlet.mcVersions()
+//	syncBodyFrom = rootProject.file("README.md").text
+//	def changelogEnv = System.getenv("VERSION_CHANGELOG")
+//	if (changelogEnv != null) changelog = changelogEnv
+//}
+//
+//tasks.modrinth.dependsOn(tasks.modrinthSyncBody)
+//
+//publishing {
+//	repositories {
+//		maven {
+//			name = "OffsetMonkey538"
+//			url = "https://maven.offsetmonkey538.top/releases"
+//			credentials {
+//				username = providers.gradleProperty("OffsetMonkey538Username").getOrElse(System.getenv("MAVEN_USERNAME"))
+//				password = providers.gradleProperty("OffsetMonkey538Password").getOrElse(System.getenv("MAVEN_PASSWORD"))
+//			}
+//			authentication {
+//				basic(BasicAuthentication)
+//			}
+//		}
+//	}
+//	publications {
+//		maven(MavenPublication) {
+//			artifactId = "mesh-lib"
+//
+//			from(components["java"])
+//		}
+//	}
+//}
