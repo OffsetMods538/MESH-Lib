@@ -24,6 +24,11 @@ subprojects {
 		options.addFileOption('-add-stylesheet', rootProject.file("javadoc-stylesheet.css"))
 	}
 
+	java {
+		withSourcesJar()
+		withJavadocJar()
+	}
+
 	jar {
 		from("${rootProject.projectDir}/LICENSE") {
 			rename { "${it}" }
@@ -34,142 +39,43 @@ subprojects {
 		compileOnly "org.jetbrains:annotations:24.0.0"
 		compileOnly "org.slf4j:slf4j-api:2.0.16"
 	}
-
-	// fixme: what: publishing {
-	// fixme: what: 	repositories {
-	// fixme: what: 		maven {
-	// fixme: what: 			name = "OffsetMonkey538"
-	// fixme: what: 			url = "https://maven.offsetmonkey538.top/releases"
-	// fixme: what: 			credentials {
-	// fixme: what: 				username = System.getenv("MAVEN_USERNAME")
-	// fixme: what: 				password = System.getenv("MAVEN_PASSWORD")
-	// fixme: what: 			}
-	// fixme: what: 			authentication {
-	// fixme: what: 				basic(BasicAuthentication)
-	// fixme: what: 			}
-	// fixme: what: 		}
-	// fixme: what: 	}
-	// fixme: what: 	publications {
-	// fixme: what: 		maven(MavenPublication) {
-	// fixme: what: 			if (project.name == "common") {
-	// fixme: what: 				artifactId = "common"
-	// fixme: what: 			} else {
-	// fixme: what: 				artifactId = "monkeylib538"
-	// fixme: what: 			}
-
-	// fixme: what: 			from(components["java"])
-	// fixme: what: 		}
-	// fixme: what: 	}
-	// fixme: what: }
-	// fixme: what: tasks.publishMavenPublicationToMavenLocal.doLast {
-	// fixme: what: 	if (System.getenv("IS_DEBUG") == "true") System.out.println("Version: " + version)
-	// fixme: what: }
 }
 
 configure(subprojects.findAll { it.name != "common" }) {
+	apply plugin: 'com.modrinth.minotaur'
+	apply plugin: 'io.github.dexman545.outlet'
+
 	if (System.getenv("IS_DEBUG") == "true") version = "${version}-${rootProject.debugVersion}"
+
+	outlet {
+		mcVersionRange = rootProject.supported_minecraft_versions
+		allowedReleaseTypes = Set.of(ReleaseType.RELEASE)
+	}
+
+	modrinth {
+		token = System.getenv("MODRINTH_TOKEN")
+		projectId = "mesh-lib"
+		def customVersionName = System.getenv("VERSION_NAME")
+		if (customVersionName != null) versionName = customVersionName
+		versionNumber = "${project.version}"
+		versionType = "alpha"
+		def isPreRelease = System.getenv("VERSION_IS_PRERELEASE")
+		versionType = !"false".equals(isPreRelease) ? "beta" : "release"
+		additionalFiles = [sourcesJar.archiveFile]
+		gameVersions = outlet.mcVersions()
+		syncBodyFrom = rootProject.file("README.md").text
+		def changelogEnv = System.getenv("VERSION_CHANGELOG")
+		if (changelogEnv != null) changelog = changelogEnv
+		//todo: remove
+		debugMode = true;
+	}
+
+	tasks.modrinth.dependsOn(tasks.modrinthSyncBody)
 }
 
 
 
 
-//version = "${project.mod_version}+${project.minecraft_version}"
-//
-//outlet {
-//	maintainPropertiesFile = System.getenv("DISABLE_PROPERTIES_UPDATE") == null
-//	mcVersionRange = project.supported_minecraft_versions
-//	allowedReleaseTypes = Set.of(ReleaseType.RELEASE)
-//	propertiesData = [
-//			'yarn_version': outlet.yarnVersion(project.minecraft_version),
-//			'loader_version': outlet.loaderVersion()
-//	]
-//}
-//
-//
-//loom {
-//	runs {
-//		client {
-//			runDir "run/client"
-//		}
-//		server {
-//			runDir "run/server"
-//		}
-//	}
-//}
-//
-//// https://gist.github.com/maityyy/3dbcd558d58a6412c3a2a38c72706e8e
-//afterEvaluate {
-//	loom.runs.configureEach {
-//		vmArg "-javaagent:${configurations.compileClasspath.find{ it.name.contains("sponge-mixin") }}"
-//		if (System.getenv("DISABLE_PROPERTIES_UPDATE") == null) vmArg "-Ddevauth.enabled=true"
-//	}
-//}
-//
-//configurations {
-//	includeModImplementation
-//
-//	include.extendsFrom           includeModImplementation
-//	modImplementation.extendsFrom includeModImplementation
-//
-//
-//	includeImplementation
-//
-//	include.extendsFrom        includeImplementation
-//	implementation.extendsFrom includeImplementation
-//
-//
-//	includeApi
-//
-//	include.extendsFrom includeApi
-//	api.extendsFrom     includeApi
-//}
-//
-//repositories {
-//	mavenCentral()
-//	mavenLocal()
-//	maven {
-//		name = "DevAuth"
-//		url = "https://pkgs.dev.azure.com/djtheredstoner/DevAuth/_packaging/public/maven/v1"
-//		content {
-//			includeGroup "me.djtheredstoner"
-//		}
-//	}
-//}
-//
-//dependencies {
-//	minecraft "com.mojang:minecraft:${project.minecraft_version}"
-//	mappings "net.fabricmc:yarn:${project.yarn_version}:v2"
-//	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
-//
-//	// DevAuth
-//	modLocalRuntime "me.djtheredstoner:DevAuth-fabric:${devauth_version}"
-//
-//	// Netty
-//	includeApi "io.netty:netty-codec-http:${project.netty_version}"
-//
-//	// Uncomment for including a module of fabric api
-//	// includeModImplementation fabricApi.module("fabric-api-base", project.fapi_version)
-//}
-//
-//processResources {
-//	final Map properties = Map<String, String>.of(
-//			"modVersion",                 project.mod_version,
-//			"supportedMinecraftVersions", project.supported_minecraft_versions
-//	)
-//
-//	inputs.properties(properties)
-//
-//	filesMatching("fabric.mod.json") {
-//		expand(properties)
-//	}
-//
-//	exclude ".cache/**"
-//}
-//
-//tasks.withType(JavaCompile).configureEach {
-//	it.options.release = 17
-//}
-//
 //java {
 //	withSourcesJar()
 //	withJavadocJar()

@@ -29,26 +29,6 @@ processResources {
 	exclude ".cache/**"
 }
 
-//modrinth {
-//	token = System.getenv("MODRINTH_TOKEN")
-//	projectId = "mesh-lib"
-//	def customVersionName = System.getenv("VERSION_NAME")
-//	if (customVersionName != null) versionName = customVersionName
-//	versionNumber = "${project.version}"
-//	versionType = "alpha"
-//	def isPreRelease = System.getenv("VERSION_IS_PRERELEASE")
-//	versionType = !"false".equals(isPreRelease) ? "beta" : "release"
-//	uploadFile = remapJar.archiveFile
-//	//additionalFiles = [sourcesJar.archiveFile, javadocJar.archiveFile]
-//	additionalFiles = [sourcesJar.archiveFile]
-//	gameVersions = outlet.mcVersions()
-//	syncBodyFrom = rootProject.file("README.md").text
-//	def changelogEnv = System.getenv("VERSION_CHANGELOG")
-//	if (changelogEnv != null) changelog = changelogEnv
-//}
-//
-//tasks.modrinth.dependsOn(tasks.modrinthSyncBody)
-//
 //publishing {
 //	repositories {
 //		maven {

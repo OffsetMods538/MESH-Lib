@@ -3,7 +3,6 @@ import dex.plugins.outlet.v2.util.ReleaseType
 plugins {
 	id 'fabric-loom' version '1.9-SNAPSHOT'
 	id 'io.github.dexman545.outlet' version '1.6.1'
-	id 'com.modrinth.minotaur' version '2.+'
 	id 'maven-publish'
 }
 
@@ -89,46 +88,8 @@ processResources {
 	exclude ".cache/**"
 }
 
-//modrinth {
-//	token = System.getenv("MODRINTH_TOKEN")
-//	projectId = "mesh-lib"
-//	def customVersionName = System.getenv("VERSION_NAME")
-//	if (customVersionName != null) versionName = customVersionName
-//	versionNumber = "${project.version}"
-//	versionType = "alpha"
-//	def isPreRelease = System.getenv("VERSION_IS_PRERELEASE")
-//	versionType = !"false".equals(isPreRelease) ? "beta" : "release"
-//	uploadFile = remapJar.archiveFile
-//	//additionalFiles = [sourcesJar.archiveFile, javadocJar.archiveFile]
-//	additionalFiles = [sourcesJar.archiveFile]
-//	gameVersions = outlet.mcVersions()
-//	syncBodyFrom = rootProject.file("README.md").text
-//	def changelogEnv = System.getenv("VERSION_CHANGELOG")
-//	if (changelogEnv != null) changelog = changelogEnv
-//}
-//
-//tasks.modrinth.dependsOn(tasks.modrinthSyncBody)
-//
-//publishing {
-//	repositories {
-//		maven {
-//			name = "OffsetMonkey538"
-//			url = "https://maven.offsetmonkey538.top/releases"
-//			credentials {
-//				username = providers.gradleProperty("OffsetMonkey538Username").getOrElse(System.getenv("MAVEN_USERNAME"))
-//				password = providers.gradleProperty("OffsetMonkey538Password").getOrElse(System.getenv("MAVEN_PASSWORD"))
-//			}
-//			authentication {
-//				basic(BasicAuthentication)
-//			}
-//		}
-//	}
-//	publications {
-//		maven(MavenPublication) {
-//			artifactId = "mesh-lib"
-//
-//			from(components["java"])
-//		}
-//	}
-//}
-//
+
+modrinth {
+	loaders = ["fabric"]
+	uploadFile = remapJar.archiveFile
+}
