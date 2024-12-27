@@ -28,26 +28,3 @@ processResources {
 
 	exclude ".cache/**"
 }
-
-//publishing {
-//	repositories {
-//		maven {
-//			name = "OffsetMonkey538"
-//			url = "https://maven.offsetmonkey538.top/releases"
-//			credentials {
-//				username = providers.gradleProperty("OffsetMonkey538Username").getOrElse(System.getenv("MAVEN_USERNAME"))
-//				password = providers.gradleProperty("OffsetMonkey538Password").getOrElse(System.getenv("MAVEN_PASSWORD"))
-//			}
-//			authentication {
-//				basic(BasicAuthentication)
-//			}
-//		}
-//	}
-//	publications {
-//		maven(MavenPublication) {
-//			artifactId = "mesh-lib"
-//
-//			from(components["java"])
-//		}
-//	}
-//}

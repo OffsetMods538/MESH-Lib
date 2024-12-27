@@ -39,6 +39,32 @@ subprojects {
 		compileOnly "org.jetbrains:annotations:24.0.0"
 		compileOnly "org.slf4j:slf4j-api:2.0.16"
 	}
+
+	publishing {
+		repositories {
+			maven {
+				name = "OffsetMonkey538"
+				url = "https://maven.offsetmonkey538.top/releases"
+				credentials {
+					username = providers.gradleProperty("OffsetMonkey538Username").getOrElse(System.getenv("MAVEN_USERNAME"))
+					password = providers.gradleProperty("OffsetMonkey538Password").getOrElse(System.getenv("MAVEN_PASSWORD"))
+				}
+				authentication {
+					basic(BasicAuthentication)
+				}
+			}
+		}
+		publications {
+			maven(MavenPublication) {
+				artifactId = project.artifactId
+
+				from(components["java"])
+			}
+		}
+	}
+	tasks.publishMavenPublicationToMavenLocal.doLast {
+		if (System.getenv("IS_DEBUG") == "true") System.out.println("Version: " + version)
+	}
 }
 
 configure(subprojects.findAll { it.name != "common" }) {
@@ -72,65 +98,3 @@ configure(subprojects.findAll { it.name != "common" }) {
 
 	tasks.modrinth.dependsOn(tasks.modrinthSyncBody)
 }
-
-
-
-
-//java {
-//	withSourcesJar()
-//	withJavadocJar()
-//}
-//
-//tasks.named("javadoc", Javadoc) {
-//	options.addFileOption('-add-stylesheet', project.file("javadoc-stylesheet.css"))
-//}
-//
-//jar {
-//	from("LICENSE") {
-//		rename { "${it}_${project.archivesBaseName}" }
-//	}
-//}
-//
-//modrinth {
-//	token = System.getenv("MODRINTH_TOKEN")
-//	projectId = "mesh-lib"
-//	def customVersionName = System.getenv("VERSION_NAME")
-//	if (customVersionName != null) versionName = customVersionName
-//	versionNumber = "${project.version}"
-//	versionType = "alpha"
-//	def isPreRelease = System.getenv("VERSION_IS_PRERELEASE")
-//	versionType = !"false".equals(isPreRelease) ? "beta" : "release"
-//	uploadFile = remapJar.archiveFile
-//	//additionalFiles = [sourcesJar.archiveFile, javadocJar.archiveFile]
-//	additionalFiles = [sourcesJar.archiveFile]
-//	gameVersions = outlet.mcVersions()
-//	syncBodyFrom = rootProject.file("README.md").text
-//	def changelogEnv = System.getenv("VERSION_CHANGELOG")
-//	if (changelogEnv != null) changelog = changelogEnv
-//}
-//
-//tasks.modrinth.dependsOn(tasks.modrinthSyncBody)
-//
-//publishing {
-//	repositories {
-//		maven {
-//			name = "OffsetMonkey538"
-//			url = "https://maven.offsetmonkey538.top/releases"
-//			credentials {
-//				username = providers.gradleProperty("OffsetMonkey538Username").getOrElse(System.getenv("MAVEN_USERNAME"))
-//				password = providers.gradleProperty("OffsetMonkey538Password").getOrElse(System.getenv("MAVEN_PASSWORD"))
-//			}
-//			authentication {
-//				basic(BasicAuthentication)
-//			}
-//		}
-//	}
-//	publications {
-//		maven(MavenPublication) {
-//			artifactId = "mesh-lib"
-//
-//			from(components["java"])
-//		}
-//	}
-//}
-//
