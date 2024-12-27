@@ -14,6 +14,6 @@ public class MeshLibPlugin extends JavaPlugin {
             channel.pipeline().addFirst(MESHLib.MOD_ID, new ProtocolHandler());
         });
 
-        new ExampleMain().onInitializeServer();
+        ExampleMain.onInitialize();
     }
 }
