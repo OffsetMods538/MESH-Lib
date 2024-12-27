@@ -9,6 +9,7 @@ import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.util.CharsetUtil;
+import top.offsetmonkey538.meshlib.example.SimpleHttpHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -23,7 +24,7 @@ import static top.offsetmonkey538.meshlib.MESHLib.LOGGER;
  * <br>
  * For example {@link #sendError(ChannelHandlerContext, HttpResponseStatus)} {@link #sendError(ChannelHandlerContext, HttpResponseStatus, String)}
  * <p>
- * Look at {@link top.offsetmonkey538.meshlib.example.SimpleHttpHandler SimpleHttpHandler} for an example
+ * Look at {@link SimpleHttpHandler SimpleHttpHandler} for an example
  *
  * @see HttpHandlerRegistry
  */
