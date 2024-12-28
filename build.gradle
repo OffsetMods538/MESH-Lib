@@ -95,8 +95,6 @@ configure(subprojects.findAll { it.name != "common" }) {
 		syncBodyFrom = rootProject.file("README.md").text
 		def changelogEnv = System.getenv("VERSION_CHANGELOG")
 		if (changelogEnv != null) changelog = changelogEnv
-		//todo: remove
-		debugMode = true;
 	}
 
 	tasks.modrinth.dependsOn(tasks.modrinthSyncBody)
