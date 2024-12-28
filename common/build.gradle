@@ -11,18 +11,4 @@ dependencies {
 	// Netty
 	api "io.netty:netty-codec-http:${project.netty_version}"
 }
-
-processResources {
-	final Map properties = Map<String, String>.of(
-			"modVersion",                 project.mod_version,
-			"supportedMinecraftVersions", project.supported_minecraft_versions
-	)
-
-	inputs.properties(properties)
-
-	filesMatching("fabric.mod.json") {
-		expand(properties)
-	}
-
-	exclude ".cache/**"
-}
+tasks.build.dependsOn(shadowJar)
