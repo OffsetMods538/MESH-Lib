@@ -10,9 +10,7 @@ public class MeshLibPlugin extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        ChannelInitializeListenerHolder.addListener(Key.key("meshlib", "meshlib"), channel -> {
-            channel.pipeline().addFirst(MESHLib.MOD_ID, new ProtocolHandler());
-        });
+        ChannelInitializeListenerHolder.addListener(Key.key("meshlib", "meshlib"), channel -> channel.pipeline().addFirst(MESHLib.MOD_ID, new ProtocolHandler()));
 
         ExampleMain.onInitialize();
     }
