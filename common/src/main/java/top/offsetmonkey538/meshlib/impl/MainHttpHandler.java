@@ -4,6 +4,7 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.HttpResponseStatus;
+import top.offsetmonkey538.meshlib.api.HttpHandler;
 import top.offsetmonkey538.meshlib.api.HttpHandlerRegistry;
 
 import static io.netty.handler.codec.http.HttpResponseStatus.BAD_REQUEST;
@@ -13,7 +14,7 @@ import static top.offsetmonkey538.meshlib.api.HttpHandler.sendError;
 /**
  * Main HTTP handler for MESH.
  * <p>
- * Forwards the requests to {@link top.offsetmonkey538.meshlib.api.HttpHandler HttpHandler}s registered in {@link HttpHandlerRegistry}
+ * Forwards the requests to {@link HttpHandler HttpHandler}s registered in {@link HttpHandlerRegistry}
  */
 public class MainHttpHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
 

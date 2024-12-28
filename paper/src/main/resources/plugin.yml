@@ -1,0 +1,3 @@
+name: MESH-Lib
+main: top.offsetmonkey538.meshlib.MeshLibPlugin
+version: ${modVersion}

@@ -1,22 +1,25 @@
 package top.offsetmonkey538.meshlib.example;
 
-import net.fabricmc.api.DedicatedServerModInitializer;
 import top.offsetmonkey538.meshlib.api.HttpHandlerRegistry;
 
 import static top.offsetmonkey538.meshlib.MESHLib.LOGGER;
 
 /**
- * Mod initializer for the example handlers
+ * Initializer for the example handlers
+ * <p>
+ * Called from either the plugin initializer {@code MeshLibPlugin} or defined as an entrypoint in the {@code fabric.mod.json} file
  */
-public class ExampleMain implements DedicatedServerModInitializer {
+public final class ExampleMain {
+    private ExampleMain() {
+
+    }
 
     /**
      * Initializer for example handlers
      * <br>
-     * Checks if {@code meshEnableExamples} is enabled and registers the example handlers if so
+     * Checks if the {@code meshEnableExamples} system property is enabled and registers the example handlers if so
      */
-    @Override
-    public void onInitializeServer() {
+    public static void onInitialize() {
         // Ignore if "meshEnableExamples" isn't set
         if (System.getProperty("meshEnableExamples", "").isEmpty()) return;
 
