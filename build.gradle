@@ -20,6 +20,9 @@ subprojects {
 	apply plugin: "java"
 	apply plugin: "java-library"
 
+	archivesBaseName = "mesh-lib-${project.nameSuffix}"
+	version = "${rootProject.mod_version}+${rootProject.minecraft_version}"
+
 	tasks.named("javadoc", Javadoc) {
 		options.addFileOption('-add-stylesheet', rootProject.file("javadoc-stylesheet.css"))
 	}
@@ -56,7 +59,7 @@ subprojects {
 		}
 		publications {
 			maven(MavenPublication) {
-				artifactId = project.artifactId
+				artifactId = project.archivesBaseName
 
 				from(components["java"])
 			}

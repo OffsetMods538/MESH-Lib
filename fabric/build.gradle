@@ -6,8 +6,6 @@ plugins {
 	id 'maven-publish'
 }
 
-version = "${rootProject.mod_version}+${project.minecraft_version}"
-
 outlet {
 	maintainPropertiesFile = System.getenv("DISABLE_PROPERTIES_UPDATE") == null
 	mcVersionRange = rootProject.supported_minecraft_versions

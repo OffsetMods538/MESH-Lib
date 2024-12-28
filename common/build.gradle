@@ -3,15 +3,13 @@ plugins {
 	id 'maven-publish'
 }
 
-version = "${rootProject.mod_version}"
-
 repositories {
 	mavenCentral()
 }
 
 dependencies {
 	// Netty
-	api("io.netty:netty-codec-http:${project.netty_version}")
+	api "io.netty:netty-codec-http:${project.netty_version}"
 }
 
 processResources {
