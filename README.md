@@ -38,10 +38,10 @@ To do that you can use `include` for fabric and the shadow gradle plugin for pap
 ```groovy
 dependencies {
     // For fabric
-    include modImplementation("top.offsetmonkey538.meshlib:mesh-lib-fabric:1.0.3+1.21.4")
+    include modImplementation("top.offsetmonkey538.meshlib:mesh-lib-fabric:1.0.4+1.21.4")
     
     // For paper
-    implementation "top.offsetmonkey538.meshlib:mesh-lib-paper:1.0.3+1.21.4"
+    implementation "top.offsetmonkey538.meshlib:mesh-lib-paper:1.0.4+1.21.4"
 }
 ```
 Make sure to use the latest version.
