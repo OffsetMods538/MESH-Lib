@@ -2,7 +2,8 @@
 [![discord-singular](https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/social/discord-singular_vector.svg)](https://discord.offsetmonkey538.top/)
 [![modrinth](https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/available/modrinth_vector.svg)](https://modrinth.com/mod/mesh-lib)  
 
-Easy to use library for running your HTTP server on the same port as the Minecraft server.
+Easy to use library for running your HTTP server on the same port as the Minecraft server.  
+Available for both fabric and paper.
 
 Javadoc is available [here](https://maven.offsetmonkey538.top/javadoc/releases/top/offsetmonkey538/meshlib/mesh-lib/latest)
 
@@ -32,12 +33,15 @@ repositories {
 }
 ```
 
-Then include the library in your dependencies block:
+This library is meant to be used as a JIJ (Jar-In-Jar), meaning you include it inside your mod/plugin.  
+To do that you can use `include` for fabric and the shadow gradle plugin for paper:  
 ```groovy
 dependencies {
-    // Others
+    // For fabric
+    include modImplementation("top.offsetmonkey538.meshlib:mesh-lib-fabric:1.0.3+1.21.4")
     
-    include modImplementation("top.offsetmonkey538.meshlib:mesh-lib:1.0.0+1.21")
+    // For paper
+    implementation "top.offsetmonkey538.meshlib:mesh-lib-paper:1.0.3+1.21.4"
 }
 ```
 Make sure to use the latest version.
@@ -75,7 +79,7 @@ public void handleRequest(@NotNull ChannelHandlerContext ctx, @NotNull FullHttpR
 }
 ```
 
-Finally, you'll need to actually register your handler. Put this in your mod initializer:
+Finally, you'll need to actually register your handler. Put this in your mod or plugin initializer:
 ```java
 @Override
 public void onInitializeServer() {
