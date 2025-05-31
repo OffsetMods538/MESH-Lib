@@ -1,6 +1,7 @@
 package top.offsetmonkey538.meshlib.mixin;
 
 import io.netty.channel.Channel;
+import net.minecraft.network.ClientConnection;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -21,5 +22,6 @@ public abstract class ServerNetworkIoMixin {
     )
     private void meshlib$addHttpHandler(Channel channel, CallbackInfo ci) {
         channel.pipeline().addFirst(MOD_ID, new ProtocolHandler());
+        System.out.println(channel.pipeline().names());
     }
 }

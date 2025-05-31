@@ -32,6 +32,15 @@ subprojects {
 		withJavadocJar()
 	}
 
+javadoc {
+	options.addFileOption('-add-stylesheet', project.file("javadoc-stylesheet.css"))
+}
+
+jar {
+	from("LICENSE") {
+		rename { "${it}_${project.archivesBaseName}" }
+	}
+}
 	jar {
 		from("${rootProject.projectDir}/LICENSE") {
 			rename { "${it}" }

@@ -1,0 +1,57 @@
+plugins {
+	id 'com.gradleup.shadow' version '9.0.0-beta4'
+	id 'xyz.jpenilla.run-velocity' version '2.3.1'
+	id 'maven-publish'
+}
+
+repositories {
+	mavenCentral()
+	maven {
+		name = 'papermc'
+		url = 'https://repo.papermc.io/repository/maven-public/'
+	}
+}
+
+configurations {
+	common {
+		canBeResolved = true
+		canBeConsumed = false
+	}
+	api.extendsFrom common
+}
+
+dependencies {
+	// Paper
+	compileOnly "com.velocitypowered:velocity-api:${project.velocity_version}"
+	annotationProcessor "com.velocitypowered:velocity-api:${project.velocity_version}"
+
+	//// Userdev
+	//paperweight.paperDevBundle(project.paper_version)
+
+	// Common
+	common project(path: ":common", configuration: "shadow")
+}
+tasks.build.dependsOn(shadowJar)
+
+processResources {
+	final Map properties = Map<String, String>.of(
+			"modVersion",                 rootProject.mod_version,
+			"lowestMinecraftVersion",     outlet.mcVersions().first() // Hopefully outlet always does stuff in this order
+	)
+
+	inputs.properties(properties)
+
+	filesMatching("plugin.yml") {
+		expand(properties)
+	}
+}
+
+tasks.runVelocity {
+	velocityVersion(project.velocity_version)
+	jvmArgs "-DmeshEnableExamples=true"
+}
+
+modrinth {
+	loaders = ["velocity"]
+	uploadFile = shadowJar
+}
