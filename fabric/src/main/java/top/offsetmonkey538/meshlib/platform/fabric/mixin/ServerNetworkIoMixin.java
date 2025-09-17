@@ -1,4 +1,4 @@
-package top.offsetmonkey538.meshlib.mixin;
+package top.offsetmonkey538.meshlib.platform.fabric.mixin;
 
 import io.netty.channel.Channel;
 import org.spongepowered.asm.mixin.Mixin;

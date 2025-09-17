@@ -6,8 +6,6 @@ import static top.offsetmonkey538.meshlib.MESHLib.LOGGER;
 
 /**
  * Initializer for the example handlers
- * <p>
- * Called from either the plugin initializer {@code MeshLibPlugin} or defined as an entrypoint in the {@code fabric.mod.json} file
  */
 public final class ExampleMain {
     private ExampleMain() {
@@ -21,7 +19,10 @@ public final class ExampleMain {
      */
     public static void onInitialize() {
         // Ignore if "meshEnableExamples" isn't set
-        if (System.getProperty("meshEnableExamples", "").isEmpty()) return;
+        // FIXME: figure something out...
+        //  Multi-version project doesn't generate launch configs and I can't seem to pass properties through the gradle tasks
+        //  I guess env variables could work?
+        if (false && !Boolean.getBoolean("meshEnableExamples")) return;
 
 
         LOGGER.warn("MESH examples enabled!");
