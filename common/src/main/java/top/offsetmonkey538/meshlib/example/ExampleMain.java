@@ -19,10 +19,7 @@ public final class ExampleMain {
      */
     public static void onInitialize() {
         // Ignore if "meshEnableExamples" isn't set
-        // FIXME: figure something out...
-        //  Multi-version project doesn't generate launch configs and I can't seem to pass properties through the gradle tasks
-        //  I guess env variables could work?
-        if (false && !Boolean.getBoolean("meshEnableExamples")) return;
+        if (!Boolean.getBoolean("meshEnableExamples")) return;
 
 
         LOGGER.warn("MESH examples enabled!");
