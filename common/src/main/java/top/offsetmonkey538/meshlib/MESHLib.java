@@ -2,8 +2,12 @@ package top.offsetmonkey538.meshlib;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import top.offsetmonkey538.meshlib.config.TestConfig;
 import top.offsetmonkey538.meshlib.example.ExampleMain;
 import top.offsetmonkey538.meshlib.platform.PlatformMain;
+import top.offsetmonkey538.monkeylib538.api.command.ConfigCommandApi;
+import top.offsetmonkey538.offsetconfig538.api.config.ConfigHolder;
+import top.offsetmonkey538.offsetconfig538.api.config.ConfigManager;
 
 import java.util.ServiceLoader;
 
@@ -26,6 +30,11 @@ public final class MESHLib {
     public static void initialize() {
         PlatformMain.enableVanillaHandler();
         ExampleMain.onInitialize();
+
+
+        final ConfigHolder<TestConfig> config = ConfigManager.INSTANCE.init(ConfigHolder.create(TestConfig::new, LOGGER::error));
+        System.out.println(config.get().thingy);
+        ConfigCommandApi.registerConfigCommand(config, () -> System.out.println(config.get().thingy), "test");
     }
 
 
