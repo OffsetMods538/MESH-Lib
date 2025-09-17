@@ -5,10 +5,19 @@ plugins {
 
 repositories {
 	mavenCentral()
+	maven {
+		name = "Mojang Libraries"
+		url = "https://libraries.minecraft.net"
+		content {
+			includeGroup "com.mojang"
+		}
+	}
 }
 
 dependencies {
 	// Netty
 	api "io.netty:netty-codec-http:${project.netty_version}"
+
+	shadow compileOnlyApi("top.offsetmonkey538.monkeylib538:monkeylib538-common:${project.monkeylib538_version}")
 }
 tasks.build.dependsOn(shadowJar)

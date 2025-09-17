@@ -11,6 +11,7 @@ outlet {
 	mcVersionRange = rootProject.supported_minecraft_versions
 	allowedReleaseTypes = Set.of(ReleaseType.RELEASE)
 	propertiesData = [
+			'fapi_version': outlet.fapiVersion(project.minecraft_version),
 			'yarn_version': outlet.yarnVersion(project.minecraft_version),
 			'loader_version': outlet.loaderVersion()
 	]
@@ -68,7 +69,16 @@ dependencies {
 	common project(":common")
 
 	// Uncomment for including a module of fabric api
-	// includeModImplementation fabricApi.module("fabric-api-base", project.fapi_version)
+	//includeModImplementation fabricApi.module("fabric-api-base", project.fapi_version)
+	modRuntimeOnly fabricApi.module("fabric-command-api-v2", project.fapi_version)
+
+    modRuntimeOnly("top.offsetmonkey538.monkeylib538:monkeylib538-fabric-1.20.5:${project.monkeylib538_version}+1.20.5") {
+		exclude(group: "net.fabricmc.fabric-api")
+		exclude(group: "top.offsetmonkey538.monkeylib538:monkeylib538-fabric")
+	}
+	modCompileOnly("top.offsetmonkey538.monkeylib538:monkeylib538-fabric:${project.monkeylib538_version}") {
+		exclude(group: "net.fabricmc.fabric-api")
+	}
 }
 
 processResources {

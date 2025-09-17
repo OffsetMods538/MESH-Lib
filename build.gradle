@@ -23,6 +23,17 @@ subprojects {
 	archivesBaseName = "mesh-lib-${project.nameSuffix}"
 	version = "${rootProject.mod_version}+${rootProject.minecraft_version}"
 
+	repositories {
+		maven {
+			name = "OffsetMods538"
+			url = "https://maven.offsetmonkey538.top/releases"
+			content {
+				includeGroup "top.offsetmonkey538.monkeylib538"
+				includeGroup "top.offsetmonkey538.offsetconfig538"
+			}
+		}
+	}
+
 	tasks.named("javadoc", Javadoc) {
 		options.addFileOption('-add-stylesheet', rootProject.file("javadoc-stylesheet.css"))
 	}
