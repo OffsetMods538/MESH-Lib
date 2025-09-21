@@ -55,4 +55,3 @@ jobs:
         with:
           files: |
             ./*/build/libs/*.jar
-            ./*/*/build/libs/*.jar

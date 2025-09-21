@@ -12,7 +12,7 @@ plugins {
 ext {
     versionPrefix = rootProject.mod_version
 
-    if (!Boolean.getBoolean("IS_PRODUCTION_BUILD")) {
+    if (!Boolean.parseBoolean(System.getenv("IS_PRODUCTION_BUILD"))) {
         versionPrefix = "${versionPrefix}-${System.currentTimeMillis()}"
     }
 
@@ -127,7 +127,7 @@ configure(subprojects.findAll { it.name == "fabric" }) {
     apply plugin: "com.modrinth.minotaur"
 
     outlet {
-        maintainPropertiesFile = !Boolean.getBoolean("IS_PRODUCTION_BUILD")
+        maintainPropertiesFile = !Boolean.parseBoolean(System.getenv("IS_PRODUCTION_BUILD"))
         mcVersionRange = project.supported_minecraft_versions
         allowedReleaseTypes = [ReleaseType.RELEASE]
         propertiesData = [
@@ -150,7 +150,7 @@ configure(subprojects.findAll { it.name == "fabric" }) {
         runConfigs.configureEach {
             ideConfigGenerated(true)
             vmArg "-DmeshEnableExamples=true"
-            if (!Boolean.getBoolean("IS_PRODUCTION_BUILD")) vmArg "-Ddevauth.enabled=true"
+            if (!Boolean.parseBoolean(System.getenv("IS_PRODUCTION_BUILD"))) vmArg "-Ddevauth.enabled=true"
         }
     }
 
@@ -224,7 +224,7 @@ configure(subprojects.findAll { it.name == "fabric" }) {
 
         versionNumber = "${project.version}"
 
-        versionType = Boolean.getBoolean("VERSION_IS_PRERELEASE") ? "beta" : "release"
+        versionType = Boolean.parseBoolean(System.getenv("VERSION_IS_PRERELEASE")) ? "beta" : "release"
 
         if (rootProject.mod_version.contains("beta")) versionType = "beta"
         if (rootProject.mod_version.contains("alpha")) versionType = "alpha"
@@ -329,7 +329,7 @@ configure(subprojects.findAll { it.name == "paper" }) {
 
         versionNumber = "${project.version}"
 
-        versionType = Boolean.getBoolean("VERSION_IS_PRERELEASE") ? "beta" : "release"
+        versionType = Boolean.parseBoolean(System.getenv("VERSION_IS_PRERELEASE")) ? "beta" : "release"
 
         if (rootProject.mod_version.contains("beta")) versionType = "beta"
         if (rootProject.mod_version.contains("alpha")) versionType = "alpha"
