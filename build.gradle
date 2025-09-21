@@ -20,7 +20,7 @@ subprojects {
 	apply plugin: "java"
 	apply plugin: "java-library"
 
-	archivesBaseName = "mesh-lib-${project.nameSuffix}"
+	base.archivesName = "mesh-lib-${project.nameSuffix}"
 	version = "${rootProject.mod_version}+${rootProject.minecraft_version}"
 
 	repositories {
@@ -70,7 +70,7 @@ subprojects {
 		}
 		publications {
 			maven(MavenPublication) {
-				artifactId = project.archivesBaseName
+				artifactId = base.archivesName.get()
 
 				from(components["java"])
 			}
