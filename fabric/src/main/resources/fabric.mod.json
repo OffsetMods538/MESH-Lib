@@ -24,6 +24,7 @@
 		"mesh-lib.mixins.json"
 	],
 	"depends": {
-		"minecraft": "${supportedMinecraftVersions}"
+		"minecraft": "${supportedMinecraftVersions}",
+        "monkeylib538": ">=${currentMonkeylibVersion}"
 	}
 }

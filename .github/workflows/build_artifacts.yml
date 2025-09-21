@@ -24,10 +24,14 @@ jobs:
         with:
           cache-read-only: false
 
+      - name: Store short commit hash
+        run: echo "short_commit_hash=$(git rev-parse --short "$GITHUB_SHA")" >> "$GITHUB_ENV"
+
       - name: Build with Gradle
         run: ./gradlew build
         env:
-          DISABLE_PROPERTIES_UPDATE: true
+          IS_PRODUCTION_BUILD: true
+          CUSTOM_VERSION: ${{ env.short_commit_hash }}
 
       - name: Delete common libs
         run: rm -r ./common/build/libs
@@ -36,4 +40,6 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: Artifacts
-          path: ./*/build/libs/
+          path: |
+            ./*/build/libs/
+            ./*/*/build/libs/

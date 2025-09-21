@@ -1,14 +1,27 @@
 import dex.plugins.outlet.v2.util.ReleaseType
 
 plugins {
-	id 'fabric-loom' version '1.11-SNAPSHOT' apply false
-	id 'io.github.dexman545.outlet' version '1.6.1' apply false
-	id 'com.modrinth.minotaur' version '2.+' apply false
-	id 'maven-publish'
+    id 'fabric-loom' version '1.11-SNAPSHOT' apply false
+    id 'io.github.dexman545.outlet' version '1.6.1' apply false
+    id 'io.papermc.paperweight.userdev' version '2.0.0-beta.8' apply false
+    id 'com.gradleup.shadow' version '9.0.0-beta4' apply false
+    id 'com.modrinth.minotaur' version '2.+' apply false
+    id 'xyz.jpenilla.run-paper' version '2.3.1' apply false
 }
 
 ext {
-	debugVersion = System.currentTimeMillis()
+    versionPrefix = rootProject.mod_version
+
+    if (!Boolean.getBoolean("IS_PRODUCTION_BUILD")) {
+        versionPrefix = "${versionPrefix}-${System.currentTimeMillis()}"
+    }
+
+    final String versionSuffix = System.getenv("VERSION_SUFFIX")
+    if (versionSuffix != null && !versionSuffix.isEmpty()) {
+        versionPrefix = "${versionPrefix}-${versionSuffix}"
+    }
+
+    println "Version Prefix: ${versionPrefix}"
 }
 
 allprojects {
@@ -16,14 +29,17 @@ allprojects {
 }
 
 subprojects {
-	apply plugin: "maven-publish"
-	apply plugin: "java"
-	apply plugin: "java-library"
+    apply plugin: "java"
+    apply plugin: "java-library"
+    apply plugin: "maven-publish"
 
-	base.archivesName = "mesh-lib-${project.nameSuffix}"
-	version = "${rootProject.mod_version}+${rootProject.minecraft_version}"
+	base.archivesName = "mesh-lib-${project.project_name}"
+    version = "${rootProject.versionPrefix}"
+    if (project.hasProperty("minecraft_version")) version = "${version}+${project.property("minecraft_version")}"
 
 	repositories {
+        mavenCentral()
+        mavenLocal()
 		maven {
 			name = "OffsetMods538"
 			url = "https://maven.offsetmonkey538.top/releases"
@@ -34,25 +50,31 @@ subprojects {
 		}
 	}
 
-	tasks.named("javadoc", Javadoc) {
-		options.addFileOption('-add-stylesheet', rootProject.file("javadoc-stylesheet.css"))
-	}
+    dependencies {
+        compileOnly "org.jetbrains:annotations:24.0.0"
+    }
+
+    tasks.withType(JavaCompile).configureEach {
+        it.options.release = 21
+    }
 
 	java {
 		withSourcesJar()
 		withJavadocJar()
+
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
 	}
 
-	jar {
-		from("${rootProject.projectDir}/LICENSE") {
-			rename { "${it}" }
-		}
-	}
+    tasks.named("javadoc", Javadoc) {
+        options.addFileOption('-add-stylesheet', rootProject.file("javadoc-stylesheet.css"))
+    }
 
-	dependencies {
-		compileOnly "org.jetbrains:annotations:24.0.0"
-		compileOnly "org.slf4j:slf4j-api:2.0.16"
-	}
+    jar {
+        from("${rootProject.projectDir}/LICENSE") {
+            rename { "${it}" }
+        }
+    }
 
 	publishing {
 		repositories {
@@ -72,41 +94,259 @@ subprojects {
 			maven(MavenPublication) {
 				artifactId = base.archivesName.get()
 
-				from(components["java"])
+				from components.java
 			}
 		}
 	}
-	tasks.publishMavenPublicationToMavenLocal.doLast {
-		if (System.getenv("IS_DEBUG") == "true") System.out.println("Version: " + version)
-	}
 }
 
-configure(subprojects.findAll { it.name != "common" }) {
-	apply plugin: 'com.modrinth.minotaur'
-	apply plugin: 'io.github.dexman545.outlet'
+configure(subprojects.findAll { it.name == "common" }) {
+    apply plugin: "com.gradleup.shadow"
 
-	if (System.getenv("IS_DEBUG") == "true") version = "${version}-${rootProject.debugVersion}"
+    repositories {
+        maven {
+            name = "Mojang Libraries"
+            url = "https://libraries.minecraft.net"
+            content {
+                includeGroup "com.mojang"
+            }
+        }
+    }
 
-	outlet {
-		mcVersionRange = rootProject.supported_minecraft_versions
-		allowedReleaseTypes = Set.of(ReleaseType.RELEASE)
-	}
+    dependencies {
+        api "io.netty:netty-codec-http:${project.netty_version}"
 
-	modrinth {
-		token = System.getenv("MODRINTH_TOKEN")
-		projectId = "mesh-lib"
-		def customVersionName = System.getenv("VERSION_NAME")
-		if (customVersionName != null) versionName = customVersionName
-		versionNumber = "${project.version}"
-		versionType = "alpha"
-		def isPreRelease = System.getenv("VERSION_IS_PRERELEASE")
-		versionType = !"false".equals(isPreRelease) ? "beta" : "release"
-		additionalFiles = [sourcesJar.archiveFile]
-		gameVersions = outlet.mcVersions()
-		syncBodyFrom = rootProject.file("README.md").text
-		def changelogEnv = System.getenv("VERSION_CHANGELOG")
-		if (changelogEnv != null) changelog = changelogEnv
-	}
+        shadow compileOnlyApi("top.offsetmonkey538.monkeylib538:monkeylib538-common:${rootProject.monkeylib538_version}")
+    }
+    tasks.build.dependsOn(shadowJar)
+}
 
-	tasks.modrinth.dependsOn(tasks.modrinthSyncBody)
+configure(subprojects.findAll { it.name == "fabric" }) {
+    apply plugin: "fabric-loom"
+    apply plugin: "io.github.dexman545.outlet"
+    apply plugin: "com.modrinth.minotaur"
+
+    outlet {
+        maintainPropertiesFile = !Boolean.getBoolean("IS_PRODUCTION_BUILD")
+        mcVersionRange = project.supported_minecraft_versions
+        allowedReleaseTypes = [ReleaseType.RELEASE]
+        propertiesData = [
+                'fapi_version': outlet.fapiVersion(project.minecraft_version),
+                'yarn_version': outlet.yarnVersion(project.minecraft_version),
+                'loader_version': outlet.loaderVersion()
+        ]
+    }
+
+    loom {
+        runs {
+            client {
+                runDir "run/client"
+            }
+            server {
+                runDir "run/server"
+            }
+        }
+
+        runConfigs.configureEach {
+            ideConfigGenerated(true)
+            vmArg "-DmeshEnableExamples=true"
+            if (!Boolean.getBoolean("IS_PRODUCTION_BUILD")) vmArg "-Ddevauth.enabled=true"
+        }
+    }
+
+    repositories {
+        maven {
+            name = "DevAuth"
+            url = "https://pkgs.dev.azure.com/djtheredstoner/DevAuth/_packaging/public/maven/v1"
+            content {
+                includeGroup "me.djtheredstoner"
+            }
+        }
+    }
+
+    configurations {
+        common {
+            canBeResolved = true
+            canBeConsumed = false
+        }
+        api.extendsFrom common
+    }
+
+    dependencies {
+        minecraft "com.mojang:minecraft:${project.minecraft_version}"
+        mappings "net.fabricmc:yarn:${project.yarn_version}:v2"
+        modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+
+        // DevAuth
+        modLocalRuntime "me.djtheredstoner:DevAuth-fabric:${project.devauth_version}"
+
+        include project(path: ":common", configuration: "shadow")
+        common project(":common")
+
+        // Only need the command api at runtime for the monkeylib config command
+        modRuntimeOnly fabricApi.module("fabric-command-api-v2", project.fapi_version)
+
+        // Whatever the heck this is for monkeylib
+        modRuntimeOnly("top.offsetmonkey538.monkeylib538:monkeylib538-fabric-1.20.5:${rootProject.monkeylib538_version}+1.20.5") {
+            exclude(group: "net.fabricmc.fabric-api")
+            exclude(group: "top.offsetmonkey538.monkeylib538:monkeylib538-fabric")
+        }
+        modCompileOnly("top.offsetmonkey538.monkeylib538:monkeylib538-fabric:${rootProject.monkeylib538_version}") {
+            exclude(group: "net.fabricmc.fabric-api")
+        }
+    }
+
+    processResources {
+        final Map properties = [
+                "commonVersion":              rootProject.versionPrefix,
+                "modVersion":                 project.version,
+                "supportedMinecraftVersions": project.supported_minecraft_versions,
+                "currentMonkeylibVersion":    project.monkeylib538_version
+        ]
+        inputs.properties(properties)
+        filesMatching("fabric.mod.json") {
+            expand(properties)
+        }
+
+        exclude ".cache/**"
+    }
+
+    modrinth {
+        // Main properties
+        token = System.getenv("MODRINTH_TOKEN")
+        projectId = "mesh-lib"
+        gameVersions = outlet.mcVersions()
+        loaders = ["fabric"]
+
+        // Version stuff
+        def customVersionName = System.getenv("VERSION_NAME")
+        if (customVersionName != null) versionName = customVersionName
+
+        versionNumber = "${project.version}"
+
+        versionType = Boolean.getBoolean("VERSION_IS_PRERELEASE") ? "beta" : "release"
+
+        if (rootProject.mod_version.contains("beta")) versionType = "beta"
+        if (rootProject.mod_version.contains("alpha")) versionType = "alpha"
+
+        // Files
+        uploadFile = remapJar.archiveFile
+        additionalFiles = [sourcesJar.archiveFile]
+
+
+        // Project info
+        syncBodyFrom = rootProject.file("README.md").text
+        def changelogEnv = System.getenv("VERSION_CHANGELOG")
+        if (changelogEnv != null) changelog = changelogEnv
+
+        dependencies {
+            required.project "monkeylib538"
+        }
+    }
+    tasks.modrinth.dependsOn(tasks.modrinthSyncBody)
+}
+
+configure(subprojects.findAll { it.name == "paper" }) {
+    apply plugin: "com.gradleup.shadow"
+    apply plugin: "com.modrinth.minotaur"
+    apply plugin: "io.github.dexman545.outlet"
+    apply plugin: "io.papermc.paperweight.userdev"
+    apply plugin: "xyz.jpenilla.run-paper"
+
+    outlet {
+        maintainPropertiesFile = false
+        mcVersionRange = project.supported_minecraft_versions
+        allowedReleaseTypes = [ReleaseType.RELEASE]
+    }
+
+    paperweight.reobfArtifactConfiguration = io.papermc.paperweight.userdev.ReobfArtifactConfiguration.getMOJANG_PRODUCTION()
+
+    repositories {
+        maven {
+            name = 'PaperMC'
+            url = 'https://repo.papermc.io/repository/maven-public/'
+            content {
+                includeGroup "io.papermc.paper"
+            }
+        }
+    }
+
+    configurations {
+        common {
+            canBeResolved = true
+            canBeConsumed = false
+        }
+        api.extendsFrom common
+    }
+
+    dependencies {
+        compileOnly "io.papermc.paper:paper-api:${project.paper_version}"
+
+        paperweight.paperDevBundle project.paper_version
+
+        common project(path: ":common", configuration: "shadow")
+
+        /* todo: monke not have paper yetttttttt
+        // Whatever the heck this is for monkeylib
+        modRuntimeOnly("top.offsetmonkey538.monkeylib538:monkeylib538-fabric-1.20.5:${rootProject.monkeylib538_version}+1.20.5") {
+            exclude(group: "io.papermc.paper")
+            exclude(group: "top.offsetmonkey538.monkeylib538:monkeylib538-fabric")
+        }
+        modCompileOnly("top.offsetmonkey538.monkeylib538:monkeylib538-fabric:${rootProject.monkeylib538_version}") {
+            exclude(group: "net.fabricmc.fabric-api")
+        }
+         */
+    }
+    tasks.build.dependsOn(shadowJar)
+
+    processResources {
+        final Map properties = [
+                "modVersion":              rootProject.mod_version,
+                "currentMonkeylibVersion": project.monkeylib538_version,
+                "lowestMinecraftVersion":  outlet.mcVersions().first() // here's hoping outlet does this in order
+        ]
+        inputs.properties(properties)
+        filesMatching("paper-plugin.yml") {
+            expand(properties)
+        }
+    }
+
+    tasks.runServer {
+        minecraftVersion(project.minecraft_version)
+        jvmArgs "-DmeshEnableExamples=true"
+    }
+
+    modrinth {
+        // Main properties
+        token = System.getenv("MODRINTH_TOKEN")
+        projectId = "mesh-lib"
+        gameVersions = outlet.mcVersions()
+        loaders = ["paper"]
+
+        // Version stuff
+        def customVersionName = System.getenv("VERSION_NAME")
+        if (customVersionName != null) versionName = customVersionName
+
+        versionNumber = "${project.version}"
+
+        versionType = Boolean.getBoolean("VERSION_IS_PRERELEASE") ? "beta" : "release"
+
+        if (rootProject.mod_version.contains("beta")) versionType = "beta"
+        if (rootProject.mod_version.contains("alpha")) versionType = "alpha"
+
+        // Files
+        uploadFile = shadowJar
+        additionalFiles = [sourcesJar.archiveFile]
+
+
+        // Project info
+        syncBodyFrom = rootProject.file("README.md").text
+        def changelogEnv = System.getenv("VERSION_CHANGELOG")
+        if (changelogEnv != null) changelog = changelogEnv
+
+        dependencies {
+            required.project "monkeylib538"
+        }
+    }
+    tasks.modrinth.dependsOn(tasks.modrinthSyncBody)
 }
