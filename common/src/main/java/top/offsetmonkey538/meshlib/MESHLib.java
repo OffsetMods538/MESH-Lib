@@ -1,11 +1,10 @@
 package top.offsetmonkey538.meshlib;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import top.offsetmonkey538.meshlib.config.TestConfig;
 import top.offsetmonkey538.meshlib.example.ExampleMain;
 import top.offsetmonkey538.meshlib.platform.PlatformMain;
 import top.offsetmonkey538.monkeylib538.api.command.ConfigCommandApi;
+import top.offsetmonkey538.monkeylib538.api.log.MonkeyLibLogger;
 import top.offsetmonkey538.offsetconfig538.api.config.ConfigHolder;
 import top.offsetmonkey538.offsetconfig538.api.config.ConfigManager;
 
@@ -24,7 +23,7 @@ public final class MESHLib {
 	/**
 	 * Logger instance used by this mod
 	 */
-	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
+	public static final MonkeyLibLogger LOGGER = MonkeyLibLogger.create(MOD_ID);
 
 
     public static void initialize() {

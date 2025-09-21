@@ -20,7 +20,7 @@ public class ProtocolHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object request) throws Exception {
         if (!(request instanceof ByteBuf buf)) {
-            LOGGER.warn("Received request '{}' that wasn't a ByteBuf", request);
+            LOGGER.warn("Received request '%s' that wasn't a ByteBuf", request);
             return;
         }
 
@@ -46,7 +46,7 @@ public class ProtocolHandler extends ChannelInboundHandlerAdapter {
 
             final String handlerId = uri.split("/")[1];
             if (!HttpHandlerRegistry.INSTANCE.has(handlerId)) {
-                LOGGER.debug("Handler with id '{}' not registered! Passing on...", handlerId);
+                LOGGER.debug("Handler with id '%s' not registered! Passing on...", handlerId);
                 forward(ctx, request);
                 return;
             }
