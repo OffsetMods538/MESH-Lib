@@ -36,6 +36,7 @@ jobs:
       - name: Publish to Maven
         run: ./gradlew publishMavenPublicationToOffsetMonkey538Repository
         env:
+          IS_PRODUCTION_BUILD: true
           DISABLE_PROPERTIES_UPDATE: true
           VERSION_SUFFIX: ${{ env.short_commit_hash }}
           MAVEN_USERNAME: ${{ secrets.MAVEN_USERNAME }}
