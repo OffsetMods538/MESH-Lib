@@ -1,6 +1,13 @@
 package top.offsetmonkey538.meshlib.example;
 
-import top.offsetmonkey538.meshlib.api.HttpHandlerRegistry;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.handler.codec.http.FullHttpRequest;
+import org.jetbrains.annotations.NotNull;
+import top.offsetmonkey538.meshlib.api.HttpHandler;
+import top.offsetmonkey538.meshlib.api.router.HttpRouter;
+import top.offsetmonkey538.meshlib.api.router.HttpRouterRegistry;
+import top.offsetmonkey538.meshlib.api.router.target.HttpTarget;
+import top.offsetmonkey538.meshlib.impl.router.rule.DomainHttpRule;
 
 import static top.offsetmonkey538.meshlib.MESHLib.LOGGER;
 
@@ -25,6 +32,9 @@ public final class ExampleMain {
         LOGGER.warn("MESH examples enabled!");
 
         // Register
-        HttpHandlerRegistry.INSTANCE.register("simple-server", new SimpleHttpHandler());
+        HttpRouterRegistry.INSTANCE.register("simple-server", new HttpRouter(
+                new DomainHttpRule(new DomainHttpRule.Data("localhost")),
+                new SimpleHttpHandler()
+        ));
     }
 }

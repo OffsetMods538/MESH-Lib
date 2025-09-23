@@ -1,12 +1,21 @@
 package top.offsetmonkey538.meshlib;
 
+import blue.endless.jankson.JsonObject;
+import blue.endless.jankson.JsonPrimitive;
+import top.offsetmonkey538.meshlib.api.HttpHandler;
+import top.offsetmonkey538.meshlib.api.router.rule.HttpRule;
+import top.offsetmonkey538.meshlib.api.router.rule.HttpRuleTypeRegistry;
+import top.offsetmonkey538.meshlib.api.HttpHandlerTypeRegistry;
 import top.offsetmonkey538.meshlib.config.TestConfig;
 import top.offsetmonkey538.meshlib.example.ExampleMain;
+import top.offsetmonkey538.meshlib.example.SimpleHttpHandler;
+import top.offsetmonkey538.meshlib.impl.router.rule.DomainHttpRule;
 import top.offsetmonkey538.meshlib.platform.PlatformMain;
 import top.offsetmonkey538.monkeylib538.api.command.ConfigCommandApi;
 import top.offsetmonkey538.monkeylib538.api.log.MonkeyLibLogger;
 import top.offsetmonkey538.offsetconfig538.api.config.ConfigHolder;
 import top.offsetmonkey538.offsetconfig538.api.config.ConfigManager;
+import top.offsetmonkey538.offsetconfig538.api.event.OffsetConfig538Events;
 
 import java.util.ServiceLoader;
 
@@ -31,9 +40,62 @@ public final class MESHLib {
         ExampleMain.onInitialize();
 
 
+        OffsetConfig538Events.JANKSON_CONFIGURATION_EVENT.listen(builder -> {
+            builder.registerSerializer(HttpRule.class, (httpRule, marshaller) -> {
+                final JsonObject result = (JsonObject) marshaller.serialize(httpRule.getData());
+                result.put("type", JsonPrimitive.of(httpRule.getType()));
+                return result;
+            });
+
+            builder.registerDeserializer(JsonObject.class, HttpRule.class, (jsonObject, marshaller) -> {
+                final String type = jsonObject.get(String.class, "type");
+
+                @SuppressWarnings("unchecked") // It's proooobably a subclass of Object...
+                HttpRule.HttpRuleDefinition<Object> ruleDefinition = (HttpRule.HttpRuleDefinition<Object>) HttpRuleTypeRegistry.get(type);
+
+                final JsonObject dummyParent = new JsonObject();
+                dummyParent.put("dataHolder", jsonObject);
+                final Object dataHolder = dummyParent.get(ruleDefinition.dataType(), "dataHolder");
+
+                return ruleDefinition.ruleInitializer().apply(dataHolder);
+            });
+
+
+            builder.registerSerializer(HttpHandler.class, (httpHandler, marshaller) -> {
+                HttpHandler.HttpHandlerDefinition<?> handlerDefinition =  HttpHandlerTypeRegistry.get(httpHandler.getClass());
+
+                final JsonObject result = (JsonObject) marshaller.serialize(handlerDefinition.handlerToData().apply(httpHandler));
+                result.put("type", JsonPrimitive.of(handlerDefinition.type()));
+                return result;
+            });
+
+            builder.registerDeserializer(JsonObject.class, HttpHandler.class, (jsonObject, marshaller) -> {
+                final String type = jsonObject.get(String.class, "type");
+
+                @SuppressWarnings("unchecked") // It's proooobably a subclass of Object...
+                HttpHandler.HttpHandlerDefinition<Object> handlerDefinition = (HttpHandler.HttpHandlerDefinition<Object>) HttpHandlerTypeRegistry.get(type);
+
+                final JsonObject dummyParent = new JsonObject();
+                dummyParent.put("dataHolder", jsonObject);
+                final Object dataHolder = dummyParent.get(handlerDefinition.dataType(), "dataHolder");
+
+                return handlerDefinition.handlerInitializer().apply(dataHolder);
+            });
+        });
+
+        HttpHandlerTypeRegistry.register(SimpleHttpHandler.class, new HttpHandler.HttpHandlerDefinition<>("simple-http", testDatType.class, testDatType -> new SimpleHttpHandler(), httpHandler -> new testDatType("a")));
+        HttpRuleTypeRegistry.register("domain", new HttpRule.HttpRuleDefinition<>(DomainHttpRule.Data.class, DomainHttpRule::new));
+
         final ConfigHolder<TestConfig> config = ConfigManager.INSTANCE.init(ConfigHolder.create(TestConfig::new, LOGGER::error));
-        System.out.println(config.get().thingy);
-        ConfigCommandApi.registerConfigCommand(config, () -> System.out.println(config.get().thingy), "test");
+        System.out.println("HELLO!");
+        ConfigCommandApi.registerConfigCommand(config, () -> {
+            System.out.println(config);
+            System.out.println("Hello!");
+        }, "test");
+    }
+
+    public record testDatType(String hi) {
+
     }
 
 

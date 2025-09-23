@@ -9,9 +9,13 @@ import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.util.CharsetUtil;
+import top.offsetmonkey538.meshlib.api.router.HttpRouterRegistry;
+import top.offsetmonkey538.meshlib.api.router.rule.HttpRule;
 import top.offsetmonkey538.meshlib.example.SimpleHttpHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.function.Function;
 
 import static io.netty.handler.codec.http.HttpHeaderNames.CONTENT_TYPE;
 import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
@@ -26,7 +30,7 @@ import static top.offsetmonkey538.meshlib.MESHLib.LOGGER;
  * <p>
  * Look at {@link SimpleHttpHandler SimpleHttpHandler} for an example
  *
- * @see HttpHandlerRegistry
+ * @see HttpRouterRegistry
  */
 @FunctionalInterface
 public interface HttpHandler {
@@ -71,5 +75,9 @@ public interface HttpHandler {
 
         response.headers().set(CONTENT_TYPE, "text/plain; charset=UTF-8");
         ctx.writeAndFlush(response).addListener(ChannelFutureListener.CLOSE);
+    }
+
+    record HttpHandlerDefinition<T>(String type, Class<T> dataType, Function<T, HttpHandler> handlerInitializer, Function<HttpHandler, T> handlerToData) {
+
     }
 }
