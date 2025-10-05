@@ -4,6 +4,7 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.FullHttpRequest;
 import org.jetbrains.annotations.NotNull;
 import top.offsetmonkey538.meshlib.api.HttpHandler;
+import top.offsetmonkey538.meshlib.api.HttpHandlerTypeRegistry;
 import top.offsetmonkey538.meshlib.api.router.HttpRouter;
 import top.offsetmonkey538.meshlib.api.router.HttpRouterRegistry;
 import top.offsetmonkey538.meshlib.api.router.target.HttpTarget;
@@ -25,6 +26,9 @@ public final class ExampleMain {
      * Checks if the {@code meshEnableExamples} system property is enabled and registers the example handlers if so
      */
     public static void onInitialize() {
+        HttpHandlerTypeRegistry.register(SimpleHttpHandler.class, new HttpHandler.HttpHandlerDefinition<>("simple-http", SimpleHttpHandler.Data.class, SimpleHttpHandler::new));
+
+
         // Ignore if "meshEnableExamples" isn't set
         if (!Boolean.getBoolean("meshEnableExamples")) return;
 
@@ -34,7 +38,7 @@ public final class ExampleMain {
         // Register
         HttpRouterRegistry.INSTANCE.register("simple-server", new HttpRouter(
                 new DomainHttpRule(new DomainHttpRule.Data("localhost")),
-                new SimpleHttpHandler()
+                new SimpleHttpHandler(new SimpleHttpHandler.Data("Yellow!"))
         ));
     }
 }

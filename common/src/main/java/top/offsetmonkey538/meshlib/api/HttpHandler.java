@@ -32,8 +32,15 @@ import static top.offsetmonkey538.meshlib.MESHLib.LOGGER;
  *
  * @see HttpRouterRegistry
  */
-@FunctionalInterface
-public interface HttpHandler {
+public abstract class HttpHandler<T> {
+    protected final T data;
+    
+    public HttpHandler(T data) {
+        this.data = data;
+    }
+    public T getData() {
+        return data;
+    }
 
     /**
      * This is called when an HTTP request is received for this handler.
@@ -44,7 +51,7 @@ public interface HttpHandler {
      * @param request the received request
      * @throws Exception when anything goes wrong
      */
-    void handleRequest(@NotNull ChannelHandlerContext ctx, @NotNull FullHttpRequest request) throws Exception;
+    public abstract void handleRequest(@NotNull ChannelHandlerContext ctx, @NotNull FullHttpRequest request) throws Exception;
 
     /**
      * Sends the requester an error code.
@@ -53,7 +60,7 @@ public interface HttpHandler {
      * @param status the received request
      * @see #sendError(ChannelHandlerContext, HttpResponseStatus, String)
      */
-    static void sendError(@NotNull ChannelHandlerContext ctx, @NotNull HttpResponseStatus status) {
+    public static void sendError(@NotNull ChannelHandlerContext ctx, @NotNull HttpResponseStatus status) {
         sendError(ctx, status, null);
     }
 
@@ -65,7 +72,7 @@ public interface HttpHandler {
      * @param reason reason to display for the error, may be null or empty
      * @see #sendError(ChannelHandlerContext, HttpResponseStatus)
      */
-    static void sendError(@NotNull ChannelHandlerContext ctx, @NotNull HttpResponseStatus status, @Nullable String reason) {
+    public static void sendError(@NotNull ChannelHandlerContext ctx, @NotNull HttpResponseStatus status, @Nullable String reason) {
         final String message = String.format("Failure: %s\r\n%s",status, (reason == null || reason.isBlank() ? "" : "Reason: " + reason + "\r\n"));
 
         LOGGER.error(message);
@@ -77,7 +84,7 @@ public interface HttpHandler {
         ctx.writeAndFlush(response).addListener(ChannelFutureListener.CLOSE);
     }
 
-    record HttpHandlerDefinition<T>(String type, Class<T> dataType, Function<T, HttpHandler> handlerInitializer, Function<HttpHandler, T> handlerToData) {
+    public record HttpHandlerDefinition<T>(String type, Class<T> dataType, Function<T, HttpHandler<T>> handlerInitializer) {
 
     }
 }

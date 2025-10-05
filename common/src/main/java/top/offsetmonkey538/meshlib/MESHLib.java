@@ -64,7 +64,7 @@ public final class MESHLib {
             builder.registerSerializer(HttpHandler.class, (httpHandler, marshaller) -> {
                 HttpHandler.HttpHandlerDefinition<?> handlerDefinition =  HttpHandlerTypeRegistry.get(httpHandler.getClass());
 
-                final JsonObject result = (JsonObject) marshaller.serialize(handlerDefinition.handlerToData().apply(httpHandler));
+                final JsonObject result = (JsonObject) marshaller.serialize(httpHandler.getData());
                 result.put("type", JsonPrimitive.of(handlerDefinition.type()));
                 return result;
             });
@@ -83,12 +83,7 @@ public final class MESHLib {
             });
         });
 
-        HttpHandlerTypeRegistry.register(SimpleHttpHandler.class, new HttpHandler.HttpHandlerDefinition<>("simple-http", testDatType.class, testDatType -> new SimpleHttpHandler(), httpHandler -> new testDatType("a")));
         HttpRuleTypeRegistry.register("domain", new HttpRule.HttpRuleDefinition<>(DomainHttpRule.Data.class, DomainHttpRule::new));
-    }
-
-    public record testDatType(String hi) {
-
     }
 
 
