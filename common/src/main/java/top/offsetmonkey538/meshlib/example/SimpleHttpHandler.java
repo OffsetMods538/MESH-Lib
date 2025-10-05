@@ -31,7 +31,6 @@ public class SimpleHttpHandler implements HttpHandler {
         // Set the "CONTENT_TYPE" header to tell the browser that this is plain text encoded in UTF-8
         response.headers().set(CONTENT_TYPE, "text/plain; charset=UTF-8");
 
-        System.out.println("hi");
         // Send the response and close the connection
         ctx.writeAndFlush(response).addListener(ChannelFutureListener.CLOSE);
     }

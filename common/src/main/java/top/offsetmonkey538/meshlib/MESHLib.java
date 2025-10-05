@@ -85,13 +85,6 @@ public final class MESHLib {
 
         HttpHandlerTypeRegistry.register(SimpleHttpHandler.class, new HttpHandler.HttpHandlerDefinition<>("simple-http", testDatType.class, testDatType -> new SimpleHttpHandler(), httpHandler -> new testDatType("a")));
         HttpRuleTypeRegistry.register("domain", new HttpRule.HttpRuleDefinition<>(DomainHttpRule.Data.class, DomainHttpRule::new));
-
-        final ConfigHolder<TestConfig> config = ConfigManager.INSTANCE.init(ConfigHolder.create(TestConfig::new, LOGGER::error));
-        System.out.println("HELLO!");
-        ConfigCommandApi.registerConfigCommand(config, () -> {
-            System.out.println(config);
-            System.out.println("Hello!");
-        }, "test");
     }
 
     public record testDatType(String hi) {
