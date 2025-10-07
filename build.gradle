@@ -3,6 +3,7 @@ import io.papermc.paperweight.userdev.ReobfArtifactConfiguration
 
 plugins {
     id 'fabric-loom' version '1.11-SNAPSHOT' apply false
+    id 'net.neoforged.moddev' version '2.0.112' apply false
     id 'io.github.dexman545.outlet' version '1.6.1' apply false
     id 'io.papermc.paperweight.userdev' version '2.0.0-beta.8' apply false
     id 'com.gradleup.shadow' version '9.0.0-beta4' apply false
@@ -115,11 +116,21 @@ configure(subprojects.findAll { it.name == "common" }) {
     }
 
     dependencies {
-        api "io.netty:netty-codec-http:${project.netty_version}"
+        api "io.netty:netty-codec-http:${rootProject.netty_version}"
 
         shadow compileOnlyApi("top.offsetmonkey538.monkeylib538:monkeylib538-common:${rootProject.monkeylib538_version}")
     }
     tasks.build.dependsOn(shadowJar)
+
+    processResources {
+        final Map properties = [
+                "modVersion":                 rootProject.versionPrefix
+        ]
+        inputs.properties(properties)
+        filesMatching("META-INF/neoforge.mods.toml") {
+            expand(properties)
+        }
+    }
 }
 
 configure(subprojects.findAll { it.name == "fabric" }) {
@@ -184,8 +195,8 @@ configure(subprojects.findAll { it.name == "fabric" }) {
         include project(path: ":common", configuration: "shadow")
         common project(":common")
 
-        // Only need the command api at runtime for the monkeylib config command
-        modRuntimeOnly fabricApi.module("fabric-command-api-v2", project.fapi_version)
+        // Only need fapi at runtime for the monkeylib shtuff
+        modRuntimeOnly "net.fabricmc.fabric-api:fabric-api:${project.fapi_version}"
 
         // Whatever the heck this is for monkeylib
         modRuntimeOnly("top.offsetmonkey538.monkeylib538:monkeylib538-fabric-1.20.5:${rootProject.monkeylib538_version}+1.20.5") {
@@ -232,6 +243,118 @@ configure(subprojects.findAll { it.name == "fabric" }) {
 
         // Files
         uploadFile = remapJar.archiveFile
+        additionalFiles = [sourcesJar.archiveFile]
+
+
+        // Project info
+        syncBodyFrom = rootProject.file("README.md").text
+        def changelogEnv = System.getenv("VERSION_CHANGELOG")
+        if (changelogEnv != null) changelog = changelogEnv
+
+        dependencies {
+            required.project "monkeylib538"
+        }
+    }
+    tasks.modrinth.dependsOn(tasks.modrinthSyncBody)
+}
+
+configure(subprojects.findAll { it.name == "neoforge" }) {
+    apply plugin: "net.neoforged.moddev"
+    apply plugin: "io.github.dexman545.outlet"
+    apply plugin: "com.modrinth.minotaur"
+
+    outlet {
+        mcVersionRange = project.supported_minecraft_versions
+        allowedReleaseTypes = [ReleaseType.RELEASE]
+    }
+
+    neoForge {
+        version = project.neoforge_version
+
+        parchment {
+            mappingsVersion = project.parchment_mappings_version
+            minecraftVersion = project.minecraft_version
+        }
+
+        mods {
+            "${project.name}" {
+                sourceSet(sourceSets.main)
+            }
+        }
+
+        runs {
+            server {
+                server()
+            }
+
+            configureEach {
+                systemProperty "forge.logging.markers", "REGISTRIES"
+                jvmArgument "-DmeshEnableExamples=true"
+            }
+        }
+    }
+
+    repositories {
+        maven {
+            name = "DevAuth"
+            url = "https://pkgs.dev.azure.com/djtheredstoner/DevAuth/_packaging/public/maven/v1"
+            content {
+                includeGroup "me.djtheredstoner"
+            }
+        }
+    }
+
+    configurations {
+        runtimeClasspath.extendsFrom localRuntime
+    }
+
+    dependencies {
+        // DevAuth
+        localRuntime "me.djtheredstoner:DevAuth-neoforge:${project.devauth_version}"
+
+        jarJar(api(project(":common")))
+        jarJar(additionalRuntimeClasspath("io.netty:netty-codec-http:${rootProject.netty_version}"))
+
+        // Whatever the heck this is for monkeylib
+        runtimeOnly "top.offsetmonkey538.monkeylib538:monkeylib538-neoforge-1.20.6:${project.monkeylib538_version}+1.20.6"
+        compileOnly "top.offsetmonkey538.monkeylib538:monkeylib538-neoforge:${project.monkeylib538_version}"
+    }
+
+    processResources {
+        final Map properties = [
+                "commonVersion":              rootProject.versionPrefix,
+                "modVersion":                 project.version,
+                "supportedMinecraftVersions": project.minecraft_version_range,
+                "currentMonkeylibVersion":    project.monkeylib538_version
+        ]
+        inputs.properties(properties)
+        filesMatching("META-INF/neoforge.mods.toml") {
+            expand(properties)
+        }
+
+        exclude ".cache/**"
+    }
+
+    modrinth {
+        // Main properties
+        token = System.getenv("MODRINTH_TOKEN")
+        projectId = "mesh-lib"
+        gameVersions = outlet.mcVersions()
+        loaders = ["neoforge"]
+
+        // Version stuff
+        def customVersionName = System.getenv("VERSION_NAME")
+        if (customVersionName != null) versionName = customVersionName
+
+        versionNumber = "${project.version}"
+
+        versionType = Boolean.parseBoolean(System.getenv("VERSION_IS_PRERELEASE")) ? "beta" : "release"
+
+        if (rootProject.mod_version.contains("beta")) versionType = "beta"
+        if (rootProject.mod_version.contains("alpha")) versionType = "alpha"
+
+        // Files
+        //TODO: uploadFile = remapJar.archiveFile
         additionalFiles = [sourcesJar.archiveFile]
 
 

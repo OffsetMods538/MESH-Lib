@@ -1,0 +1,14 @@
+modLoader = "javafml"
+loaderVersion = "[1,)"
+license="MIT"
+
+issueTrackerURL="https://github.com/OffsetMods538/MonkeyLib538/issues"
+
+
+[[mods]]
+modId="mesh_lib_common"
+displayName="MESH Lib Common"
+version="${modVersion}"
+displayURL="https://modrinth.com/mod/monkeylib538"
+authors="OffsetMonkey538"
+description="A library mod for OffsetMonkey538s mods"
