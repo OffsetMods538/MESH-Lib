@@ -19,6 +19,9 @@ import top.offsetmonkey538.offsetconfig538.api.event.OffsetConfig538Events;
 
 import java.util.ServiceLoader;
 
+// TODO: once I start working on allowing the netty server to run separately from minecraft, I should make the default exposed port value null to avoid 2 things:
+//  - The port from server.properties being wrong: The network being behind something (like a firewall or Docker for example) can allow the exposed port to be different from what minecraft binds to.
+//  - Tell people to use a separate port if at all possible. Proxies that some like running minecraft through (especially DDOS blockers like TcpShield) may block http traffic.
 public final class MESHLib {
 	/**
 	 * Private constructor as this class shouldn't be instanced
