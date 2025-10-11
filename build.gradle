@@ -1,6 +1,8 @@
 import dex.plugins.outlet.v2.util.ReleaseType
 import io.papermc.paperweight.userdev.ReobfArtifactConfiguration
 
+import java.nio.file.Files
+
 plugins {
     id 'fabric-loom' version '1.11-SNAPSHOT' apply false
     id 'net.neoforged.moddev' version '2.0.112' apply false
@@ -13,17 +15,25 @@ plugins {
 
 ext {
     versionPrefix = rootProject.mod_version
+    if (!Boolean.parseBoolean(System.getenv("IS_RELEASE"))) {
+        String preReleaseVersion = System.currentTimeMillis()
 
-    if (!Boolean.parseBoolean(System.getenv("IS_PRODUCTION_BUILD"))) {
-        versionPrefix = "${versionPrefix}-${System.currentTimeMillis()}"
+        if (Boolean.parseBoolean(System.getenv("PRESERVE_PRERELEASE_VERSION"))) {
+            var preReleaseVersionFile = file("preReleaseVersion.txt").toPath()
+            if (Files.exists(preReleaseVersionFile)) preReleaseVersion = Files.readString(preReleaseVersionFile)
+            Files.writeString(preReleaseVersionFile, preReleaseVersion)
+        }
+
+        var separator = "-"
+        if (versionPrefix.contains("-")) separator = "."
+        versionPrefix = "${versionPrefix}${separator}${preReleaseVersion}"
     }
-
     final String versionSuffix = System.getenv("VERSION_SUFFIX")
     if (versionSuffix != null && !versionSuffix.isEmpty()) {
-        versionPrefix = "${versionPrefix}-${versionSuffix}"
+        versionPrefix = "${versionPrefix}+${versionSuffix}"
     }
 
-    println "Version Prefix: ${versionPrefix}"
+    System.out.println("Version Prefix: " + versionPrefix)
 }
 
 allprojects {

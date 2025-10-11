@@ -29,12 +29,14 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew build
         env:
-          IS_PRODUCTION_BUILD: true
+          IS_RELEASE: true
+          DISABLE_PROPERTIES_UPDATE: true
 
       - name: Upload to Modrinth
         run: ./gradlew modrinth
         env:
-          IS_PRODUCTION_BUILD: true
+          IS_RELEASE: true
+          DISABLE_PROPERTIES_UPDATE: true
           MODRINTH_TOKEN: ${{ secrets.MODRINTH_TOKEN }}
           VERSION_NAME: ${{ github.event.release.name }}
           VERSION_IS_PRERELEASE: ${{ github.event.release.prerelease }}
@@ -43,7 +45,8 @@ jobs:
       - name: Publish to Maven
         run: ./gradlew publishMavenPublicationToOffsetMonkey538Repository
         env:
-          IS_PRODUCTION_BUILD: true
+          IS_RELEASE: true
+          DISABLE_PROPERTIES_UPDATE: true
           MAVEN_USERNAME: ${{ secrets.MAVEN_USERNAME }}
           MAVEN_PASSWORD: ${{ secrets.MAVEN_PASSWORD }}
 

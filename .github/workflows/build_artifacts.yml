@@ -30,13 +30,14 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew build
         env:
-          IS_PRODUCTION_BUILD: true
+          PRESERVE_PRERELEASE_VERSION: true
+          DISABLE_PROPERTIES_UPDATE: true
           VERSION_SUFFIX: ${{ env.short_commit_hash }}
 
       - name: Publish to Maven
         run: ./gradlew publishMavenPublicationToOffsetMonkey538Repository
         env:
-          IS_PRODUCTION_BUILD: true
+          PRESERVE_PRERELEASE_VERSION: true
           DISABLE_PROPERTIES_UPDATE: true
           VERSION_SUFFIX: ${{ env.short_commit_hash }}
           MAVEN_USERNAME: ${{ secrets.MAVEN_USERNAME }}
