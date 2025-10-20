@@ -6,6 +6,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import top.offsetmonkey538.meshlib.impl.ProtocolHandler;
+import top.offsetmonkey538.meshlib.platform.fabric.FabricPlatformMain;
 
 import static top.offsetmonkey538.meshlib.MESHLib.MOD_ID;
 
@@ -20,6 +21,8 @@ public abstract class ServerNetworkIoMixin {
             at = @At("TAIL")
     )
     private void meshlib$addHttpHandler(Channel channel, CallbackInfo ci) {
+        // This method is executed every time a new connection is started. Thus, I can just not add to the vanilla server when that's disabled
+        if (!FabricPlatformMain.isVanillaHandlerEnabled) return;
         channel.pipeline().addFirst(MOD_ID, new ProtocolHandler());
     }
 }

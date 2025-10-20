@@ -10,14 +10,16 @@ import java.nio.file.Path;
 import static top.offsetmonkey538.meshlib.MESHLib.MOD_ID;
 
 public final class FabricPlatformMain implements PlatformMain, DedicatedServerModInitializer {
+    public static boolean isVanillaHandlerEnabled = false;
+
     @Override
     public void enableVanillaHandlerImpl() {
-        // TODO
+        isVanillaHandlerEnabled = true;
     }
 
     @Override
     public void disableVanillaHandlerImpl() {
-        // TODO
+        isVanillaHandlerEnabled = false;
     }
 
     @Override

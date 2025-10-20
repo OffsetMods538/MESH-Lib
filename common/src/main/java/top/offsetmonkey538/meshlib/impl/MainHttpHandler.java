@@ -58,7 +58,7 @@ public class MainHttpHandler extends SimpleChannelInboundHandler<FullHttpRequest
             return;
         }
 
-        final HttpHandler handler = router.handler();
+        final HttpHandler<?> handler = router.handler();
         ctx.pipeline().addAfter(MOD_ID + "/handler", MOD_ID + "/" + matchedRouterIDs.getFirst(), new SimpleChannelInboundHandler<FullHttpRequest>() {
             @Override
             protected void channelRead0(ChannelHandlerContext ctx, FullHttpRequest request) throws Exception {

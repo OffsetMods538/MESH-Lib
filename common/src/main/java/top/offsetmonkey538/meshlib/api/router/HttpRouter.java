@@ -5,5 +5,5 @@ import top.offsetmonkey538.meshlib.api.HttpHandler;
 import top.offsetmonkey538.meshlib.api.router.rule.HttpRule;
 import top.offsetmonkey538.meshlib.api.router.target.HttpTarget;
 
-public record HttpRouter(@NotNull HttpRule<?> rule, @NotNull HttpHandler handler) {
+public record HttpRouter(@NotNull HttpRule<?> rule, @NotNull HttpHandler<?> handler) {
 }
