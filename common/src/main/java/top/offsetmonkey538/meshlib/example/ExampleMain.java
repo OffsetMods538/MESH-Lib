@@ -26,9 +26,6 @@ public final class ExampleMain {
      * Checks if the {@code meshEnableExamples} system property is enabled and registers the example handlers if so
      */
     public static void onInitialize() {
-        HttpHandlerTypeRegistry.register(SimpleHttpHandler.class, new HttpHandler.HttpHandlerDefinition<>("simple-http", SimpleHttpHandler.Data.class, SimpleHttpHandler::new));
-
-
         // Ignore if "meshEnableExamples" isn't set
         if (!Boolean.getBoolean("meshEnableExamples")) return;
 
@@ -36,6 +33,8 @@ public final class ExampleMain {
         LOGGER.warn("MESH examples enabled!");
 
         // Register
+        HttpHandlerTypeRegistry.register(SimpleHttpHandler.class, new HttpHandler.HttpHandlerDefinition<>("simple-http", SimpleHttpHandler.Data.class, SimpleHttpHandler::new));
+
         HttpRouterRegistry.INSTANCE.register("simple-server", new HttpRouter(
                 new DomainHttpRule(new DomainHttpRule.Data("localhost")),
                 new SimpleHttpHandler(new SimpleHttpHandler.Data("Yellow!"))
