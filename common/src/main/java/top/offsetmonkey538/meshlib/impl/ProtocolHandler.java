@@ -24,6 +24,7 @@ public class ProtocolHandler extends ChannelInboundHandlerAdapter {
             return;
         }
 
+        // TODO: pretty sure I will not be able to use this same method for https? there does seem to be a SslHandler.isEncrypted(buf) method which I could use in addition to this?
         // Read the first line to check if it's an http request
         //  todo: maybe there's a better way to check?
         final StringBuilder firstLine = new StringBuilder();

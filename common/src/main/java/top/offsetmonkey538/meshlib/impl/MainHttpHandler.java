@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 import static io.netty.handler.codec.http.HttpResponseStatus.BAD_REQUEST;
 import static top.offsetmonkey538.meshlib.MESHLib.LOGGER;
 import static top.offsetmonkey538.meshlib.MESHLib.MOD_ID;
-import static top.offsetmonkey538.meshlib.api.HttpHandler.sendError;
+import static top.offsetmonkey538.meshlib.api.util.HttpResponseUtil.sendError;
 
 /**
  * Main HTTP handler for MESH.
@@ -82,7 +82,7 @@ public class MainHttpHandler extends SimpleChannelInboundHandler<FullHttpRequest
         LOGGER.error("Failed to handle request", cause);
 
         if (!ctx.channel().isActive()) return;
-        sendError(ctx, HttpResponseStatus.INTERNAL_SERVER_ERROR, cause.getMessage());
+        sendError(ctx, HttpResponseStatus.INTERNAL_SERVER_ERROR, cause);
     }
 
     private static void forward(ChannelHandlerContext ctx, FullHttpRequest request) {

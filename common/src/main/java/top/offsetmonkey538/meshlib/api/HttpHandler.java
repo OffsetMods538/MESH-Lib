@@ -53,37 +53,6 @@ public abstract class HttpHandler<T> {
      */
     public abstract void handleRequest(@NotNull ChannelHandlerContext ctx, @NotNull FullHttpRequest request) throws Exception;
 
-    /**
-     * Sends the requester an error code.
-     *
-     * @param ctx the current channel handler context
-     * @param status the received request
-     * @see #sendError(ChannelHandlerContext, HttpResponseStatus, String)
-     */
-    public static void sendError(@NotNull ChannelHandlerContext ctx, @NotNull HttpResponseStatus status) {
-        sendError(ctx, status, null);
-    }
-
-    /**
-     * Sends the requester an error code and optionally a reason with it.
-     *
-     * @param ctx the current channel handler context
-     * @param status the received request
-     * @param reason reason to display for the error, may be null or empty
-     * @see #sendError(ChannelHandlerContext, HttpResponseStatus)
-     */
-    public static void sendError(@NotNull ChannelHandlerContext ctx, @NotNull HttpResponseStatus status, @Nullable String reason) {
-        final String message = String.format("Failure: %s\r\n%s",status, (reason == null || reason.isBlank() ? "" : "Reason: " + reason + "\r\n"));
-
-        LOGGER.error(message);
-
-        final ByteBuf byteBuf = Unpooled.copiedBuffer(message, CharsetUtil.UTF_8);
-        final FullHttpResponse response = new DefaultFullHttpResponse(HTTP_1_1, status, byteBuf);
-
-        response.headers().set(CONTENT_TYPE, "text/plain; charset=UTF-8");
-        ctx.writeAndFlush(response).addListener(ChannelFutureListener.CLOSE);
-    }
-
     public record HttpHandlerDefinition<T>(String type, Class<T> dataType, Function<T, HttpHandler<T>> handlerInitializer) {
 
     }
