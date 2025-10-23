@@ -107,96 +107,11 @@ public class StaticDirectoryHandler implements HttpHandler {
         final StringBuilder result = new StringBuilder();
 
 
-        result.append(
-                """
-                <!DOCTYPE html>
-                <html lang= "en">
-                <head>
-                """
-        );
-        result.append("<title>Index of ").append(uriPath).append("</title>\n");
-
-        result.append(
-                """
-                    <style>
-                        table {
-                            width: 100%;
-                            border-collapse: collapse;
-                            border: 2px solid #111111;
-                        }
-                        th {
-                            text-align: left;
-                        }
-                        thead th.index {
-                            background: #c0c0c0;
-                            font-size: 1.2em;
-                            padding: 8px;
-                        }
-                        th.label {
-                            background-color: #dedede;
-                            border: 1px solid #111111;
-                            padding: 6px 8px;
-                        }
-                        td {
-                            padding: 6px 8px;
-                            border-bottom: 1px solid #ccc;
-                            verical-align: middle;
-                        }
-                        tr:nth-child(odd) {
-                            background-color: #efefef;
-                        }
-                        tr:nth-child(even) {
-                            background-color: #e2e2e2;
-                        }
-                        a {
-                            color: #0078d7;
-                            text-decoration: none;
-                        }
-                        a:hover {
-                            text-decoration: underline;
-                        }
-                        tfoot th.provided {
-                            background: #c0c0c0;
-                            border: 1px solid #111111;
-                            text-align: center;
-                            padding: 8px;
-                            color: #2d2d2d;
-                            font-size: 0.8em;
-                        }
-                        .back-icon::before {
-                            content: "🔙 ";
-                        }
-                        .dir-icon::before {
-                            content: "📁 ";
-                        }
-                        .file-icon::before {
-                            content: "📄 ";
-                        }
-                    </style>
-                </head>
-                """
-        );
-
-        result.append(
-                """
-                <body>
-                    <table>
-                        <thead>
-                            <tr><th class="index" colspan="3">Index of\s
-               """);
+        result.append("<!DOCTYPE html><html lang=\"en\"><head><title>Index of ").append(uriPath).append("</title>");
+        result.append("<style>table{width:100%;border-collapse:collapse;border:2px solid #111}th{text-align:left}thead th.index{background:silver;font-size:1.2em;padding:8px}th.label{background-color:#dedede;border:1px solid #111;padding:6px 8px}td{padding:6px 8px;border-bottom:1px solid #ccc;verical-align:middle}tr:nth-child(odd){background-color:#efefef}tr:nth-child(even){background-color:#e2e2e2}a{color:#0078d7;text-decoration:none}a:hover{text-decoration:underline}tfoot th.provided{background:silver;border:1px solid #111;text-align:center;padding:8px;color:#2d2d2d;font-size:.8em}.back-icon::before{content:\"\uD83D\uDD19 \"}.dir-icon::before{content:\"\uD83D\uDCC1 \"}.file-icon::before{content:\"\uD83D\uDCC4 \"}</style></head>");
+        result.append("<body><table><thead><tr><th class=\"index\" colspan=\"3\">Index of ");
         result.append(uriPath);
-        result.append(
-                """
-                            </th></tr>
-                            <tr>
-                                <th class="label">Name</th>
-                                <th class="label">Last Modified</th>
-                                <th class="label">Size</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                """
-        );
+        result.append("</th></tr><tr><th class=\"label\">Name</th><th class=\"label\">Last Modified</th><th class=\"label\">Size</th></tr></thead><tbody>");
 
         if (!"/".equals(uriPath)) {
             result.append("<tr><td><a class=\"back-icon\" href=\"../\">Parent Directory</a></td><td>-</td><td>-</td></tr>");
@@ -221,27 +136,13 @@ public class StaticDirectoryHandler implements HttpHandler {
                     LOGGER.error("Failed to get modification time for file '%s'!", e, path);
                 }
 
-                result.append("<tr>");
-                result.append("<td><a class=\"").append(icon).append("\" href=\"").append(name).append("\">").append(name).append("</a></td>");
-                result.append("<td>").append(modifiedTime).append("</td>");
-                result.append("<td>");
+                result.append("<tr><td><a class=\"").append(icon).append("\" href=\"").append(name).append("\">").append(name).append("</a></td><td>").append(modifiedTime).append("</td><td>");
                 formatFileSize(result, path);
-                result.append("</td>");
-                result.append("</tr>");
+                result.append("</td></tr>");
             });
         }
 
-        result.append(
-                """
-                        </tbody>
-                        <tfoot>
-                            <tr><th class="provided" colspan="3">Provided by <a href="https://modrinth.com/plugin/mesh-lib">MESH Lib</a></th></tr>
-                        </tfoot>
-                    </table>
-                </body>
-                </html>
-                """
-        );
+        result.append("</tbody><tfoot><tr><th class=\"provided\" colspan=\"3\">Provided by <a href=\"https://modrinth.com/plugin/mesh-lib\">MESH Lib</a></th></tr></tfoot></table></body></html>");
 
         return result;
     }
