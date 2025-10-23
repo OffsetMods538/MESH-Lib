@@ -6,7 +6,7 @@ import top.offsetmonkey538.meshlib.impl.HttpRouterRegistryImpl;
 import top.offsetmonkey538.offsetconfig538.api.event.Event;
 
 /**
- * Registry for {@link HttpRouter}s, use the {@link #HTTP_ROUTER_REGISTRATION_EVENT_EVENT} event for registering your routers.
+ * Registry for {@link HttpRouter}s, use the {@link #HTTP_ROUTER_REGISTRATION_EVENT} event for registering your routers.
  */
 public interface HttpRouterRegistry {
     /**
@@ -38,12 +38,12 @@ public interface HttpRouterRegistry {
      *     Initially called while the server is starting, so <strong>make sure to register your handler before that!</strong>
      * </p>
      */
-    Event<HttpRouterRegistrationEvent> HTTP_ROUTER_REGISTRATION_EVENT_EVENT = Event.createEvent(HttpRouterRegistrationEvent.class, handlers -> registry -> {
+    Event<HttpRouterRegistrationEvent> HTTP_ROUTER_REGISTRATION_EVENT = Event.createEvent(HttpRouterRegistrationEvent.class, handlers -> registry -> {
         for (HttpRouterRegistrationEvent handler : handlers) handler.register(registry);
     });
 
     /**
-     * Handler for {@link #HTTP_ROUTER_REGISTRATION_EVENT_EVENT}.
+     * Handler for {@link #HTTP_ROUTER_REGISTRATION_EVENT}.
      */
     @FunctionalInterface
     interface HttpRouterRegistrationEvent {

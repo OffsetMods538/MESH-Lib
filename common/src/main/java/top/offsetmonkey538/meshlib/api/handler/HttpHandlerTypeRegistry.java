@@ -41,7 +41,7 @@ public interface HttpHandlerTypeRegistry {
      *     Initially called while the server is starting, so <strong>make sure to register your handler before that!</strong>
      * </p>
      * <p>
-     *     Called before the {@link top.offsetmonkey538.meshlib.api.router.HttpRouterRegistry#HTTP_ROUTER_REGISTRATION_EVENT_EVENT HTTP_ROUTER_REGISTRATION_EVENT_EVENT} event.
+     *     Called before the {@link top.offsetmonkey538.meshlib.api.router.HttpRouterRegistry#HTTP_ROUTER_REGISTRATION_EVENT HTTP_ROUTER_REGISTRATION_EVENT} event.
      * </p>
      */
     Event<HttpHandlerRegistrationEvent> HTTP_HANDLER_REGISTRATION_EVENT = Event.createEvent(HttpHandlerRegistrationEvent.class, handlers -> registry -> {

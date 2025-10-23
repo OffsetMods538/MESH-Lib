@@ -44,7 +44,7 @@ public final class ExampleMain {
         //        new DomainHttpRule("localhost"),
         //        new SimpleHttpHandler("Yellow!")
         //));
-        HttpRouterRegistry.HTTP_ROUTER_REGISTRATION_EVENT_EVENT.listen(registry -> {
+        HttpRouterRegistry.HTTP_ROUTER_REGISTRATION_EVENT.listen(registry -> {
             registry.register("simple-server2", new HttpRouter(
                     new PathHttpRule("/hi"),
                     new SimpleHttpHandler("Goodbye!")

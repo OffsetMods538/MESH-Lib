@@ -110,7 +110,7 @@ public final class MESHLib {
 
         HttpHandlerTypeRegistry.HTTP_HANDLER_REGISTRATION_EVENT.getInvoker().invoke();
         HttpRuleTypeRegistry.HTTP_RULE_REGISTRATION_EVENT.getInvoker().invoke();
-        HttpRouterRegistry.HTTP_ROUTER_REGISTRATION_EVENT_EVENT.getInvoker().invoke();
+        HttpRouterRegistry.HTTP_ROUTER_REGISTRATION_EVENT.getInvoker().invoke();
     }
 
 
