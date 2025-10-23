@@ -2,7 +2,7 @@ package top.offsetmonkey538.meshlib.api.router;
 
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
-import top.offsetmonkey538.meshlib.api.HttpHandler;
+import top.offsetmonkey538.meshlib.api.handler.HttpHandler;
 import top.offsetmonkey538.meshlib.impl.HttpRouterRegistryImpl;
 
 import java.util.Map;

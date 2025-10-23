@@ -1,8 +1,8 @@
 package top.offsetmonkey538.meshlib.impl.router.rule;
 
 import org.jetbrains.annotations.NotNull;
-import top.offsetmonkey538.meshlib.api.router.rule.HttpRule;
-import top.offsetmonkey538.meshlib.api.router.rule.HttpRuleTypeRegistry;
+import top.offsetmonkey538.meshlib.api.rule.HttpRule;
+import top.offsetmonkey538.meshlib.api.rule.HttpRuleTypeRegistry;
 
 import java.util.HashMap;
 import java.util.Map;

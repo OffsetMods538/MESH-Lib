@@ -1,4 +1,4 @@
-package top.offsetmonkey538.meshlib.api.router.rule;
+package top.offsetmonkey538.meshlib.api.rule;
 
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;

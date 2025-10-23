@@ -6,6 +6,7 @@ import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.ChannelPipeline;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpServerCodec;
+import io.netty.handler.stream.ChunkedWriteHandler;
 import top.offsetmonkey538.meshlib.api.router.HttpRouterRegistry;
 
 import static top.offsetmonkey538.meshlib.MESHLib.LOGGER;
@@ -45,7 +46,8 @@ public class ProtocolHandler extends ChannelInboundHandlerAdapter {
         final ChannelPipeline pipeline = ctx.pipeline();
         pipeline.addAfter(MOD_ID, MOD_ID + "/codec", new HttpServerCodec());
         pipeline.addAfter(MOD_ID + "/codec", MOD_ID + "/aggregator", new HttpObjectAggregator(65536));
-        pipeline.addAfter(MOD_ID + "/aggregator", MOD_ID + "/handler", new MainHttpHandler());
+        pipeline.addAfter(MOD_ID + "/aggregator", MOD_ID + "/chunked", new ChunkedWriteHandler());
+        pipeline.addAfter(MOD_ID + "/chunked", MOD_ID + "/handler", new MainHttpHandler());
 
         forward(ctx, request);
     }

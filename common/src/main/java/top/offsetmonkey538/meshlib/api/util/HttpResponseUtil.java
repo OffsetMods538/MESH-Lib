@@ -1,6 +1,7 @@
 package top.offsetmonkey538.meshlib.api.util;
 
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import org.jetbrains.annotations.ApiStatus;
@@ -8,9 +9,13 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import top.offsetmonkey538.meshlib.impl.util.HttpResponseUtilImpl;
 
+import java.io.IOException;
+import java.nio.file.Path;
+
 /**
  * Provides utils for responding to http requests
  */
+// TODO: FIXME: respect keep alive
 public interface HttpResponseUtil {
     /**
      * Instance
@@ -18,6 +23,18 @@ public interface HttpResponseUtil {
     @ApiStatus.Internal
     HttpResponseUtil INSTANCE = new HttpResponseUtilImpl();
 
+
+    /**
+     * Sends the requester the file at the provided file
+     *
+     * @param ctx the current channel handler context
+     * @param request the client request
+     * @param fileToSend the path to the file to send
+     * @throws IOException when io go wrong :(
+     */
+    static void sendFile(@NotNull ChannelHandlerContext ctx, @NotNull FullHttpRequest request, @NotNull Path fileToSend) throws IOException {
+        INSTANCE.sendFileImpl(ctx, request, fileToSend);
+    }
 
     /**
      * Sends the requester a Permanent Redirect (308) response containing the new location.
@@ -100,6 +117,7 @@ public interface HttpResponseUtil {
     }
 
 
+    void sendFileImpl(@NotNull ChannelHandlerContext ctx, @NotNull FullHttpRequest request, @NotNull Path fileToSend) throws IOException;
     void sendRedirectImpl(@NotNull ChannelHandlerContext ctx, @NotNull HttpResponseStatus status, @NotNull String newLocation);
     void sendStringImpl(@NotNull ChannelHandlerContext ctx, @NotNull String content);
     void sendErrorImpl(@NotNull ChannelHandlerContext ctx, @NotNull HttpResponseStatus status, @Nullable String reason);

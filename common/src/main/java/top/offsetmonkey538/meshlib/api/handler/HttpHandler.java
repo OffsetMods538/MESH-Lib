@@ -1,8 +1,9 @@
-package top.offsetmonkey538.meshlib.api;
+package top.offsetmonkey538.meshlib.api.handler;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.FullHttpRequest;
 import top.offsetmonkey538.meshlib.api.router.HttpRouterRegistry;
+import top.offsetmonkey538.meshlib.api.rule.HttpRule;
 import top.offsetmonkey538.meshlib.example.SimpleHttpHandler;
 import org.jetbrains.annotations.NotNull;
 
@@ -15,15 +16,7 @@ import java.util.function.Function;
  *
  * @see HttpRouterRegistry
  */
-public abstract class HttpHandler<T> {
-    protected final T data;
-    
-    public HttpHandler(T data) {
-        this.data = data;
-    }
-    public T getData() {
-        return data;
-    }
+public interface HttpHandler {
 
     /**
      * This is called when an HTTP request is received for this handler.
@@ -32,11 +25,8 @@ public abstract class HttpHandler<T> {
      *
      * @param ctx the current channel handler context
      * @param request the received request
+     * @param rule the rule used to match this handler
      * @throws Exception when anything goes wrong
      */
-    public abstract void handleRequest(@NotNull ChannelHandlerContext ctx, @NotNull FullHttpRequest request) throws Exception;
-
-    public record HttpHandlerDefinition<T>(String type, Class<T> dataType, Function<T, HttpHandler<T>> handlerInitializer) {
-
-    }
+    void handleRequest(@NotNull ChannelHandlerContext ctx, @NotNull FullHttpRequest request, @NotNull HttpRule<?> rule) throws Exception;
 }

@@ -2,21 +2,57 @@ package top.offsetmonkey538.meshlib.impl.util;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
+import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.handler.codec.http.DefaultFullHttpResponse;
-import io.netty.handler.codec.http.FullHttpResponse;
-import io.netty.handler.codec.http.HttpResponseStatus;
+import io.netty.handler.codec.http.*;
+import io.netty.handler.stream.ChunkedNioFile;
 import io.netty.util.CharsetUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import top.offsetmonkey538.meshlib.api.util.HttpResponseUtil;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+
 import static io.netty.handler.codec.http.HttpHeaderNames.*;
+import static io.netty.handler.codec.http.HttpHeaderValues.CLOSE;
+import static io.netty.handler.codec.http.HttpHeaderValues.KEEP_ALIVE;
+import static io.netty.handler.codec.http.HttpResponseStatus.OK;
 import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 import static top.offsetmonkey538.meshlib.MESHLib.LOGGER;
+import static top.offsetmonkey538.meshlib.api.util.HttpResponseUtil.sendError;
 
 public final class HttpResponseUtilImpl implements HttpResponseUtil {
+
+    @Override
+    public void sendFileImpl(@NotNull ChannelHandlerContext ctx, @NotNull FullHttpRequest request, @NotNull Path fileToSend) throws IOException {
+        if (!Files.exists(fileToSend) || !Files.isRegularFile(fileToSend)) {
+            sendError(ctx, HttpResponseStatus.NOT_FOUND);
+            return;
+        }
+
+        final boolean isKeepAlive = HttpUtil.isKeepAlive(request);
+        final long fileLength = Files.size(fileToSend);
+
+
+        final HttpResponse response = new DefaultHttpResponse(HTTP_1_1, OK);
+        response.headers().set(CONTENT_LENGTH, fileLength);
+        response.headers().set(CONTENT_TYPE, getContentType(fileToSend));
+        response.headers().set(CONNECTION, isKeepAlive ? KEEP_ALIVE : CLOSE);
+        ctx.write(response);
+
+        ctx.write(
+                new ChunkedNioFile(fileToSend.toFile()),
+                //new DefaultFileRegion(fileToServe.toFile(), 0, fileLength),
+                ctx.newProgressivePromise()
+        ).addListener(ChannelFutureListener.CLOSE_ON_FAILURE);
+
+        final ChannelFuture lastContentFuture = ctx.writeAndFlush(LastHttpContent.EMPTY_LAST_CONTENT);
+        if (isKeepAlive) return;
+        lastContentFuture.addListener(ChannelFutureListener.CLOSE);
+    }
 
     @Override
     public void sendRedirectImpl(@NotNull ChannelHandlerContext ctx, @NotNull HttpResponseStatus status, @NotNull String newLocation) {
@@ -59,5 +95,18 @@ public final class HttpResponseUtilImpl implements HttpResponseUtil {
     public void sendResponseAndCloseImpl(@NotNull ChannelHandlerContext ctx, @NotNull FullHttpResponse response) {
         response.headers().set(CONNECTION, "close");
         ctx.writeAndFlush(response).addListener(ChannelFutureListener.CLOSE);
+    }
+
+    private static String getContentType(final @NotNull Path file) {
+        final String result;
+
+        try {
+            result = Files.probeContentType(file);
+        } catch (IOException e) {
+            return "text/plain";
+        }
+
+        if (result == null) return "text/plain";
+        return result;
     }
 }

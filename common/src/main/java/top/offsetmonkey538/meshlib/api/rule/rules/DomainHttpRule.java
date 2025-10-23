@@ -1,15 +1,14 @@
-package top.offsetmonkey538.meshlib.impl.router.rule;
+package top.offsetmonkey538.meshlib.api.rule.rules;
 
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.HttpHeaderNames;
-import top.offsetmonkey538.meshlib.api.router.rule.HttpRule;
-import top.offsetmonkey538.meshlib.config.TestConfig;
+import top.offsetmonkey538.meshlib.api.rule.HttpRule;
 
 public class DomainHttpRule implements HttpRule<DomainHttpRule.Data> {
     private final String value; // i.e. map.example.com
 
-    public DomainHttpRule(Data data) {
-        this.value = data.value;
+    public DomainHttpRule(String value) {
+        this.value = value;
     }
 
     @Override
@@ -23,8 +22,8 @@ public class DomainHttpRule implements HttpRule<DomainHttpRule.Data> {
     }
 
     @Override
-    public boolean matches(FullHttpRequest httpRequest) {
-        String host = httpRequest.headers().get(HttpHeaderNames.HOST);
+    public boolean matches(FullHttpRequest request) {
+        String host = request.headers().get(HttpHeaderNames.HOST);
         if (host == null) return false;
 
         final int portIndex = host.indexOf(':');

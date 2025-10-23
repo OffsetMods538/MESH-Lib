@@ -3,15 +3,13 @@ package top.offsetmonkey538.meshlib.impl;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.*;
-import io.netty.util.ReferenceCountUtil;
-import top.offsetmonkey538.meshlib.api.HttpHandler;
+import top.offsetmonkey538.meshlib.api.handler.HttpHandler;
 import top.offsetmonkey538.meshlib.api.router.HttpRouter;
 import top.offsetmonkey538.meshlib.api.router.HttpRouterRegistry;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import static io.netty.handler.codec.http.HttpResponseStatus.BAD_REQUEST;
 import static top.offsetmonkey538.meshlib.MESHLib.LOGGER;
@@ -41,7 +39,7 @@ public class MainHttpHandler extends SimpleChannelInboundHandler<FullHttpRequest
             if (router == null) router = possibleRouter.getValue();
         }
         if (router == null) {
-            LOGGER.warn("No routers matched request! Ignoring...");
+            LOGGER.warn("No routers matched request for '%s%s'! Ignoring...", request.headers().get(HttpHeaderNames.HOST), request.uri());
             forward(ctx, request);
             return;
         }
@@ -58,19 +56,7 @@ public class MainHttpHandler extends SimpleChannelInboundHandler<FullHttpRequest
             return;
         }
 
-        final HttpHandler<?> handler = router.handler();
-        ctx.pipeline().addAfter(MOD_ID + "/handler", MOD_ID + "/" + matchedRouterIDs.getFirst(), new SimpleChannelInboundHandler<FullHttpRequest>() {
-            @Override
-            protected void channelRead0(ChannelHandlerContext ctx, FullHttpRequest request) throws Exception {
-                handler.handleRequest(ctx, request);
-            }
-
-            @Override
-            public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-                exceptionCaughtImpl(ctx, cause);
-            }
-        });
-        forward(ctx, request);
+        router.handler().handleRequest(ctx, request, router.rule());
     }
 
     @Override
@@ -87,11 +73,10 @@ public class MainHttpHandler extends SimpleChannelInboundHandler<FullHttpRequest
 
     private static void forward(ChannelHandlerContext ctx, FullHttpRequest request) {
         // These handlers can be removed from this context now
-        // actually these probably can't!! otherwise the stupid requests can't like yknow do http stuff ctx.pipeline().remove(MOD_ID + "/codec");
-        // actually these probably can't!! otherwise the stupid requests can't like yknow do http stuff ctx.pipeline().remove(MOD_ID + "/aggregator");
         ctx.pipeline().remove(MOD_ID + "/handler");
 
         // Forward to the next handler.
-        ctx.fireChannelRead(ReferenceCountUtil.retain(request));
+        // TODO: I don't think I need to retain anymore? ctx.fireChannelRead(ReferenceCountUtil.retain(request));
+        ctx.fireChannelRead(request);
     }
 }
