@@ -31,8 +31,7 @@ import static io.netty.handler.codec.http.HttpHeaderValues.CLOSE;
 import static io.netty.handler.codec.http.HttpHeaderValues.KEEP_ALIVE;
 import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 import static top.offsetmonkey538.meshlib.MESHLib.LOGGER;
-import static top.offsetmonkey538.meshlib.api.util.HttpResponseUtil.sendError;
-import static top.offsetmonkey538.meshlib.api.util.HttpResponseUtil.sendPermanentRedirect;
+import static top.offsetmonkey538.meshlib.api.util.HttpResponseUtil.*;
 
 
 public class StaticDirectoryHandler implements HttpHandler {
@@ -68,21 +67,23 @@ public class StaticDirectoryHandler implements HttpHandler {
         }
 
         if (!Files.isDirectory(requestedPath)) {
-            HttpResponseUtil.sendFile(ctx, request, requestedPath);
+            sendFile(ctx, request, requestedPath);
             return;
         }
 
-
-        if (!allowDirectoryList) {
-            sendError(ctx, HttpResponseStatus.NOT_FOUND);
-            return;
-        }
-
+        // At this point we know it's a directory and that it exists
         if (!request.uri().endsWith("/")) {
             sendPermanentRedirect(ctx, request.uri() + "/");
+            return;
         }
 
-        sendDirectoryListing(ctx, request, rawPath, requestedPath);
+        if (allowDirectoryList) {
+            sendDirectoryListing(ctx, request, rawPath, requestedPath);
+            return;
+        }
+
+        // Try serving an index.html file
+        sendFile(ctx, request, requestedPath.resolve("index.html"));
     }
 
     private static void sendDirectoryListing(ChannelHandlerContext ctx, FullHttpRequest request, String uriPath, Path directory) throws IOException {

@@ -60,7 +60,7 @@ public final class ExampleMain {
 
         HttpRouterRegistry.INSTANCE.register("static-directory-test2", new HttpRouter(
                 new DomainHttpRule("localhost"),
-                new StaticDirectoryHandler(Path.of("/home/dave"), false)
+                new StaticDirectoryHandler(Path.of("/home/dave/Dev/Java/Minecraft/Mods/Loot-Table-Modifier/docs/dist/"), false)
         ));
     }
 }
