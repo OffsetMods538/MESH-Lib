@@ -104,12 +104,7 @@ public class StaticDirectoryHandler implements HttpHandler {
     }
 
     private static StringBuilder renderDirectoryListing(String uriPath, Path directory) throws IOException {
-        final StringBuilder result = new StringBuilder();
-
-
-        result.append("<!DOCTYPE html><html lang=\"en\"><head><title>Index of ").append(uriPath).append("</title>");
-        result.append("<style>table{width:100%;border-collapse:collapse;border:2px solid #111}th{text-align:left}thead th.index{background:silver;font-size:1.2em;padding:8px}th.label{background-color:#dedede;border:1px solid #111;padding:6px 8px}td{padding:6px 8px;border-bottom:1px solid #ccc;verical-align:middle}tr:nth-child(odd){background-color:#efefef}tr:nth-child(even){background-color:#e2e2e2}a{color:#0078d7;text-decoration:none}a:hover{text-decoration:underline}tfoot th.provided{background:silver;border:1px solid #111;text-align:center;padding:8px;color:#2d2d2d;font-size:.8em}.back-icon::before{content:\"\uD83D\uDD19 \"}.dir-icon::before{content:\"\uD83D\uDCC1 \"}.file-icon::before{content:\"\uD83D\uDCC4 \"}</style></head>");
-        result.append("<body><table><thead><tr><th class=\"index\" colspan=\"3\">Index of ");
+        final StringBuilder result = new StringBuilder("<!DOCTYPE html><html lang=\"en\"><head><title>Index of ").append(uriPath).append("</title><style>table{width:100%;border-collapse:collapse;border:2px solid #111}th{text-align:left}thead th.index{background:silver;font-size:1.2em;padding:8px}th.label{background-color:#dedede;border:1px solid #111;padding:6px 8px}td{padding:6px 8px;border-bottom:1px solid #ccc;verical-align:middle}tr:nth-child(odd){background-color:#efefef}tr:nth-child(even){background-color:#e2e2e2}a{color:#0078d7;text-decoration:none}a:hover{text-decoration:underline}tfoot th.provided{background:silver;border:1px solid #111;text-align:center;padding:8px;color:#2d2d2d;font-size:.8em}.back-icon::before{content:\"\uD83D\uDD19 \"}.dir-icon::before{content:\"\uD83D\uDCC1 \"}.file-icon::before{content:\"\uD83D\uDCC4 \"}</style></head><body><table><thead><tr><th class=\"index\" colspan=\"3\">Index of ");
         result.append(uriPath);
         result.append("</th></tr><tr><th class=\"label\">Name</th><th class=\"label\">Last Modified</th><th class=\"label\">Size</th></tr></thead><tbody>");
 
