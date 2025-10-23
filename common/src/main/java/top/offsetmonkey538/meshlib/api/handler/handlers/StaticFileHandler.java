@@ -32,7 +32,6 @@ public record StaticFileHandler(Path fileToServe) implements HttpHandler {
 
     @ApiStatus.Internal
     private static final class Data {
-        @SuppressWarnings("FieldMayBeFinal") // Pretty sure this needs to be non-final cause jankson wants to modify
         private Path fileToServe;
 
         @SuppressWarnings("unused")

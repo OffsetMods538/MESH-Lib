@@ -27,7 +27,6 @@ public record PathHttpRule(String path) implements HttpRule {
 
     @ApiStatus.Internal
     private static final class Data {
-        @SuppressWarnings("FieldMayBeFinal") // Pretty sure this needs to be non-final cause jankson wants to modify
         private String path;
 
         @SuppressWarnings("unused")

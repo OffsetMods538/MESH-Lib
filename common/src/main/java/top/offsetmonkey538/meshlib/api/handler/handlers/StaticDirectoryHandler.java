@@ -176,9 +176,7 @@ public record StaticDirectoryHandler(Path baseDir, boolean allowDirectoryList) i
 
     @ApiStatus.Internal
     private static final class Data {
-        @SuppressWarnings("FieldMayBeFinal") // Pretty sure this needs to be non-final cause jankson wants to modify
         private Path baseDir;
-        @SuppressWarnings("FieldMayBeFinal") // Pretty sure this needs to be non-final cause jankson wants to modify
         private boolean allowDirectoryList;
 
         @SuppressWarnings("unused")
