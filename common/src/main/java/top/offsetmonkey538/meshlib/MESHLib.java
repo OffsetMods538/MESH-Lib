@@ -5,6 +5,7 @@ import blue.endless.jankson.JsonPrimitive;
 import top.offsetmonkey538.meshlib.api.handler.HttpHandler;
 import top.offsetmonkey538.meshlib.api.handler.handlers.StaticDirectoryHandler;
 import top.offsetmonkey538.meshlib.api.handler.handlers.StaticFileHandler;
+import top.offsetmonkey538.meshlib.api.router.HttpRouterRegistry;
 import top.offsetmonkey538.meshlib.api.rule.HttpRule;
 import top.offsetmonkey538.meshlib.api.rule.HttpRuleTypeRegistry;
 import top.offsetmonkey538.meshlib.api.handler.HttpHandlerTypeRegistry;
@@ -14,6 +15,7 @@ import top.offsetmonkey538.meshlib.api.rule.rules.PathHttpRule;
 import top.offsetmonkey538.meshlib.impl.router.HttpHandlerTypeRegistryImpl;
 import top.offsetmonkey538.meshlib.impl.router.rule.HttpRuleTypeRegistryImpl;
 import top.offsetmonkey538.meshlib.platform.PlatformMain;
+import top.offsetmonkey538.monkeylib538.api.lifecycle.ServerLifecycleApi;
 import top.offsetmonkey538.monkeylib538.api.log.MonkeyLibLogger;
 import top.offsetmonkey538.offsetconfig538.api.event.OffsetConfig538Events;
 
@@ -90,11 +92,25 @@ public final class MESHLib {
             });
         });
 
-        DomainHttpRule.register();
-        PathHttpRule.register();
+        HttpRuleTypeRegistry.HTTP_RULE_REGISTRATION_EVENT.listen(DomainHttpRule::register);
+        HttpRuleTypeRegistry.HTTP_RULE_REGISTRATION_EVENT.listen(PathHttpRule::register);
 
-        StaticFileHandler.register();
-        StaticDirectoryHandler.register();
+        HttpHandlerTypeRegistry.HTTP_HANDLER_REGISTRATION_EVENT.listen(StaticFileHandler::register);
+        HttpHandlerTypeRegistry.HTTP_HANDLER_REGISTRATION_EVENT.listen(StaticDirectoryHandler::register);
+
+        ServerLifecycleApi.runOnServerStarting(MESHLib::reload);
+    }
+
+    // TODO: move somewhere under api so others can invoke a reload? For example git pack manager after reloading its config cause that's where the rule for it will be stored.
+    public static void reload() {
+        HttpHandlerTypeRegistry.clear();
+        HttpRuleTypeRegistry.clear();
+        HttpRouterRegistry.clear();
+
+
+        HttpHandlerTypeRegistry.HTTP_HANDLER_REGISTRATION_EVENT.getInvoker().invoke();
+        HttpRuleTypeRegistry.HTTP_RULE_REGISTRATION_EVENT.getInvoker().invoke();
+        HttpRouterRegistry.HTTP_ROUTER_REGISTRATION_EVENT_EVENT.getInvoker().invoke();
     }
 
 

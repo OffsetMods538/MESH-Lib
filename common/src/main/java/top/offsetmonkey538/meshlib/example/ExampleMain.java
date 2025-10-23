@@ -36,30 +36,34 @@ public final class ExampleMain {
         record SimpleHttpHandlerData(String content) {
 
         }
-        HttpHandlerTypeRegistry.register("simple-http", SimpleHttpHandlerData.class, SimpleHttpHandler.class, handler -> new SimpleHttpHandlerData(handler.content()), data -> new SimpleHttpHandler(data.content()));
+        HttpHandlerTypeRegistry.HTTP_HANDLER_REGISTRATION_EVENT.listen(registry -> {
+            registry.register("simple-http", SimpleHttpHandlerData.class, SimpleHttpHandler.class, handler -> new SimpleHttpHandlerData(handler.content()), data -> new SimpleHttpHandler(data.content()));
+        });
 
         //HttpRouterRegistry.INSTANCE.register("simple-server", new HttpRouter(
         //        new DomainHttpRule("localhost"),
         //        new SimpleHttpHandler("Yellow!")
         //));
-        HttpRouterRegistry.INSTANCE.register("simple-server2", new HttpRouter(
-                new PathHttpRule("/hi"),
-                new SimpleHttpHandler("Goodbye!")
-        ));
+        HttpRouterRegistry.HTTP_ROUTER_REGISTRATION_EVENT_EVENT.listen(registry -> {
+            registry.register("simple-server2", new HttpRouter(
+                    new PathHttpRule("/hi"),
+                    new SimpleHttpHandler("Goodbye!")
+            ));
 
-        HttpRouterRegistry.INSTANCE.register("static-file-test", new HttpRouter(
-                new PathHttpRule("/static/file"),
-                new StaticFileHandler(Path.of("usercache.json"))
-        ));
+            registry.register("static-file-test", new HttpRouter(
+                    new PathHttpRule("/static/file"),
+                    new StaticFileHandler(Path.of("usercache.json"))
+            ));
 
-        HttpRouterRegistry.INSTANCE.register("static-directory-test", new HttpRouter(
-                new PathHttpRule("/static/directory"),
-                new StaticDirectoryHandler(Path.of("/home/dave"), true)
-        ));
+            registry.register("static-directory-test", new HttpRouter(
+                    new PathHttpRule("/static/directory"),
+                    new StaticDirectoryHandler(Path.of("/home/dave"), true)
+            ));
 
-        HttpRouterRegistry.INSTANCE.register("static-directory-test2", new HttpRouter(
-                new DomainHttpRule("localhost"),
-                new StaticDirectoryHandler(Path.of("/home/dave/Dev/Java/Minecraft/Mods/Loot-Table-Modifier/docs/dist/"), false)
-        ));
+            registry.register("static-directory-test2", new HttpRouter(
+                    new DomainHttpRule("localhost"),
+                    new StaticDirectoryHandler(Path.of("/home/dave/Dev/Java/Minecraft/Mods/Loot-Table-Modifier/docs/dist/"), false)
+            ));
+        });
     }
 }

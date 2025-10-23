@@ -23,8 +23,8 @@ public record StaticFileHandler(Path fileToServe) implements HttpHandler {
     }
 
     @ApiStatus.Internal
-    public static void register() {
-        HttpHandlerTypeRegistry.register("static-file", Data.class, StaticFileHandler.class, handler -> new Data(handler.fileToServe), data -> new StaticFileHandler(data.fileToServe));
+    public static void register(final HttpHandlerTypeRegistry registry) {
+        registry.register("static-file", Data.class, StaticFileHandler.class, handler -> new Data(handler.fileToServe), data -> new StaticFileHandler(data.fileToServe));
     }
 
     @ApiStatus.Internal

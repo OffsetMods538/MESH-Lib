@@ -2,39 +2,65 @@ package top.offsetmonkey538.meshlib.api.router;
 
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
-import top.offsetmonkey538.meshlib.api.handler.HttpHandler;
 import top.offsetmonkey538.meshlib.impl.HttpRouterRegistryImpl;
-
-import java.util.Map;
+import top.offsetmonkey538.offsetconfig538.api.event.Event;
 
 /**
- * Registry for routers
- * todo;K commebnt
- * <p>
- * Each handler will only be able to listen to requests on *its* sub-path.
- * <br>
- * If your handler's id is {@code testmod}, then your handler will only receive requests on {@code server.com/testmod/}
- * @see HttpHandler
+ * Registry for {@link HttpRouter}s, use the {@link #HTTP_ROUTER_REGISTRATION_EVENT_EVENT} event for registering your routers.
  */
 public interface HttpRouterRegistry {
     /**
      * Instance
      */
     @ApiStatus.Internal
+    @SuppressWarnings("DeprecatedIsStillUsed")
+    @Deprecated // Marking it as internal isn't enough cause I also need to prevent usage from other places in my code
     HttpRouterRegistry INSTANCE = new HttpRouterRegistryImpl();
 
     /**
-     * todo;: actual comment
-     * Method for registering a {@link HttpHandler}
-     * <br>
-     * THE ID SHOULD NOT BE EMPTY
-     *
-     * @param id your handler or mod's id
-     * @throws IllegalArgumentException when the provided id is empty or a handler with this id is already registered
-     * @see HttpHandler
+     * Internal method for clearing the registry, no touch!
      */
-    void register(@NotNull String id, @NotNull HttpRouter router) throws IllegalArgumentException;
+    @ApiStatus.Internal
+    static void clear() {
+        INSTANCE.clearImpl();
+    }
 
-    @NotNull
-    Iterable<Map.Entry<String, HttpRouter>> iterable();
+    void clearImpl();
+    void register(@NotNull final String id, @NotNull final HttpRouter router);
+
+
+    /**
+     * Event for registering http routers.
+     * <p>
+     *     The registry is cleared upon reloading, so to make your routers persist, you need to register them in this event.
+     * </p>
+     * <p>
+     *     Initially called while the server is starting, so <strong>make sure to register your handler before that!</strong>
+     * </p>
+     */
+    Event<HttpRouterRegistrationEvent> HTTP_ROUTER_REGISTRATION_EVENT_EVENT = Event.createEvent(HttpRouterRegistrationEvent.class, handlers -> registry -> {
+        for (HttpRouterRegistrationEvent handler : handlers) handler.register(registry);
+    });
+
+    /**
+     * Handler for {@link #HTTP_ROUTER_REGISTRATION_EVENT_EVENT}.
+     */
+    @FunctionalInterface
+    interface HttpRouterRegistrationEvent {
+
+        /**
+         * Internal method for invoking the event without providing the registry, no touch!
+         */
+        @ApiStatus.Internal
+        default void invoke() {
+            register(INSTANCE);
+        }
+
+        /**
+         * Registers {@link HttpRouter}s to the provided registry
+         *
+         * @param registry the registry to register to
+         */
+        void register(final @NotNull HttpRouterRegistry registry);
+    }
 }

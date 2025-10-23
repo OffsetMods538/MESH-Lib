@@ -17,7 +17,13 @@ public class HttpHandlerTypeRegistryImpl implements HttpHandlerTypeRegistry {
     private final Map<Class<? extends HttpHandler>, HttpHandlerDefinition<?,?>> handlersByType = new HashMap<>();
 
     @Override
-    public <D, H extends HttpHandler> void registerImpl(@NotNull final String type, @NotNull final Class<D> dataType, @NotNull final Class<H> handlerType, @NotNull final Function<H, D> handlerToData, @NotNull final Function<D, H> dataToHandler) {
+    public void clearImpl() {
+        handlersById.clear();
+        handlersByType.clear();
+    }
+
+    @Override
+    public <D, H extends HttpHandler> void register(@NotNull final String type, @NotNull final Class<D> dataType, @NotNull final Class<H> handlerType, @NotNull final Function<H, D> handlerToData, @NotNull final Function<D, H> dataToHandler) {
         if (type.isEmpty()) throw new IllegalArgumentException("Id may not be empty!");
         if (handlersById.containsKey(type)) throw new IllegalArgumentException("Handler type with id '" + type + "' already registered!");
         if (handlersByType.containsKey(handlerType)) throw new IllegalArgumentException("Handler type for type '" + handlerType + "' already registered!");

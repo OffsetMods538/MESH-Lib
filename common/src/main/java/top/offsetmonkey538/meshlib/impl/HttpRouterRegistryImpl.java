@@ -11,18 +11,22 @@ import java.util.Map;
  * Implementation of {@link HttpRouterRegistry}
  */
 public class HttpRouterRegistryImpl implements HttpRouterRegistry {
-    private final Map<String, HttpRouter> handlers = new HashMap<>();
+    private final Map<String, HttpRouter> routers = new HashMap<>();
 
     @Override
-    public void register(@NotNull String id, @NotNull HttpRouter router) throws IllegalArgumentException {
+    public void register(@NotNull String id, @NotNull HttpRouter router) {
         if (id.isEmpty()) throw new IllegalArgumentException("Id may not be empty!");
-        if (handlers.containsKey(id)) throw new IllegalArgumentException("Handler with id '" + id + "' already registered!");
+        if (routers.containsKey(id)) throw new IllegalArgumentException("Handler with id '" + id + "' already registered!");
 
-        handlers.put(id, router);
+        routers.put(id, router);
     }
 
     @Override
+    public void clearImpl() {
+        routers.clear();
+    }
+
     public @NotNull Iterable<Map.Entry<String, HttpRouter>> iterable() {
-        return this.handlers.entrySet();
+        return this.routers.entrySet();
     }
 }

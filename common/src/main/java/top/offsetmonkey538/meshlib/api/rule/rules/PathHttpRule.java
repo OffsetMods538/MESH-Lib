@@ -21,8 +21,8 @@ public record PathHttpRule(String path) implements HttpRule {
     }
 
     @ApiStatus.Internal
-    public static void register() {
-        HttpRuleTypeRegistry.register("path", Data.class, PathHttpRule.class, rule -> new Data(rule.path), data -> new PathHttpRule(data.path));
+    public static void register(final HttpRuleTypeRegistry registry) {
+        registry.register("path", Data.class, PathHttpRule.class, rule -> new Data(rule.path), data -> new PathHttpRule(data.path));
     }
 
     @ApiStatus.Internal

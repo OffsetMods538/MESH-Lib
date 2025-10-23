@@ -12,7 +12,7 @@ import java.nio.file.Path;
 
 public class TestConfig implements Config {
 
-    public HttpRule<?> rule = new DomainHttpRule("map.example.com");
+    public HttpRule rule = new DomainHttpRule("map.example.com");
     public HttpHandler target = new SimpleHttpHandler("Goodbye, World!");
 
 

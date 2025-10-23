@@ -23,8 +23,8 @@ public record DomainHttpRule(String domain) implements HttpRule {
     }
 
     @ApiStatus.Internal
-    public static void register() {
-        HttpRuleTypeRegistry.register("domain", Data.class, DomainHttpRule.class, rule -> new Data(rule.domain), data -> new DomainHttpRule(data.domain));
+    public static void register(final HttpRuleTypeRegistry registry) {
+        registry.register("domain", Data.class, DomainHttpRule.class, rule -> new Data(rule.domain), data -> new DomainHttpRule(data.domain));
     }
 
     @ApiStatus.Internal

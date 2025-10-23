@@ -16,7 +16,13 @@ public class HttpRuleTypeRegistryImpl implements HttpRuleTypeRegistry {
     private final Map<Class<? extends HttpRule>, HttpRuleDefinition<?,?>> rulesByType = new HashMap<>();
 
     @Override
-    public <D, R extends HttpRule> void registerImpl(@NotNull final String type, @NotNull final Class<D> dataType, @NotNull final Class<R> ruleType, @NotNull final Function<R, D> ruleToData, @NotNull final Function<D, R> dataToRule) {
+    public void clearImpl() {
+        rulesById.clear();
+        rulesByType.clear();
+    }
+
+    @Override
+    public <D, R extends HttpRule> void register(@NotNull final String type, @NotNull final Class<D> dataType, @NotNull final Class<R> ruleType, @NotNull final Function<R, D> ruleToData, @NotNull final Function<D, R> dataToRule) {
         if (type.isEmpty()) throw new IllegalArgumentException("Id may not be empty!");
         if (rulesById.containsKey(type)) throw new IllegalArgumentException("Handler type with id '" + type + "' already registered!");
         if (rulesByType.containsKey(ruleType)) throw new IllegalArgumentException("Handler type for type '" + ruleType + "' already registered!");

@@ -32,7 +32,8 @@ public class MainHttpHandler extends SimpleChannelInboundHandler<FullHttpRequest
 
         HttpRouter router = null;
         List<String> matchedRouterIDs = new ArrayList<>(0);
-        for (Map.Entry<String,HttpRouter> possibleRouter : HttpRouterRegistry.INSTANCE.iterable()) {
+        //noinspection deprecation
+        for (Map.Entry<String,HttpRouter> possibleRouter : ((HttpRouterRegistryImpl) HttpRouterRegistry.INSTANCE).iterable()) {
             if (!possibleRouter.getValue().rule().matches(request)) continue;
 
             matchedRouterIDs.add(possibleRouter.getKey());
