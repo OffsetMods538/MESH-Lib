@@ -5,9 +5,7 @@ import top.offsetmonkey538.meshlib.api.router.HttpRouter;
 import top.offsetmonkey538.meshlib.api.router.HttpRouterRegistry;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
-import java.util.stream.Stream;
 
 /**
  * Implementation of {@link HttpRouterRegistry}

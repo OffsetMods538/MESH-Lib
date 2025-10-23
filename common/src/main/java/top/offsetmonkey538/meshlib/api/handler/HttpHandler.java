@@ -7,8 +7,6 @@ import top.offsetmonkey538.meshlib.api.rule.HttpRule;
 import top.offsetmonkey538.meshlib.example.SimpleHttpHandler;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.function.Function;
-
 /**
  * An http handler for you to implement :D
  * <br>

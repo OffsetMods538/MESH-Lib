@@ -2,8 +2,6 @@ package top.offsetmonkey538.meshlib.api.rule;
 
 import io.netty.handler.codec.http.FullHttpRequest;
 
-import java.util.function.Function;
-
 public interface HttpRule {
     boolean matches(final FullHttpRequest request);
 
