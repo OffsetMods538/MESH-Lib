@@ -47,7 +47,7 @@ public final class MESHLib {
 
         OffsetConfig538Events.JANKSON_CONFIGURATION_EVENT.listen(builder -> {
             builder.registerSerializer(HttpRule.class, (httpRule, marshaller) -> {
-                @SuppressWarnings("unchecked") // rule definition of ?,? extends HttpRule should match ?,HttpHandler, no?
+                @SuppressWarnings({"unchecked", "deprecation"}) // rule definition of ?,? extends HttpRule should match ?,HttpHandler, no?
                 final HttpRuleTypeRegistryImpl.HttpRuleDefinition<?,HttpRule> ruleDefinition = (HttpRuleTypeRegistryImpl.HttpRuleDefinition<?, HttpRule>) ((HttpRuleTypeRegistryImpl) HttpHandlerTypeRegistry.INSTANCE).get(httpRule.getClass());
 
                 final JsonObject result = (JsonObject) marshaller.serialize(ruleDefinition.ruleToData().apply(httpRule));
@@ -58,7 +58,7 @@ public final class MESHLib {
             builder.registerDeserializer(JsonObject.class, HttpRule.class, (jsonObject, marshaller) -> {
                 final String type = jsonObject.get(String.class, "type");
 
-                @SuppressWarnings("unchecked") // It's proooobably a subclass of Object...
+                @SuppressWarnings({"unchecked", "deprecation"}) // It's proooobably a subclass of Object...
                 final HttpRuleTypeRegistryImpl.HttpRuleDefinition<Object,?> ruleDefinition = (HttpRuleTypeRegistryImpl.HttpRuleDefinition<Object,?>) ((HttpRuleTypeRegistryImpl) HttpRuleTypeRegistry.INSTANCE).get(type);
 
                 final JsonObject dummyParent = new JsonObject();
@@ -70,7 +70,7 @@ public final class MESHLib {
 
 
             builder.registerSerializer(HttpHandler.class, (httpHandler, marshaller) -> {
-                @SuppressWarnings("unchecked") // handler definition of ?,? extends HttpHandler should match ?,HttpHandler, no?
+                @SuppressWarnings({"unchecked", "deprecation"}) // handler definition of ?,? extends HttpHandler should match ?,HttpHandler, no?
                 final HttpHandlerTypeRegistryImpl.HttpHandlerDefinition<?,HttpHandler> handlerDefinition = (HttpHandlerTypeRegistryImpl.HttpHandlerDefinition<?, HttpHandler>) ((HttpHandlerTypeRegistryImpl) HttpHandlerTypeRegistry.INSTANCE).get(httpHandler.getClass());
 
                 final JsonObject result = (JsonObject) marshaller.serialize(handlerDefinition.handlerToData().apply(httpHandler));
@@ -81,7 +81,7 @@ public final class MESHLib {
             builder.registerDeserializer(JsonObject.class, HttpHandler.class, (jsonObject, marshaller) -> {
                 final String type = jsonObject.get(String.class, "type");
 
-                @SuppressWarnings("unchecked") // It's proooobably a subclass of Object...
+                @SuppressWarnings({"unchecked", "deprecation"}) // It's proooobably a subclass of Object...
                 final HttpHandlerTypeRegistryImpl.HttpHandlerDefinition<Object,?> handlerDefinition = (HttpHandlerTypeRegistryImpl.HttpHandlerDefinition<Object, ?>) ((HttpHandlerTypeRegistryImpl) HttpHandlerTypeRegistry.INSTANCE).get(type);
 
                 final JsonObject dummyParent = new JsonObject();
