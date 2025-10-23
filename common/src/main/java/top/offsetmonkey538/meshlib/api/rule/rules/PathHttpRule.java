@@ -10,6 +10,10 @@ import top.offsetmonkey538.meshlib.api.rule.HttpRuleTypeRegistry;
  */
 public record PathHttpRule(String path) implements HttpRule {
 
+    public PathHttpRule(final String path) {
+        this.path = path.startsWith("/") ? path : "/" + path;
+    }
+
     @Override
     public boolean matches(FullHttpRequest request) {
         return request.uri().startsWith(path);
