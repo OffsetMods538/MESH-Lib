@@ -7,10 +7,11 @@ import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.*;
 import io.netty.util.CharsetUtil;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import top.offsetmonkey538.meshlib.api.handler.HttpHandler;
+import top.offsetmonkey538.meshlib.api.handler.HttpHandlerTypeRegistry;
 import top.offsetmonkey538.meshlib.api.rule.HttpRule;
-import top.offsetmonkey538.meshlib.api.util.HttpResponseUtil;
 
 import java.io.IOException;
 import java.net.URI;
@@ -19,12 +20,9 @@ import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.text.CharacterIterator;
-import java.text.SimpleDateFormat;
 import java.text.StringCharacterIterator;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.Formatter;
-import java.util.Locale;
 
 import static io.netty.handler.codec.http.HttpHeaderNames.*;
 import static io.netty.handler.codec.http.HttpHeaderValues.CLOSE;
@@ -34,11 +32,8 @@ import static top.offsetmonkey538.meshlib.MESHLib.LOGGER;
 import static top.offsetmonkey538.meshlib.api.util.HttpResponseUtil.*;
 
 
-public class StaticDirectoryHandler implements HttpHandler {
+public record StaticDirectoryHandler(Path baseDir, boolean allowDirectoryList) implements HttpHandler {
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
-
-    public final Path baseDir;
-    public final boolean allowDirectoryList;
 
     public StaticDirectoryHandler(final Path baseDir, final boolean allowDirectoryList) {
         this.baseDir = baseDir.normalize().toAbsolutePath();
@@ -46,7 +41,7 @@ public class StaticDirectoryHandler implements HttpHandler {
     }
 
     @Override
-    public void handleRequest(@NotNull ChannelHandlerContext ctx, @NotNull FullHttpRequest request, @NotNull HttpRule<?> rule) throws Exception {
+    public void handleRequest(@NotNull ChannelHandlerContext ctx, @NotNull FullHttpRequest request, @NotNull HttpRule rule) throws Exception {
         final String rawPath = new URI(rule.normalizeUri(request.uri())).getPath();
         final Path requestedPath;
         try {
@@ -174,8 +169,27 @@ public class StaticDirectoryHandler implements HttpHandler {
         builder.append("%.1f %ciB".formatted(value / 1024.0, charIterator.current()));
     }
 
-    // todo: does this need to be mutable for jankson to do its magic?
-    public record Data(Path baseDir, boolean allowDirectoryList) {
+    @ApiStatus.Internal
+    public static void register() {
+        HttpHandlerTypeRegistry.register("static-directory", Data.class, StaticDirectoryHandler.class, handler -> new Data(handler.baseDir, handler.allowDirectoryList), data -> new StaticDirectoryHandler(data.baseDir, data.allowDirectoryList));
+    }
 
+    @ApiStatus.Internal
+    private static final class Data {
+        @SuppressWarnings("FieldMayBeFinal") // Pretty sure this needs to be non-final cause jankson wants to modify
+        private Path baseDir;
+        @SuppressWarnings("FieldMayBeFinal") // Pretty sure this needs to be non-final cause jankson wants to modify
+        private boolean allowDirectoryList;
+
+        @SuppressWarnings("unused")
+        // Pretty sure this public no-args needs to exist cause jankson wants to create instances
+        public Data() {
+
+        }
+
+        public Data(final Path baseDir, final boolean allowDirectoryList) {
+            this.baseDir = baseDir;
+            this.allowDirectoryList = allowDirectoryList;
+        }
     }
 }

@@ -1,46 +1,43 @@
 package top.offsetmonkey538.meshlib.api.rule.rules;
 
 import io.netty.handler.codec.http.FullHttpRequest;
+import org.jetbrains.annotations.ApiStatus;
 import top.offsetmonkey538.meshlib.api.rule.HttpRule;
+import top.offsetmonkey538.meshlib.api.rule.HttpRuleTypeRegistry;
 
-public class PathHttpRule implements HttpRule<PathHttpRule.Data> {
-    private final String value; // i.e. /map -> example.com/map
-
-    public PathHttpRule(String value) {
-        this.value = value;
-    }
-
-    @Override
-    public String getType() {
-        return "path";
-    }
-
-    @Override
-    public Data getData() {
-        return new Data(value);
-    }
+/**
+ * @param path i.e. /map -> example.com/map
+ */
+public record PathHttpRule(String path) implements HttpRule {
 
     @Override
     public boolean matches(FullHttpRequest request) {
-        return request.uri().startsWith(value);
+        return request.uri().startsWith(path);
     }
 
     @Override
     public String normalizeUri(String uri) {
-        return uri.replaceFirst(value, "");
+        return uri.replaceFirst(path, "");
     }
 
-    public static final class Data {
-        @SuppressWarnings("FieldMayBeFinal") // Think it needs to be non-final cause jankson
-        public String value;
+    @ApiStatus.Internal
+    public static void register() {
+        HttpRuleTypeRegistry.register("path", Data.class, PathHttpRule.class, rule -> new Data(rule.path), data -> new PathHttpRule(data.path));
+    }
 
-        @SuppressWarnings("unused") // Public no-args used by jankson i think
+    @ApiStatus.Internal
+    private static final class Data {
+        @SuppressWarnings("FieldMayBeFinal") // Pretty sure this needs to be non-final cause jankson wants to modify
+        private String path;
+
+        @SuppressWarnings("unused")
+        // Pretty sure this public no-args needs to exist cause jankson wants to create instances
         public Data() {
 
         }
 
-        public Data(String value) {
-            this.value = value;
+        public Data(final String path) {
+            this.path = path;
         }
     }
 }

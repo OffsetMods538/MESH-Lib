@@ -1,6 +1,5 @@
 package top.offsetmonkey538.meshlib.example;
 
-import top.offsetmonkey538.meshlib.api.handler.HttpHandler;
 import top.offsetmonkey538.meshlib.api.handler.HttpHandlerTypeRegistry;
 import top.offsetmonkey538.meshlib.api.handler.handlers.StaticDirectoryHandler;
 import top.offsetmonkey538.meshlib.api.handler.handlers.StaticFileHandler;
@@ -37,7 +36,7 @@ public final class ExampleMain {
         record SimpleHttpHandlerData(String content) {
 
         }
-        HttpHandlerTypeRegistry.register("simple-http", SimpleHttpHandlerData.class, SimpleHttpHandler.class, handler -> new SimpleHttpHandlerData(handler.content), data -> new SimpleHttpHandler(data.content()));
+        HttpHandlerTypeRegistry.register("simple-http", SimpleHttpHandlerData.class, SimpleHttpHandler.class, handler -> new SimpleHttpHandlerData(handler.content()), data -> new SimpleHttpHandler(data.content()));
 
         //HttpRouterRegistry.INSTANCE.register("simple-server", new HttpRouter(
         //        new DomainHttpRule("localhost"),

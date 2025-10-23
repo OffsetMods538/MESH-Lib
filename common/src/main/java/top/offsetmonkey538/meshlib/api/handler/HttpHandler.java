@@ -28,5 +28,5 @@ public interface HttpHandler {
      * @param rule the rule used to match this handler
      * @throws Exception when anything goes wrong
      */
-    void handleRequest(@NotNull ChannelHandlerContext ctx, @NotNull FullHttpRequest request, @NotNull HttpRule<?> rule) throws Exception;
+    void handleRequest(@NotNull ChannelHandlerContext ctx, @NotNull FullHttpRequest request, @NotNull HttpRule rule) throws Exception;
 }

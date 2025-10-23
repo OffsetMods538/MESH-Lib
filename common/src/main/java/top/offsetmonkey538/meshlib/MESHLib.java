@@ -12,6 +12,7 @@ import top.offsetmonkey538.meshlib.example.ExampleMain;
 import top.offsetmonkey538.meshlib.api.rule.rules.DomainHttpRule;
 import top.offsetmonkey538.meshlib.api.rule.rules.PathHttpRule;
 import top.offsetmonkey538.meshlib.impl.router.HttpHandlerTypeRegistryImpl;
+import top.offsetmonkey538.meshlib.impl.router.rule.HttpRuleTypeRegistryImpl;
 import top.offsetmonkey538.meshlib.platform.PlatformMain;
 import top.offsetmonkey538.monkeylib538.api.log.MonkeyLibLogger;
 import top.offsetmonkey538.offsetconfig538.api.event.OffsetConfig538Events;
@@ -44,8 +45,11 @@ public final class MESHLib {
 
         OffsetConfig538Events.JANKSON_CONFIGURATION_EVENT.listen(builder -> {
             builder.registerSerializer(HttpRule.class, (httpRule, marshaller) -> {
-                final JsonObject result = (JsonObject) marshaller.serialize(httpRule.getData());
-                result.put("type", JsonPrimitive.of(httpRule.getType()));
+                @SuppressWarnings("unchecked") // rule definition of ?,? extends HttpRule should match ?,HttpHandler, no?
+                final HttpRuleTypeRegistryImpl.HttpRuleDefinition<?,HttpRule> ruleDefinition = (HttpRuleTypeRegistryImpl.HttpRuleDefinition<?, HttpRule>) ((HttpRuleTypeRegistryImpl) HttpHandlerTypeRegistry.INSTANCE).get(httpRule.getClass());
+
+                final JsonObject result = (JsonObject) marshaller.serialize(ruleDefinition.ruleToData().apply(httpRule));
+                result.put("type", JsonPrimitive.of(ruleDefinition.type()));
                 return result;
             });
 
@@ -53,19 +57,19 @@ public final class MESHLib {
                 final String type = jsonObject.get(String.class, "type");
 
                 @SuppressWarnings("unchecked") // It's proooobably a subclass of Object...
-                HttpRule.HttpRuleDefinition<Object> ruleDefinition = (HttpRule.HttpRuleDefinition<Object>) HttpRuleTypeRegistry.get(type);
+                final HttpRuleTypeRegistryImpl.HttpRuleDefinition<Object,?> ruleDefinition = (HttpRuleTypeRegistryImpl.HttpRuleDefinition<Object,?>) ((HttpRuleTypeRegistryImpl) HttpRuleTypeRegistry.INSTANCE).get(type);
 
                 final JsonObject dummyParent = new JsonObject();
                 dummyParent.put("dataHolder", jsonObject);
                 final Object dataHolder = dummyParent.get(ruleDefinition.dataType(), "dataHolder");
 
-                return ruleDefinition.ruleInitializer().apply(dataHolder);
+                return ruleDefinition.dataToRule().apply(dataHolder);
             });
 
 
             builder.registerSerializer(HttpHandler.class, (httpHandler, marshaller) -> {
                 @SuppressWarnings("unchecked") // handler definition of ?,? extends HttpHandler should match ?,HttpHandler, no?
-                HttpHandlerTypeRegistryImpl.HttpHandlerDefinition<?,HttpHandler> handlerDefinition = (HttpHandlerTypeRegistryImpl.HttpHandlerDefinition<?, HttpHandler>) ((HttpHandlerTypeRegistryImpl) HttpHandlerTypeRegistry.INSTANCE).get(httpHandler.getClass());
+                final HttpHandlerTypeRegistryImpl.HttpHandlerDefinition<?,HttpHandler> handlerDefinition = (HttpHandlerTypeRegistryImpl.HttpHandlerDefinition<?, HttpHandler>) ((HttpHandlerTypeRegistryImpl) HttpHandlerTypeRegistry.INSTANCE).get(httpHandler.getClass());
 
                 final JsonObject result = (JsonObject) marshaller.serialize(handlerDefinition.handlerToData().apply(httpHandler));
                 result.put("type", JsonPrimitive.of(handlerDefinition.type()));
@@ -76,22 +80,21 @@ public final class MESHLib {
                 final String type = jsonObject.get(String.class, "type");
 
                 @SuppressWarnings("unchecked") // It's proooobably a subclass of Object...
-                HttpHandlerTypeRegistryImpl.HttpHandlerDefinition<Object,?> handlerDefinition = (HttpHandlerTypeRegistryImpl.HttpHandlerDefinition<Object, ?>) ((HttpHandlerTypeRegistryImpl) HttpHandlerTypeRegistry.INSTANCE).get(type);
+                final HttpHandlerTypeRegistryImpl.HttpHandlerDefinition<Object,?> handlerDefinition = (HttpHandlerTypeRegistryImpl.HttpHandlerDefinition<Object, ?>) ((HttpHandlerTypeRegistryImpl) HttpHandlerTypeRegistry.INSTANCE).get(type);
 
                 final JsonObject dummyParent = new JsonObject();
                 dummyParent.put("dataHolder", jsonObject);
                 final Object dataHolder = dummyParent.get(handlerDefinition.dataType(), "dataHolder");
 
-                return handlerDefinition.handlerInitializer().apply(dataHolder);
+                return handlerDefinition.dataToHandler().apply(dataHolder);
             });
         });
 
-        HttpRuleTypeRegistry.register("domain", new HttpRule.HttpRuleDefinition<>(DomainHttpRule.Data.class, data -> new DomainHttpRule(data.value)));
-        HttpRuleTypeRegistry.register("path", new HttpRule.HttpRuleDefinition<>(PathHttpRule.Data.class, data -> new PathHttpRule(data.value)));
+        DomainHttpRule.register();
+        PathHttpRule.register();
 
-
-        HttpHandlerTypeRegistry.register("static-file", StaticFileHandler.Data.class, StaticFileHandler.class, handler -> new StaticFileHandler.Data(handler.fileToServe), data -> new StaticFileHandler(data.fileToServe()));
-        HttpHandlerTypeRegistry.register("static-directory", StaticDirectoryHandler.Data.class, StaticDirectoryHandler.class, handler -> new StaticDirectoryHandler.Data(handler.baseDir, handler.allowDirectoryList), data -> new StaticDirectoryHandler(data.baseDir(), data.allowDirectoryList()));
+        StaticFileHandler.register();
+        StaticDirectoryHandler.register();
     }
 
 

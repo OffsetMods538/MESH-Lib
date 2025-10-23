@@ -20,15 +20,10 @@ import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 /**
  * An example {@link HttpHandler} implementation to learn from
  */
-public class SimpleHttpHandler implements HttpHandler {
-    public final String content;
-
-    public SimpleHttpHandler(String content) {
-        this.content = content;
-    }
+public record SimpleHttpHandler(String content) implements HttpHandler {
 
     @Override
-    public void handleRequest(@NotNull ChannelHandlerContext ctx, @NotNull FullHttpRequest request, @NotNull HttpRule<?> rule) throws Exception {
+    public void handleRequest(@NotNull ChannelHandlerContext ctx, @NotNull FullHttpRequest request, @NotNull HttpRule rule) throws Exception {
         // Write the provided content to a buffer, encoded in UTF-8
         final ByteBuf content = Unpooled.copiedBuffer(this.content, StandardCharsets.UTF_8);
         // Create a response with said buffer

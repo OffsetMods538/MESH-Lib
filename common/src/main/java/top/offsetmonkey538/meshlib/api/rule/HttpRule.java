@@ -4,10 +4,7 @@ import io.netty.handler.codec.http.FullHttpRequest;
 
 import java.util.function.Function;
 
-public interface HttpRule<T> {
-    String getType();
-    T getData();
-
+public interface HttpRule {
     boolean matches(final FullHttpRequest request);
 
     /**
@@ -21,9 +18,5 @@ public interface HttpRule<T> {
     default  String normalizeUri(final String uri) {
         // no-op
         return uri;
-    }
-
-    record HttpRuleDefinition<T>(Class<T> dataType, Function<T, HttpRule<T>> ruleInitializer) {
-
     }
 }

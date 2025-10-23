@@ -13,9 +13,9 @@ public interface HttpHandlerTypeRegistry {
     @ApiStatus.Internal
     HttpHandlerTypeRegistry INSTANCE = new HttpHandlerTypeRegistryImpl();
 
-    static <T, H extends HttpHandler> void register(@NotNull final String type, @NotNull final Class<T> dataType, @NotNull final Class<H> handlerType, @NotNull final Function<H, T> handlerToData, @NotNull final Function<T, H> dataToHandler) {
+    static <D, H extends HttpHandler> void register(@NotNull final String type, @NotNull final Class<D> dataType, @NotNull final Class<H> handlerType, @NotNull final Function<H, D> handlerToData, @NotNull final Function<D, H> dataToHandler) {
         INSTANCE.registerImpl(type, dataType, handlerType, handlerToData, dataToHandler);
     }
 
-    <T, H extends HttpHandler> void registerImpl(@NotNull final String type, @NotNull final Class<T> dataType, @NotNull final Class<H> handlerType, @NotNull final Function<H, T> handlerToData, @NotNull final Function<T, H> dataToHandler);
+    <D, H extends HttpHandler> void registerImpl(@NotNull final String type, @NotNull final Class<D> dataType, @NotNull final Class<H> handlerType, @NotNull final Function<H, D> handlerToData, @NotNull final Function<D, H> dataToHandler);
 }
