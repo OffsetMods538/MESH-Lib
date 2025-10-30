@@ -2,8 +2,6 @@ package top.offsetmonkey538.meshlib.platform;
 
 import org.jetbrains.annotations.ApiStatus;
 
-import java.nio.file.Path;
-
 import static top.offsetmonkey538.meshlib.MESHLib.load;
 
 @ApiStatus.Internal
@@ -21,11 +19,6 @@ public interface PlatformMain {
         INSTANCE.disableVanillaHandlerImpl();
     }
 
-    static Path getConfigDir() {
-        return INSTANCE.getConfigDirImpl();
-    }
-
     void enableVanillaHandlerImpl();
     void disableVanillaHandlerImpl();
-    Path getConfigDirImpl();
 }

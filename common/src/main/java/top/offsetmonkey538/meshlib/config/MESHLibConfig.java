@@ -2,12 +2,14 @@ package top.offsetmonkey538.meshlib.config;
 
 import blue.endless.jankson.Comment;
 import org.jetbrains.annotations.NotNull;
-import top.offsetmonkey538.meshlib.platform.PlatformMain;
+import top.offsetmonkey538.monkeylib538.api.platform.PlatformUtil;
 import top.offsetmonkey538.offsetconfig538.api.config.Config;
 
 import java.nio.file.Path;
 
-public class MESHLibConfig implements Config {
+import static top.offsetmonkey538.meshlib.MESHLib.MOD_ID;
+
+public final class MESHLibConfig implements Config {
 
     @Comment("Used to figure out if mesh lib should inject into vanilla or not. Required as external port may differ from that's defined in server.properties")
     public String minecraftServerExternalPort = null;
@@ -16,12 +18,12 @@ public class MESHLibConfig implements Config {
 
 
     @Override
-    public @NotNull Path getFilePath() {
-        return PlatformMain.getConfigDir().resolve(getId() + ".json");
+    public @NotNull Path getConfigDirPath() {
+        return PlatformUtil.getConfigDir();
     }
 
     @Override
     public @NotNull String getId() {
-        return "main";
+        return MOD_ID + "/main";
     }
 }

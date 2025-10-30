@@ -2,6 +2,7 @@ package top.offsetmonkey538.meshlib;
 
 import blue.endless.jankson.JsonObject;
 import blue.endless.jankson.JsonPrimitive;
+import com.google.common.base.Stopwatch;
 import top.offsetmonkey538.meshlib.api.handler.HttpHandler;
 import top.offsetmonkey538.meshlib.api.handler.handlers.StaticDirectoryHandler;
 import top.offsetmonkey538.meshlib.api.handler.handlers.StaticFileHandler;
@@ -9,21 +10,22 @@ import top.offsetmonkey538.meshlib.api.router.HttpRouterRegistry;
 import top.offsetmonkey538.meshlib.api.rule.HttpRule;
 import top.offsetmonkey538.meshlib.api.rule.HttpRuleTypeRegistry;
 import top.offsetmonkey538.meshlib.api.handler.HttpHandlerTypeRegistry;
+import top.offsetmonkey538.meshlib.config.MESHLibConfig;
 import top.offsetmonkey538.meshlib.example.ExampleMain;
 import top.offsetmonkey538.meshlib.api.rule.rules.DomainHttpRule;
 import top.offsetmonkey538.meshlib.api.rule.rules.PathHttpRule;
 import top.offsetmonkey538.meshlib.impl.router.HttpHandlerTypeRegistryImpl;
 import top.offsetmonkey538.meshlib.impl.router.rule.HttpRuleTypeRegistryImpl;
 import top.offsetmonkey538.meshlib.platform.PlatformMain;
+import top.offsetmonkey538.monkeylib538.api.command.ConfigCommandApi;
 import top.offsetmonkey538.monkeylib538.api.lifecycle.ServerLifecycleApi;
 import top.offsetmonkey538.monkeylib538.api.log.MonkeyLibLogger;
+import top.offsetmonkey538.offsetconfig538.api.config.ConfigHolder;
+import top.offsetmonkey538.offsetconfig538.api.config.ConfigManager;
 import top.offsetmonkey538.offsetconfig538.api.event.OffsetConfig538Events;
 
 import java.util.ServiceLoader;
 
-// TODO: once I start working on allowing the netty server to run separately from minecraft, I should make the default exposed port value null to avoid 2 things:
-//  - The port from server.properties being wrong: The network being behind something (like a firewall or Docker for example) can allow the exposed port to be different from what minecraft binds to.
-//  - Tell people to use a separate port if at all possible. Proxies that some like running minecraft through (especially DDOS blockers like TcpShield) may block http traffic.
 public final class MESHLib {
 	/**
 	 * Private constructor as this class shouldn't be instanced
@@ -39,11 +41,14 @@ public final class MESHLib {
 	 */
 	public static final MonkeyLibLogger LOGGER = MonkeyLibLogger.create(MOD_ID);
 
+    public static final ConfigHolder<MESHLibConfig> CONFIG = ConfigManager.init(ConfigHolder.create(MESHLibConfig::new, LOGGER::error));
+
 
     public static void initialize() {
         PlatformMain.enableVanillaHandler();
         ExampleMain.onInitialize();
 
+        ConfigCommandApi.registerConfigCommand(CONFIG, MESHLib::reload, MOD_ID, "config");
 
         OffsetConfig538Events.JANKSON_CONFIGURATION_EVENT.listen(builder -> {
             builder.registerSerializer(HttpRule.class, (httpRule, marshaller) -> {
@@ -103,14 +108,21 @@ public final class MESHLib {
 
     // TODO: move somewhere under api so others can invoke a reload? For example git pack manager after reloading its config cause that's where the rule for it will be stored.
     public static void reload() {
+        LOGGER.info("Reloading MESH Lib...");
+        final Stopwatch stopwatch = Stopwatch.createStarted();
+
         HttpHandlerTypeRegistry.clear();
         HttpRuleTypeRegistry.clear();
         HttpRouterRegistry.clear();
+        LOGGER.info("Registries cleared");
 
 
         HttpHandlerTypeRegistry.HTTP_HANDLER_REGISTRATION_EVENT.getInvoker().invoke();
         HttpRuleTypeRegistry.HTTP_RULE_REGISTRATION_EVENT.getInvoker().invoke();
         HttpRouterRegistry.HTTP_ROUTER_REGISTRATION_EVENT.getInvoker().invoke();
+        LOGGER.info("Registries repopulated");
+
+        LOGGER.info("MESH Lib reloaded in %s!", stopwatch.stop());
     }
 
 

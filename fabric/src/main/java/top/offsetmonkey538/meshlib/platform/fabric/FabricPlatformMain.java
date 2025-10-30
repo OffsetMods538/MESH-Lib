@@ -23,11 +23,6 @@ public final class FabricPlatformMain implements PlatformMain, DedicatedServerMo
     }
 
     @Override
-    public Path getConfigDirImpl() {
-        return FabricLoader.getInstance().getConfigDir().resolve(MOD_ID);
-    }
-
-    @Override
     public void onInitializeServer() {
         MESHLib.initialize();
     }

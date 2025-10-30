@@ -24,11 +24,6 @@ public final class PaperPlatformMain implements PlatformMain {
         ChannelInitializeListenerHolder.removeListener(HANDLER_KEY);
     }
 
-    @Override
-    public Path getConfigDirImpl() {
-        return getPlugin().getDataPath();
-    }
-
     public static void setPlugin(MeshLibPlugin plugin) {
         PaperPlatformMain.plugin = plugin;
     }
