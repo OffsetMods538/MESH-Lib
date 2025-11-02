@@ -4,6 +4,7 @@ import blue.endless.jankson.JsonObject;
 import blue.endless.jankson.JsonPrimitive;
 import com.google.common.base.Stopwatch;
 import top.offsetmonkey538.meshlib.api.handler.HttpHandler;
+import top.offsetmonkey538.meshlib.api.handler.handlers.StaticContentHandler;
 import top.offsetmonkey538.meshlib.api.handler.handlers.StaticDirectoryHandler;
 import top.offsetmonkey538.meshlib.api.handler.handlers.StaticFileHandler;
 import top.offsetmonkey538.meshlib.api.router.HttpRouter;
@@ -59,6 +60,7 @@ public final class MESHLib {
         HttpRuleTypeRegistry.HTTP_RULE_REGISTRATION_EVENT.listen(DomainHttpRule::register);
         HttpRuleTypeRegistry.HTTP_RULE_REGISTRATION_EVENT.listen(PathHttpRule::register);
 
+        HttpHandlerTypeRegistry.HTTP_HANDLER_REGISTRATION_EVENT.listen(StaticContentHandler::register);
         HttpHandlerTypeRegistry.HTTP_HANDLER_REGISTRATION_EVENT.listen(StaticFileHandler::register);
         HttpHandlerTypeRegistry.HTTP_HANDLER_REGISTRATION_EVENT.listen(StaticDirectoryHandler::register);
 

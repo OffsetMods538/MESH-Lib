@@ -1,14 +1,9 @@
 package top.offsetmonkey538.meshlib.example;
 
 import top.offsetmonkey538.meshlib.api.handler.HttpHandlerTypeRegistry;
-import top.offsetmonkey538.meshlib.api.handler.handlers.StaticDirectoryHandler;
-import top.offsetmonkey538.meshlib.api.handler.handlers.StaticFileHandler;
 import top.offsetmonkey538.meshlib.api.router.HttpRouter;
 import top.offsetmonkey538.meshlib.api.router.HttpRouterRegistry;
 import top.offsetmonkey538.meshlib.api.rule.rules.DomainHttpRule;
-import top.offsetmonkey538.meshlib.api.rule.rules.PathHttpRule;
-
-import java.nio.file.Path;
 
 import static top.offsetmonkey538.meshlib.MESHLib.LOGGER;
 
@@ -33,36 +28,12 @@ public final class ExampleMain {
         LOGGER.warn("MESH examples enabled!");
 
         // Register
-        record SimpleHttpHandlerData(String content) {
+        HttpHandlerTypeRegistry.HTTP_HANDLER_REGISTRATION_EVENT.listen(ExampleHttpHandler::register);
 
-        }
-        HttpHandlerTypeRegistry.HTTP_HANDLER_REGISTRATION_EVENT.listen(registry -> {
-            registry.register("simple-http", SimpleHttpHandlerData.class, SimpleHttpHandler.class, handler -> new SimpleHttpHandlerData(handler.content()), data -> new SimpleHttpHandler(data.content()));
-        });
-
-        //HttpRouterRegistry.INSTANCE.register("simple-server", new HttpRouter(
-        //        new DomainHttpRule("localhost"),
-        //        new SimpleHttpHandler("Yellow!")
-        //));
         HttpRouterRegistry.HTTP_ROUTER_REGISTRATION_EVENT.listen(registry -> {
-            registry.register("simple-server2", new HttpRouter(
-                    new PathHttpRule("/hi"),
-                    new SimpleHttpHandler("Goodbye!")
-            ));
-
-            registry.register("static-file-test", new HttpRouter(
-                    new PathHttpRule("/static/file"),
-                    new StaticFileHandler(Path.of("usercache.json"))
-            ));
-
-            registry.register("static-directory-test", new HttpRouter(
-                    new PathHttpRule("/static/directory"),
-                    new StaticDirectoryHandler(Path.of("/home/dave"), true)
-            ));
-
-            registry.register("static-directory-test2", new HttpRouter(
-                    new DomainHttpRule("localhost"),
-                    new StaticDirectoryHandler(Path.of("/home/dave/Dev/Java/Minecraft/Mods/Loot-Table-Modifier/docs/dist/"), false)
+            registry.register("example/example-http-handler", new HttpRouter(
+                    new DomainHttpRule("site.example.com"),
+                    new ExampleHttpHandler("Requested path: ")
             ));
         });
     }

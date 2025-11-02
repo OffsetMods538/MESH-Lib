@@ -8,13 +8,17 @@ import blue.endless.jankson.api.DeserializationException;
 import blue.endless.jankson.api.SyntaxError;
 import com.google.common.collect.ImmutableMap;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import com.mojang.brigadier.context.CommandContext;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
 import top.offsetmonkey538.meshlib.api.handler.HttpHandler;
+import top.offsetmonkey538.meshlib.api.handler.handlers.StaticContentHandler;
+import top.offsetmonkey538.meshlib.api.handler.handlers.StaticDirectoryHandler;
 import top.offsetmonkey538.meshlib.api.handler.handlers.StaticFileHandler;
 import top.offsetmonkey538.meshlib.api.router.HttpRouter;
 import top.offsetmonkey538.meshlib.api.router.HttpRouterRegistry;
 import top.offsetmonkey538.meshlib.api.rule.HttpRule;
+import top.offsetmonkey538.meshlib.api.rule.rules.DomainHttpRule;
 import top.offsetmonkey538.meshlib.api.rule.rules.PathHttpRule;
 import top.offsetmonkey538.monkeylib538.api.command.CommandAbstractionApi;
 import top.offsetmonkey538.monkeylib538.api.command.ConfigCommandApi;
@@ -25,6 +29,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 import static top.offsetmonkey538.meshlib.MESHLib.LOGGER;
@@ -40,34 +45,52 @@ public final class RouterConfigHandler {
 
     public static LiteralArgumentBuilder<?> createExampleConfigCommand() {
         final LiteralArgumentBuilder<Object> exampleCommand = literal("example").requires(CommandAbstractionApi::isOp);
+        Consumer<CommandContext<Object>> allHandler = context -> {};
 
         for (final Map.Entry<String, HttpRouter> exampleRouter : Map.of(
-                "server-properties.json", new HttpRouter(new PathHttpRule("/server-properties"), new StaticFileHandler(Path.of("server.properties")))
+                "server-properties.json", new HttpRouter(new PathHttpRule("example/server-properties"), new StaticFileHandler(Path.of("server.properties"))),
+                "ops.json", new HttpRouter(new PathHttpRule("example/ops"), new StaticFileHandler(Path.of("ops.json"))),
+                "directory.json", new HttpRouter(new DomainHttpRule("directory.example.com"), new StaticDirectoryHandler(Path.of("."), true)),
+                "index.json", new HttpRouter(new DomainHttpRule("docs.example.com"), new StaticDirectoryHandler(Path.of("/home/dave/Dev/Java/Minecraft/Mods/Loot-Table-Modifier/docs/dist/"), false)),
+                "hello.json", new HttpRouter(new PathHttpRule("/example/hello"), new StaticContentHandler("""
+                        Hello World!
+                        ...
+                        ...
+                        Goodbye! :P
+                        """))
         ).entrySet()) {
+            allHandler = allHandler.andThen(context -> runCommand(exampleRouter, context));
+
             final LiteralArgumentBuilder<Object> routerCommand = literal(exampleRouter.getKey());
-            routerCommand.executes(context -> {
-                final Path routerPath = ROUTERS_DIR.resolve("example").resolve(exampleRouter.getKey()).normalize().toAbsolutePath();
-
-                boolean success;
-                try {
-                    success = save(routerPath, exampleRouter.getValue());
-                } catch (Exception e) {
-                    LOGGER.error("Failed to create example config at '%s'!", e);
-                    success = false;
-                }
-
-                if (!success) {
-                    CommandAbstractionApi.sendError(context, "Failed to create example config at '%s'! See log for more details", routerPath);
-                    return 0;
-                }
-
-                CommandAbstractionApi.sendMessage(context, "Created example config at '%s'!", routerPath);
-                return 1;
-            });
+            routerCommand.executes(context -> runCommand(exampleRouter, context));
             exampleCommand.then(routerCommand);
         }
 
-        return literal("mesh-lib").then(exampleCommand);
+        final Consumer<CommandContext<Object>> finalAllHandler = allHandler;
+        return literal("mesh-lib").then(exampleCommand).then(literal("all").executes(context -> {
+            finalAllHandler.accept(context);
+        return 1;
+        }));
+    }
+
+    private static int runCommand(final Map.Entry<String, HttpRouter> exampleRouter, final CommandContext<Object> context) {
+        final Path routerPath = ROUTERS_DIR.resolve("example").resolve(exampleRouter.getKey()).normalize().toAbsolutePath();
+
+        boolean success;
+        try {
+            success = save(routerPath, exampleRouter.getValue());
+        } catch (Exception e) {
+            LOGGER.error("Failed to create example config at '%s'!", e);
+            success = false;
+        }
+
+        if (!success) {
+            CommandAbstractionApi.sendError(context, "Failed to create example config at '%s'! See log for more details", routerPath);
+            return 0;
+        }
+
+        CommandAbstractionApi.sendMessage(context, "Created example config at '%s'!", routerPath);
+        return 1;
     }
 
     private static boolean save(final Path path, final HttpRouter router) {

@@ -4,13 +4,13 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.FullHttpRequest;
 import top.offsetmonkey538.meshlib.api.router.HttpRouterRegistry;
 import top.offsetmonkey538.meshlib.api.rule.HttpRule;
-import top.offsetmonkey538.meshlib.example.SimpleHttpHandler;
+import top.offsetmonkey538.meshlib.example.ExampleHttpHandler;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * An http handler for you to implement :D
  * <br>
- * Look at {@link SimpleHttpHandler SimpleHttpHandler} for an example
+ * Look at {@link ExampleHttpHandler ExampleHttpHandler} for an example
  *
  * @see HttpRouterRegistry
  */
