@@ -130,6 +130,7 @@ configure(subprojects.findAll { it.name == "common" }) {
 
         shadow compileOnlyApi("top.offsetmonkey538.monkeylib538:monkeylib538-common:${rootProject.monkeylib538_version}")
         shadow compileOnly("com.google.guava:guava:${rootProject.guava_version}")
+        shadow compileOnly("com.mojang:brigadier:${rootProject.brigadier_version}")
     }
     tasks.build.dependsOn(shadowJar)
 

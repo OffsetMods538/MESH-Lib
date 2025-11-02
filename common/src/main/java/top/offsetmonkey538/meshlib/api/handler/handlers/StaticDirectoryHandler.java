@@ -171,12 +171,12 @@ public record StaticDirectoryHandler(Path baseDir, boolean allowDirectoryList) i
 
     @ApiStatus.Internal
     public static void register(final HttpHandlerTypeRegistry registry) {
-        registry.register("static-directory", Data.class, StaticDirectoryHandler.class, handler -> new Data(handler.baseDir, handler.allowDirectoryList), data -> new StaticDirectoryHandler(data.baseDir, data.allowDirectoryList));
+        registry.register("static-directory", Data.class, StaticDirectoryHandler.class, handler -> new Data(handler.baseDir, handler.allowDirectoryList), data -> new StaticDirectoryHandler(Path.of(data.baseDir), data.allowDirectoryList));
     }
 
     @ApiStatus.Internal
     private static final class Data {
-        private Path baseDir;
+        private String baseDir;
         private boolean allowDirectoryList;
 
         @SuppressWarnings("unused")
@@ -186,7 +186,7 @@ public record StaticDirectoryHandler(Path baseDir, boolean allowDirectoryList) i
         }
 
         public Data(final Path baseDir, final boolean allowDirectoryList) {
-            this.baseDir = baseDir;
+            this.baseDir = baseDir.toString();
             this.allowDirectoryList = allowDirectoryList;
         }
     }

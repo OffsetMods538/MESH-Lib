@@ -1,6 +1,7 @@
 package top.offsetmonkey538.meshlib.api.router;
 
 import blue.endless.jankson.Jankson;
+import blue.endless.jankson.JsonElement;
 import blue.endless.jankson.JsonObject;
 import blue.endless.jankson.JsonPrimitive;
 import org.jetbrains.annotations.NotNull;
@@ -10,6 +11,9 @@ import top.offsetmonkey538.meshlib.api.rule.HttpRule;
 import top.offsetmonkey538.meshlib.api.rule.HttpRuleTypeRegistry;
 import top.offsetmonkey538.meshlib.impl.router.HttpHandlerTypeRegistryImpl;
 import top.offsetmonkey538.meshlib.impl.router.rule.HttpRuleTypeRegistryImpl;
+
+import java.net.URI;
+import java.nio.file.Path;
 
 public record HttpRouter(@NotNull HttpRule rule, @NotNull HttpHandler handler) {
 
@@ -28,7 +32,7 @@ public record HttpRouter(@NotNull HttpRule rule, @NotNull HttpHandler handler) {
         janksonBuilder.registerSerializer(HttpRule.class, (httpRule, marshaller) -> {
             @SuppressWarnings({"unchecked", "deprecation"})
             // rule definition of ?,? extends HttpRule should match ?,HttpHandler, no?
-            final HttpRuleTypeRegistryImpl.HttpRuleDefinition<?, HttpRule> ruleDefinition = (HttpRuleTypeRegistryImpl.HttpRuleDefinition<?, HttpRule>) ((HttpRuleTypeRegistryImpl) HttpHandlerTypeRegistry.INSTANCE).get(httpRule.getClass());
+            final HttpRuleTypeRegistryImpl.HttpRuleDefinition<?, HttpRule> ruleDefinition = (HttpRuleTypeRegistryImpl.HttpRuleDefinition<?, HttpRule>) ((HttpRuleTypeRegistryImpl) HttpRuleTypeRegistry.INSTANCE).get(httpRule.getClass());
 
             final JsonObject result = (JsonObject) marshaller.serialize(ruleDefinition.ruleToData().apply(httpRule));
             result.put("type", JsonPrimitive.of(ruleDefinition.type()));
@@ -42,6 +46,7 @@ public record HttpRouter(@NotNull HttpRule rule, @NotNull HttpHandler handler) {
             final HttpRuleTypeRegistryImpl.HttpRuleDefinition<Object, ?> ruleDefinition = (HttpRuleTypeRegistryImpl.HttpRuleDefinition<Object, ?>) ((HttpRuleTypeRegistryImpl) HttpRuleTypeRegistry.INSTANCE).get(type);
 
             final JsonObject dummyParent = new JsonObject();
+            jsonObject.remove("type");
             dummyParent.put("dataHolder", jsonObject);
             final Object dataHolder = dummyParent.get(ruleDefinition.dataType(), "dataHolder");
 
@@ -66,6 +71,7 @@ public record HttpRouter(@NotNull HttpRule rule, @NotNull HttpHandler handler) {
             final HttpHandlerTypeRegistryImpl.HttpHandlerDefinition<Object, ?> handlerDefinition = (HttpHandlerTypeRegistryImpl.HttpHandlerDefinition<Object, ?>) ((HttpHandlerTypeRegistryImpl) HttpHandlerTypeRegistry.INSTANCE).get(type);
 
             final JsonObject dummyParent = new JsonObject();
+            jsonObject.remove("type");
             dummyParent.put("dataHolder", jsonObject);
             final Object dataHolder = dummyParent.get(handlerDefinition.dataType(), "dataHolder");
 

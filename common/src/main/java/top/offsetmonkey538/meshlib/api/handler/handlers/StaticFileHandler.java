@@ -24,12 +24,12 @@ public record StaticFileHandler(Path fileToServe) implements HttpHandler {
 
     @ApiStatus.Internal
     public static void register(final HttpHandlerTypeRegistry registry) {
-        registry.register("static-file", Data.class, StaticFileHandler.class, handler -> new Data(handler.fileToServe), data -> new StaticFileHandler(data.fileToServe));
+        registry.register("static-file", Data.class, StaticFileHandler.class, handler -> new Data(handler.fileToServe), data -> new StaticFileHandler(Path.of(data.fileToServe)));
     }
 
     @ApiStatus.Internal
     private static final class Data {
-        private Path fileToServe;
+        private String fileToServe;
 
         @SuppressWarnings("unused")
         // Pretty sure this public no-args needs to exist cause jankson wants to create instances
@@ -38,7 +38,7 @@ public record StaticFileHandler(Path fileToServe) implements HttpHandler {
         }
 
         public Data(final Path fileToServe) {
-            this.fileToServe = fileToServe;
+            this.fileToServe = fileToServe.toString();
         }
     }
 }

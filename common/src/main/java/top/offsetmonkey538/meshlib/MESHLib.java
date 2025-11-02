@@ -12,12 +12,14 @@ import top.offsetmonkey538.meshlib.api.rule.HttpRule;
 import top.offsetmonkey538.meshlib.api.rule.HttpRuleTypeRegistry;
 import top.offsetmonkey538.meshlib.api.handler.HttpHandlerTypeRegistry;
 import top.offsetmonkey538.meshlib.config.MESHLibConfig;
+import top.offsetmonkey538.meshlib.config.RouterConfigHandler;
 import top.offsetmonkey538.meshlib.example.ExampleMain;
 import top.offsetmonkey538.meshlib.api.rule.rules.DomainHttpRule;
 import top.offsetmonkey538.meshlib.api.rule.rules.PathHttpRule;
 import top.offsetmonkey538.meshlib.impl.router.HttpHandlerTypeRegistryImpl;
 import top.offsetmonkey538.meshlib.impl.router.rule.HttpRuleTypeRegistryImpl;
 import top.offsetmonkey538.meshlib.platform.PlatformMain;
+import top.offsetmonkey538.monkeylib538.api.command.CommandRegistrationApi;
 import top.offsetmonkey538.monkeylib538.api.command.ConfigCommandApi;
 import top.offsetmonkey538.monkeylib538.api.lifecycle.ServerLifecycleApi;
 import top.offsetmonkey538.monkeylib538.api.log.MonkeyLibLogger;
@@ -50,6 +52,7 @@ public final class MESHLib {
         ExampleMain.onInitialize();
 
         ConfigCommandApi.registerConfigCommand(CONFIG, MESHLib::reload, MOD_ID, "config");
+        CommandRegistrationApi.registerCommand(RouterConfigHandler.createExampleConfigCommand());
 
         OffsetConfig538Events.JANKSON_CONFIGURATION_EVENT.listen(HttpRouter::configureJankson);
 
@@ -58,6 +61,8 @@ public final class MESHLib {
 
         HttpHandlerTypeRegistry.HTTP_HANDLER_REGISTRATION_EVENT.listen(StaticFileHandler::register);
         HttpHandlerTypeRegistry.HTTP_HANDLER_REGISTRATION_EVENT.listen(StaticDirectoryHandler::register);
+
+        HttpRouterRegistry.HTTP_ROUTER_REGISTRATION_EVENT.listen(RouterConfigHandler::init);
 
         ServerLifecycleApi.runOnServerStarting(MESHLib::reload);
     }
