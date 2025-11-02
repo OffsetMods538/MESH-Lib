@@ -6,6 +6,7 @@ import com.google.common.base.Stopwatch;
 import top.offsetmonkey538.meshlib.api.handler.HttpHandler;
 import top.offsetmonkey538.meshlib.api.handler.handlers.StaticDirectoryHandler;
 import top.offsetmonkey538.meshlib.api.handler.handlers.StaticFileHandler;
+import top.offsetmonkey538.meshlib.api.router.HttpRouter;
 import top.offsetmonkey538.meshlib.api.router.HttpRouterRegistry;
 import top.offsetmonkey538.meshlib.api.rule.HttpRule;
 import top.offsetmonkey538.meshlib.api.rule.HttpRuleTypeRegistry;
@@ -50,52 +51,7 @@ public final class MESHLib {
 
         ConfigCommandApi.registerConfigCommand(CONFIG, MESHLib::reload, MOD_ID, "config");
 
-        OffsetConfig538Events.JANKSON_CONFIGURATION_EVENT.listen(builder -> {
-            builder.registerSerializer(HttpRule.class, (httpRule, marshaller) -> {
-                @SuppressWarnings({"unchecked", "deprecation"}) // rule definition of ?,? extends HttpRule should match ?,HttpHandler, no?
-                final HttpRuleTypeRegistryImpl.HttpRuleDefinition<?,HttpRule> ruleDefinition = (HttpRuleTypeRegistryImpl.HttpRuleDefinition<?, HttpRule>) ((HttpRuleTypeRegistryImpl) HttpHandlerTypeRegistry.INSTANCE).get(httpRule.getClass());
-
-                final JsonObject result = (JsonObject) marshaller.serialize(ruleDefinition.ruleToData().apply(httpRule));
-                result.put("type", JsonPrimitive.of(ruleDefinition.type()));
-                return result;
-            });
-
-            builder.registerDeserializer(JsonObject.class, HttpRule.class, (jsonObject, marshaller) -> {
-                final String type = jsonObject.get(String.class, "type");
-
-                @SuppressWarnings({"unchecked", "deprecation"}) // It's proooobably a subclass of Object...
-                final HttpRuleTypeRegistryImpl.HttpRuleDefinition<Object,?> ruleDefinition = (HttpRuleTypeRegistryImpl.HttpRuleDefinition<Object,?>) ((HttpRuleTypeRegistryImpl) HttpRuleTypeRegistry.INSTANCE).get(type);
-
-                final JsonObject dummyParent = new JsonObject();
-                dummyParent.put("dataHolder", jsonObject);
-                final Object dataHolder = dummyParent.get(ruleDefinition.dataType(), "dataHolder");
-
-                return ruleDefinition.dataToRule().apply(dataHolder);
-            });
-
-
-            builder.registerSerializer(HttpHandler.class, (httpHandler, marshaller) -> {
-                @SuppressWarnings({"unchecked", "deprecation"}) // handler definition of ?,? extends HttpHandler should match ?,HttpHandler, no?
-                final HttpHandlerTypeRegistryImpl.HttpHandlerDefinition<?,HttpHandler> handlerDefinition = (HttpHandlerTypeRegistryImpl.HttpHandlerDefinition<?, HttpHandler>) ((HttpHandlerTypeRegistryImpl) HttpHandlerTypeRegistry.INSTANCE).get(httpHandler.getClass());
-
-                final JsonObject result = (JsonObject) marshaller.serialize(handlerDefinition.handlerToData().apply(httpHandler));
-                result.put("type", JsonPrimitive.of(handlerDefinition.type()));
-                return result;
-            });
-
-            builder.registerDeserializer(JsonObject.class, HttpHandler.class, (jsonObject, marshaller) -> {
-                final String type = jsonObject.get(String.class, "type");
-
-                @SuppressWarnings({"unchecked", "deprecation"}) // It's proooobably a subclass of Object...
-                final HttpHandlerTypeRegistryImpl.HttpHandlerDefinition<Object,?> handlerDefinition = (HttpHandlerTypeRegistryImpl.HttpHandlerDefinition<Object, ?>) ((HttpHandlerTypeRegistryImpl) HttpHandlerTypeRegistry.INSTANCE).get(type);
-
-                final JsonObject dummyParent = new JsonObject();
-                dummyParent.put("dataHolder", jsonObject);
-                final Object dataHolder = dummyParent.get(handlerDefinition.dataType(), "dataHolder");
-
-                return handlerDefinition.dataToHandler().apply(dataHolder);
-            });
-        });
+        OffsetConfig538Events.JANKSON_CONFIGURATION_EVENT.listen(HttpRouter::configureJankson);
 
         HttpRuleTypeRegistry.HTTP_RULE_REGISTRATION_EVENT.listen(DomainHttpRule::register);
         HttpRuleTypeRegistry.HTTP_RULE_REGISTRATION_EVENT.listen(PathHttpRule::register);
