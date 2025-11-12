@@ -32,20 +32,8 @@ public record ExampleHttpHandler(String baseContent) implements HttpHandler {
         // Calculate response using super amazing and hard math™
         final String responseText = superCoolMethodForRunningTheHardAndAmazingCalculationForCalculationinatingTheResponseTM(request.uri());
 
-        // You could also use this magical utility method for sending the response, but doing it manually makes the example longer and thus more betterer :P
-        //  HttpResponseUtil.sendString(ctx, responseText);
-
-
-        // Write the responseText to a buffer, encoded in UTF-8
-        final ByteBuf content = Unpooled.copiedBuffer(responseText, StandardCharsets.UTF_8);
-        // Create a response with said buffer
-        final FullHttpResponse response = new DefaultFullHttpResponse(HTTP_1_1, OK, content);
-
-        // Set the "CONTENT_TYPE" header to tell the browser that this is plain text encoded in UTF-8
-        response.headers().set(CONTENT_TYPE, "text/plain; charset=UTF-8");
-
-        // Send the response and close the connection
-        ctx.writeAndFlush(response).addListener(ChannelFutureListener.CLOSE);
+        // Magical utility for sending a plain-text string
+        HttpResponseUtil.sendString(ctx, request, responseText);
     }
 
     private String superCoolMethodForRunningTheHardAndAmazingCalculationForCalculationinatingTheResponseTM(String requestUri) {

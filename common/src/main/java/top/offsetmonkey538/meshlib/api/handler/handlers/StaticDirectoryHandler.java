@@ -47,17 +47,17 @@ public record StaticDirectoryHandler(Path baseDir, boolean allowDirectoryList) i
         try {
             requestedPath = baseDir.resolve(rawPath.startsWith("/") ? rawPath.substring(1) : rawPath).normalize();
         } catch (InvalidPathException e) {
-            sendError(ctx, HttpResponseStatus.BAD_REQUEST, e);
+            sendError(ctx, request, HttpResponseStatus.BAD_REQUEST, e);
             return;
         }
 
         if (!requestedPath.startsWith(baseDir)) {
-            sendError(ctx, HttpResponseStatus.FORBIDDEN);
+            sendError(ctx, request, HttpResponseStatus.FORBIDDEN);
             return;
         }
 
         if (!Files.exists(requestedPath)) {
-            sendError(ctx, HttpResponseStatus.NOT_FOUND);
+            sendError(ctx, request, HttpResponseStatus.NOT_FOUND);
             return;
         }
 
@@ -68,7 +68,7 @@ public record StaticDirectoryHandler(Path baseDir, boolean allowDirectoryList) i
 
         // At this point we know it's a directory and that it exists
         if (!request.uri().endsWith("/")) {
-            sendPermanentRedirect(ctx, request.uri() + "/");
+            sendPermanentRedirect(ctx, request, request.uri() + "/");
             return;
         }
 

@@ -17,7 +17,7 @@ public record StaticContentHandler(String content) implements HttpHandler {
 
     @Override
     public void handleRequest(@NotNull ChannelHandlerContext ctx, @NotNull FullHttpRequest request, @NotNull HttpRule rule) throws Exception {
-        HttpResponseUtil.sendString(ctx, content);
+        HttpResponseUtil.sendString(ctx, request, content);
     }
 
     @ApiStatus.Internal

@@ -26,7 +26,7 @@ public class MainHttpHandler extends SimpleChannelInboundHandler<FullHttpRequest
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, FullHttpRequest request) throws Exception {
         if (!request.decoderResult().isSuccess()) {
-            sendError(ctx, BAD_REQUEST);
+            sendError(ctx, request, BAD_REQUEST);
             return;
         }
 
@@ -69,7 +69,7 @@ public class MainHttpHandler extends SimpleChannelInboundHandler<FullHttpRequest
         LOGGER.error("Failed to handle request", cause);
 
         if (!ctx.channel().isActive()) return;
-        sendError(ctx, HttpResponseStatus.INTERNAL_SERVER_ERROR, cause);
+        sendError(ctx, null, HttpResponseStatus.INTERNAL_SERVER_ERROR, cause);
     }
 
     private static void forward(ChannelHandlerContext ctx, FullHttpRequest request) {
