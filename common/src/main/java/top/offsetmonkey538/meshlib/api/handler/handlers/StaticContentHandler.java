@@ -11,9 +11,6 @@ import top.offsetmonkey538.meshlib.api.util.HttpResponseUtil;
 
 
 public record StaticContentHandler(String content) implements HttpHandler {
-    public StaticContentHandler(final String content) {
-        this.content = content;
-    }
 
     @Override
     public void handleRequest(@NotNull ChannelHandlerContext ctx, @NotNull FullHttpRequest request, @NotNull HttpRule rule) throws Exception {

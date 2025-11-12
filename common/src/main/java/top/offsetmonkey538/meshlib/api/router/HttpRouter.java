@@ -1,7 +1,6 @@
 package top.offsetmonkey538.meshlib.api.router;
 
 import blue.endless.jankson.Jankson;
-import blue.endless.jankson.JsonElement;
 import blue.endless.jankson.JsonObject;
 import blue.endless.jankson.JsonPrimitive;
 import org.jetbrains.annotations.NotNull;
@@ -11,9 +10,6 @@ import top.offsetmonkey538.meshlib.api.rule.HttpRule;
 import top.offsetmonkey538.meshlib.api.rule.HttpRuleTypeRegistry;
 import top.offsetmonkey538.meshlib.impl.router.HttpHandlerTypeRegistryImpl;
 import top.offsetmonkey538.meshlib.impl.router.rule.HttpRuleTypeRegistryImpl;
-
-import java.net.URI;
-import java.nio.file.Path;
 
 public record HttpRouter(@NotNull HttpRule rule, @NotNull HttpHandler handler) {
 

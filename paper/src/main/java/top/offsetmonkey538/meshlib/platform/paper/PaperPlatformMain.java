@@ -6,8 +6,6 @@ import top.offsetmonkey538.meshlib.MESHLib;
 import top.offsetmonkey538.meshlib.impl.ProtocolHandler;
 import top.offsetmonkey538.meshlib.platform.PlatformMain;
 
-import java.nio.file.Path;
-
 public final class PaperPlatformMain implements PlatformMain {
     private static final Key HANDLER_KEY = Key.key("meshlib", "meshlib_vanilla_handler");
 
