@@ -1,7 +1,7 @@
 {
 	"required": true,
-	"package": "top.offsetmonkey538.meshlib.platform.fabric.mixin",
-	"compatibilityLevel": "JAVA_17",
+	"package": "top.offsetmonkey538.meshlib.fabric.mixin",
+	"compatibilityLevel": "JAVA_21",
 	"server": [
       "ServerNetworkIoMixin"
 	],

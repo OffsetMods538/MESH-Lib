@@ -10,7 +10,7 @@ allprojects {
 	outlet.allowedReleaseTypes = Set.of(ReleaseType.RELEASE)
 
 	paperPluginYaml {
-		main = "top.offsetmonkey538.meshlib.platform.paper.MeshLibPlugin"
+		main = "top.offsetmonkey538.meshlib.paper.platform.PaperPlatformMain\$MeshLibPlugin"
 		authors.add("OffsetMonkey538")
 		load = "STARTUP"
 		dependencies {
