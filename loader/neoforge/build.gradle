@@ -1,0 +1,37 @@
+import dex.plugins.outlet.v2.util.ReleaseType
+
+plugins {
+    id 'multiloader-neoforge'
+}
+
+allprojects {
+    neoForgeModsToml {
+        mitLicense()
+        mod(rootProject.neo_mod_id) {
+            authors = "OffsetMonkey538"
+            dependencies {
+                required("monkeylib538", "[${rootProject.monkeylib538_version},)")
+            }
+        }
+        mixin("mesh-lib.modded.mixins.json")
+    }
+
+    dependencies {
+        compileOnly "top.offsetmonkey538.monkeylib538:monkeylib538-neoforge:${rootProject.monkeylib538_version}+neoforge"
+    }
+}
+
+subprojects {
+    // Gotta have this here cause I can't import it in buildSrc
+    outlet.allowedReleaseTypes = Set.of(ReleaseType.RELEASE)
+
+    dependencies {
+        implementation "top.offsetmonkey538.monkeylib538:monkeylib538-neoforge-${project.monkeylib538_suffix}:${rootProject.monkeylib538_version}+neoforge+${project.monkeylib538_suffix}"
+    }
+
+    modrinth {
+        dependencies {
+            required.project "monkeylib538"
+        }
+    }
+}

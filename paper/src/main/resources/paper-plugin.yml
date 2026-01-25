@@ -1,8 +1,0 @@
-name: MESH-Lib
-version: '${modVersion}'
-main: top.offsetmonkey538.meshlib.platform.paper.MeshLibPlugin
-description: Easy to use library for hosting an HTTP server on the Minecraft server's port
-author: OffsetMonkey538
-website: https://github.com/OffsetMods538/MESH-Lib
-api-version: '${lowestMinecraftVersion}'
-load: STARTUP

@@ -1,0 +1,40 @@
+import dex.plugins.outlet.v2.util.ReleaseType
+import xyz.jpenilla.resourcefactory.paper.PaperPluginYaml
+
+plugins {
+	id 'multiloader-paper'
+}
+
+allprojects {
+	// Gotta have this here cause I can't import it in buildSrc
+	outlet.allowedReleaseTypes = Set.of(ReleaseType.RELEASE)
+
+	paperPluginYaml {
+		main = "top.offsetmonkey538.meshlib.platform.paper.MeshLibPlugin"
+		authors.add("OffsetMonkey538")
+		load = "STARTUP"
+		dependencies {
+			server("MonkeyLib538", PaperPluginYaml.Load.BEFORE, true, true)
+		}
+	}
+
+	dependencies {
+		compileOnly("top.offsetmonkey538.monkeylib538:monkeylib538-paper:${rootProject.monkeylib538_version}+paper")
+	}
+}
+
+subprojects {
+	dependencies {
+		shadow implementation("top.offsetmonkey538.monkeylib538:monkeylib538-fabric-${project.monkeylib538_suffix}:${rootProject.monkeylib538_version}+fabric+${project.monkeylib538_suffix}")
+	}
+
+	tasks.runServer {
+		jvmArgs "-DmeshEnableExamples=true"
+	}
+
+	modrinth {
+		dependencies {
+			required.project "monkeylib538"
+		}
+	}
+}

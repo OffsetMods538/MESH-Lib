@@ -1,4 +1,0 @@
-jdk:
-  - openjdk21
-env:
-  DISABLE_PROPERTIES_UPDATE: true

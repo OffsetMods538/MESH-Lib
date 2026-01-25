@@ -1,0 +1,20 @@
+plugins {
+    id 'multiloader-base'
+}
+
+repositories {
+    maven {
+        name = "Mojang Libraries"
+        url = "https://libraries.minecraft.net"
+        content {
+            includeGroup "com.mojang"
+        }
+    }
+}
+
+dependencies {
+    compileOnlyApi "top.offsetmonkey538.monkeylib538:monkeylib538-common:${rootProject.monkeylib538_version}+common"
+    compileOnlyApi "io.netty:netty-codec-http:${rootProject.netty_version}"
+    compileOnly "com.google.guava:guava:${rootProject.guava_version}"
+    compileOnly "com.mojang:brigadier:${rootProject.brigadier_version}"
+}

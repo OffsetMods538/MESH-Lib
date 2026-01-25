@@ -19,8 +19,8 @@ import top.offsetmonkey538.meshlib.api.router.HttpRouterRegistry;
 import top.offsetmonkey538.meshlib.api.rule.HttpRule;
 import top.offsetmonkey538.meshlib.api.rule.rules.DomainHttpRule;
 import top.offsetmonkey538.meshlib.api.rule.rules.PathHttpRule;
-import top.offsetmonkey538.monkeylib538.api.command.CommandAbstractionApi;
-import top.offsetmonkey538.monkeylib538.api.platform.PlatformUtil;
+import top.offsetmonkey538.monkeylib538.common.api.command.CommandAbstractionApi;
+import top.offsetmonkey538.monkeylib538.common.api.platform.LoaderUtil;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -32,14 +32,14 @@ import java.util.stream.Stream;
 
 import static top.offsetmonkey538.meshlib.MESHLib.LOGGER;
 import static top.offsetmonkey538.meshlib.MESHLib.MOD_ID;
-import static top.offsetmonkey538.monkeylib538.api.command.CommandAbstractionApi.literal;
+import static top.offsetmonkey538.monkeylib538.common.api.command.CommandAbstractionApi.literal;
 
 public final class RouterConfigHandler {
     private RouterConfigHandler() {
 
     }
 
-    private static final Path ROUTERS_DIR = PlatformUtil.getConfigDir().resolve(MOD_ID).resolve("routers").normalize().toAbsolutePath();
+    private static final Path ROUTERS_DIR = LoaderUtil.getConfigDir().resolve(MOD_ID).resolve("routers").normalize().toAbsolutePath();
 
     public static LiteralArgumentBuilder<?> createExampleConfigCommand() {
         final LiteralArgumentBuilder<Object> exampleCommand = literal("example").requires(CommandAbstractionApi::isOp);

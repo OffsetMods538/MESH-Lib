@@ -2,7 +2,7 @@ package top.offsetmonkey538.meshlib.config;
 
 import blue.endless.jankson.Comment;
 import org.jetbrains.annotations.NotNull;
-import top.offsetmonkey538.monkeylib538.api.platform.PlatformUtil;
+import top.offsetmonkey538.monkeylib538.common.api.platform.LoaderUtil;
 import top.offsetmonkey538.offsetconfig538.api.config.Config;
 
 import java.nio.file.Path;
@@ -19,7 +19,7 @@ public final class MESHLibConfig implements Config {
 
     @Override
     public @NotNull Path getConfigDirPath() {
-        return PlatformUtil.getConfigDir();
+        return LoaderUtil.getConfigDir();
     }
 
     @Override

@@ -1,0 +1,15 @@
+plugins {
+	id 'multiloader-modded'
+}
+
+allprojects {
+	dependencies {
+		modCompileOnly "top.offsetmonkey538.monkeylib538:monkeylib538-modded:${rootProject.monkeylib538_version}+modded"
+	}
+}
+
+subprojects {
+	dependencies {
+		modCompileOnly "top.offsetmonkey538.monkeylib538:monkeylib538-modded-${project.monkeylib538_suffix}:${rootProject.monkeylib538_version}+modded+${project.monkeylib538_suffix}"
+	}
+}

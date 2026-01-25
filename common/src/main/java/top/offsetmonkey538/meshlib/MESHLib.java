@@ -14,10 +14,10 @@ import top.offsetmonkey538.meshlib.example.ExampleMain;
 import top.offsetmonkey538.meshlib.api.rule.rules.DomainHttpRule;
 import top.offsetmonkey538.meshlib.api.rule.rules.PathHttpRule;
 import top.offsetmonkey538.meshlib.platform.PlatformMain;
-import top.offsetmonkey538.monkeylib538.api.command.CommandRegistrationApi;
-import top.offsetmonkey538.monkeylib538.api.command.ConfigCommandApi;
-import top.offsetmonkey538.monkeylib538.api.lifecycle.ServerLifecycleApi;
-import top.offsetmonkey538.monkeylib538.api.log.MonkeyLibLogger;
+import top.offsetmonkey538.monkeylib538.common.api.command.CommandRegistrationApi;
+import top.offsetmonkey538.monkeylib538.common.api.command.ConfigCommandApi;
+import top.offsetmonkey538.monkeylib538.common.api.lifecycle.ServerLifecycleApi;
+import top.offsetmonkey538.monkeylib538.common.api.log.MonkeyLibLogger;
 import top.offsetmonkey538.offsetconfig538.api.config.ConfigHolder;
 import top.offsetmonkey538.offsetconfig538.api.config.ConfigManager;
 import top.offsetmonkey538.offsetconfig538.api.event.OffsetConfig538Events;
@@ -33,7 +33,7 @@ public final class MESHLib {
 	/**
 	 * String modid for this mod
 	 */
-	public static final String MOD_ID = "mesh-lib";
+	public static final String MOD_ID = "meshlib";
 	/**
 	 * Logger instance used by this mod
 	 */

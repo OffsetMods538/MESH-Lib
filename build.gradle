@@ -1,488 +1,74 @@
-import dex.plugins.outlet.v2.util.ReleaseType
-import io.papermc.paperweight.userdev.ReobfArtifactConfiguration
-
-import java.nio.file.Files
-
 plugins {
-    id 'fabric-loom' version '1.11-SNAPSHOT' apply false
-    id 'net.neoforged.moddev' version '2.0.112' apply false
-    id 'io.github.dexman545.outlet' version '1.6.1' apply false
-    id 'io.papermc.paperweight.userdev' version '2.0.0-beta.8' apply false
-    id 'com.gradleup.shadow' version '9.0.0-beta4' apply false
-    id 'com.modrinth.minotaur' version '2.+' apply false
-    id 'xyz.jpenilla.run-paper' version '2.3.1' apply false
+    id 'multiloader-root'
+    id 'java'
+    id 'java-library'
+    id 'net.neoforged.moddev'           version "${neoforged_moddev}"            apply false
+    id 'fabric-loom'                    version "${fabric_loom}"                 apply false
+    id 'io.papermc.paperweight.userdev' version "${papermc_paperweight_userdev}" apply false
+    id 'xyz.jpenilla.run-paper'         version "${jpenilla_run_task}"           apply false
+    id 'com.gradleup.shadow'            version "${gradleup_shadow}"             apply false
+    id 'xyz.jpenilla.resource-factory'  version "${jpenilla_resource_factory}"   apply false
+    id 'io.github.dexman545.outlet'     version "${dexman_outlet}"               apply false
+    id 'com.modrinth.minotaur'          version "${modrinth_minotaur}"           apply false
+    id 'hamburg.janove.elevator-music'  version "0.1"
 }
 
-ext {
-    versionPrefix = rootProject.mod_version
-    if (!Boolean.parseBoolean(System.getenv("IS_RELEASE"))) {
-        String preReleaseVersion = System.currentTimeMillis()
-
-        if (Boolean.parseBoolean(System.getenv("PRESERVE_PRERELEASE_VERSION"))) {
-            var preReleaseVersionFile = file("preReleaseVersion.txt").toPath()
-            if (Files.exists(preReleaseVersionFile)) preReleaseVersion = Files.readString(preReleaseVersionFile)
-            Files.writeString(preReleaseVersionFile, preReleaseVersion)
-        }
-
-        var separator = "-"
-        if (versionPrefix.contains("-")) separator = "."
-        versionPrefix = "${versionPrefix}${separator}${preReleaseVersion}"
-    }
-    final String versionSuffix = System.getenv("VERSION_SUFFIX")
-    if (versionSuffix != null && !versionSuffix.isEmpty()) {
-        versionPrefix = "${versionPrefix}+${versionSuffix}"
-    }
-
-    System.out.println("Version Prefix: " + versionPrefix)
-}
-
-allprojects {
-	group = "top.offsetmonkey538.meshlib"
-}
+//elevatorMusic {
+//    if (Boolean.parseBoolean(System.getenv("DISABLE_MUSIC"))) return
+//    waitMusic = file("${rootProject.projectDir}/veryImportant/music.wav")
+//    successSound = file("${rootProject.projectDir}/veryImportant/done.wav")
+//}
 
 subprojects {
-    apply plugin: "java"
     apply plugin: "java-library"
-    apply plugin: "maven-publish"
 
-	base.archivesName = "mesh-lib-${project.project_name}"
-    version = "${rootProject.versionPrefix}"
-    if (project.hasProperty("minecraft_version")) version = "${version}+${project.property("minecraft_version")}"
-
-	repositories {
+    repositories {
         mavenCentral()
         mavenLocal()
-		maven {
-			name = "OffsetMods538"
-			url = "https://maven.offsetmonkey538.top/releases"
-			content {
-				includeGroup "top.offsetmonkey538.monkeylib538"
-				includeGroup "top.offsetmonkey538.offsetconfig538"
-			}
-		}
-	}
-
-    dependencies {
-        compileOnly "org.jetbrains:annotations:24.0.0"
-    }
-
-    tasks.withType(JavaCompile).configureEach {
-        it.options.release = 21
-    }
-
-	java {
-		withSourcesJar()
-		withJavadocJar()
-
-        sourceCompatibility = JavaVersion.VERSION_21
-        targetCompatibility = JavaVersion.VERSION_21
-	}
-
-    tasks.named("javadoc", Javadoc) {
-        options.addFileOption('-add-stylesheet', rootProject.file("javadoc-stylesheet.css"))
-    }
-
-    jar {
-        from("${rootProject.projectDir}/LICENSE") {
-            rename { "${it}" }
-        }
-    }
-
-	publishing {
-		repositories {
-			maven {
-				name = "OffsetMonkey538"
-				url = "https://maven.offsetmonkey538.top/releases"
-				credentials {
-					username = providers.gradleProperty("OffsetMonkey538Username").getOrElse(System.getenv("MAVEN_USERNAME"))
-					password = providers.gradleProperty("OffsetMonkey538Password").getOrElse(System.getenv("MAVEN_PASSWORD"))
-				}
-				authentication {
-					basic(BasicAuthentication)
-				}
-			}
-		}
-		publications {
-			maven(MavenPublication) {
-				artifactId = base.archivesName.get()
-
-				from components.java
-			}
-		}
-	}
-}
-
-configure(subprojects.findAll { it.name == "common" }) {
-    apply plugin: "com.gradleup.shadow"
-
-    repositories {
-        maven {
-            name = "Mojang Libraries"
-            url = "https://libraries.minecraft.net"
-            content {
-                includeGroup "com.mojang"
+        exclusiveContent {
+            forRepository {
+                maven {
+                    name = "OffsetMods538"
+                    url = "https://maven.offsetmonkey538.top/releases"
+                }
+            }
+            filter {
+                includeGroupAndSubgroups "top.offsetmonkey538"
             }
         }
     }
 
     dependencies {
-        api "io.netty:netty-codec-http:${rootProject.netty_version}"
-
-        shadow compileOnlyApi("top.offsetmonkey538.monkeylib538:monkeylib538-common:${rootProject.monkeylib538_version}")
-        shadow compileOnly("com.google.guava:guava:${rootProject.guava_version}")
-        shadow compileOnly("com.mojang:brigadier:${rootProject.brigadier_version}")
-    }
-    tasks.build.dependsOn(shadowJar)
-
-    processResources {
-        final Map properties = [
-                "modVersion":                 rootProject.versionPrefix
-        ]
-        inputs.properties(properties)
-        filesMatching("META-INF/neoforge.mods.toml") {
-            expand(properties)
-        }
+        //TODO: switch to this: compileOnlyApi "org.jspecify:jspecify:${rootProject.jspecify_version}"
+        compileOnlyApi "org.jetbrains:annotations:24.0.0"
     }
 }
 
-configure(subprojects.findAll { it.name == "fabric" }) {
-    apply plugin: "fabric-loom"
-    apply plugin: "io.github.dexman545.outlet"
-    apply plugin: "com.modrinth.minotaur"
+configure(subprojects.findAll { it.hasProperty("project_name") }) {
+    apply plugin: "maven-publish"
 
-    outlet {
-        maintainPropertiesFile = !Boolean.parseBoolean(System.getenv("IS_PRODUCTION_BUILD"))
-        mcVersionRange = project.supported_minecraft_versions
-        allowedReleaseTypes = [ReleaseType.RELEASE]
-        propertiesData = [
-                'fapi_version': outlet.fapiVersion(project.minecraft_version),
-                'yarn_version': outlet.yarnVersion(project.minecraft_version),
-                'loader_version': outlet.loaderVersion()
-        ]
-    }
-
-    loom {
-        runs {
-            client {
-                runDir "run/client"
-            }
-            server {
-                runDir "run/server"
+    publishing {
+        repositories {
+            maven {
+                name = "OffsetMonkey538"
+                url = "https://maven.offsetmonkey538.top/releases"
+                credentials {
+                    username = providers.gradleProperty("OffsetMonkey538Username").getOrElse(System.getenv("MAVEN_USERNAME"))
+                    password = providers.gradleProperty("OffsetMonkey538Password").getOrElse(System.getenv("MAVEN_PASSWORD"))
+                }
+                authentication {
+                    basic(BasicAuthentication)
+                }
             }
         }
-
-        runConfigs.configureEach {
-            ideConfigGenerated(true)
-            vmArg "-DmeshEnableExamples=true"
-            if (!Boolean.parseBoolean(System.getenv("IS_PRODUCTION_BUILD"))) vmArg "-Ddevauth.enabled=true"
-        }
-    }
-
-    repositories {
-        maven {
-            name = "DevAuth"
-            url = "https://pkgs.dev.azure.com/djtheredstoner/DevAuth/_packaging/public/maven/v1"
-            content {
-                includeGroup "me.djtheredstoner"
+        publications {
+            register("maven", MavenPublication) {
+                afterEvaluate {
+                    artifactId base.archivesName.get()
+                }
+                groupId "top.offsetmonkey538.meshlib"
+                from components.java
             }
         }
     }
-
-    configurations {
-        common {
-            canBeResolved = true
-            canBeConsumed = false
-        }
-        api.extendsFrom common
-    }
-
-    dependencies {
-        minecraft "com.mojang:minecraft:${project.minecraft_version}"
-        mappings "net.fabricmc:yarn:${project.yarn_version}:v2"
-        modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
-
-        // DevAuth
-        modLocalRuntime "me.djtheredstoner:DevAuth-fabric:${project.devauth_version}"
-
-        include project(path: ":common", configuration: "shadow")
-        common project(":common")
-
-        // Only need fapi at runtime for the monkeylib shtuff
-        modRuntimeOnly "net.fabricmc.fabric-api:fabric-api:${project.fapi_version}"
-
-        // Whatever the heck this is for monkeylib
-        modRuntimeOnly("top.offsetmonkey538.monkeylib538:monkeylib538-fabric-1.20.5:${rootProject.monkeylib538_version}+1.20.5") {
-            exclude(group: "net.fabricmc.fabric-api")
-            exclude(group: "top.offsetmonkey538.monkeylib538:monkeylib538-fabric")
-        }
-        modCompileOnly("top.offsetmonkey538.monkeylib538:monkeylib538-fabric:${rootProject.monkeylib538_version}") {
-            exclude(group: "net.fabricmc.fabric-api")
-        }
-    }
-
-    processResources {
-        final Map properties = [
-                "commonVersion":              rootProject.versionPrefix,
-                "modVersion":                 project.version,
-                "supportedMinecraftVersions": project.supported_minecraft_versions,
-                "currentMonkeylibVersion":    project.monkeylib538_version
-        ]
-        inputs.properties(properties)
-        filesMatching("fabric.mod.json") {
-            expand(properties)
-        }
-
-        exclude ".cache/**"
-    }
-
-    modrinth {
-        // Main properties
-        token = System.getenv("MODRINTH_TOKEN")
-        projectId = "mesh-lib"
-        gameVersions = outlet.mcVersions()
-        loaders = ["fabric"]
-
-        // Version stuff
-        def customVersionName = System.getenv("VERSION_NAME")
-        if (customVersionName != null) versionName = customVersionName
-
-        versionNumber = "${project.version}"
-
-        versionType = Boolean.parseBoolean(System.getenv("VERSION_IS_PRERELEASE")) ? "beta" : "release"
-
-        if (rootProject.mod_version.contains("beta")) versionType = "beta"
-        if (rootProject.mod_version.contains("alpha")) versionType = "alpha"
-
-        // Files
-        uploadFile = remapJar.archiveFile
-        additionalFiles = [sourcesJar.archiveFile]
-
-
-        // Project info
-        syncBodyFrom = rootProject.file("README.md").text
-        def changelogEnv = System.getenv("VERSION_CHANGELOG")
-        if (changelogEnv != null) changelog = changelogEnv
-
-        dependencies {
-            required.project "monkeylib538"
-        }
-    }
-    tasks.modrinth.dependsOn(tasks.modrinthSyncBody)
-}
-
-configure(subprojects.findAll { it.name == "neoforge" }) {
-    apply plugin: "net.neoforged.moddev"
-    apply plugin: "io.github.dexman545.outlet"
-    apply plugin: "com.modrinth.minotaur"
-
-    outlet {
-        mcVersionRange = project.supported_minecraft_versions
-        allowedReleaseTypes = [ReleaseType.RELEASE]
-    }
-
-    neoForge {
-        version = project.neoforge_version
-
-        parchment {
-            mappingsVersion = project.parchment_mappings_version
-            minecraftVersion = project.minecraft_version
-        }
-
-        mods {
-            "${project.name}" {
-                sourceSet(sourceSets.main)
-            }
-        }
-
-        runs {
-            server {
-                server()
-            }
-
-            configureEach {
-                systemProperty "forge.logging.markers", "REGISTRIES"
-                jvmArgument "-DmeshEnableExamples=true"
-            }
-        }
-    }
-
-    repositories {
-        maven {
-            name = "DevAuth"
-            url = "https://pkgs.dev.azure.com/djtheredstoner/DevAuth/_packaging/public/maven/v1"
-            content {
-                includeGroup "me.djtheredstoner"
-            }
-        }
-    }
-
-    configurations {
-        runtimeClasspath.extendsFrom localRuntime
-    }
-
-    dependencies {
-        // DevAuth
-        localRuntime "me.djtheredstoner:DevAuth-neoforge:${project.devauth_version}"
-
-        jarJar(api(project(":common")))
-        jarJar(additionalRuntimeClasspath("io.netty:netty-codec-http:${rootProject.netty_version}"))
-
-        // Whatever the heck this is for monkeylib
-        runtimeOnly "top.offsetmonkey538.monkeylib538:monkeylib538-neoforge-1.20.6:${project.monkeylib538_version}+1.20.6"
-        compileOnly "top.offsetmonkey538.monkeylib538:monkeylib538-neoforge:${project.monkeylib538_version}"
-    }
-
-    processResources {
-        final Map properties = [
-                "commonVersion":              rootProject.versionPrefix,
-                "modVersion":                 project.version,
-                "supportedMinecraftVersions": project.minecraft_version_range,
-                "currentMonkeylibVersion":    project.monkeylib538_version
-        ]
-        inputs.properties(properties)
-        filesMatching("META-INF/neoforge.mods.toml") {
-            expand(properties)
-        }
-
-        exclude ".cache/**"
-    }
-
-    modrinth {
-        // Main properties
-        token = System.getenv("MODRINTH_TOKEN")
-        projectId = "mesh-lib"
-        gameVersions = outlet.mcVersions()
-        loaders = ["neoforge"]
-
-        // Version stuff
-        def customVersionName = System.getenv("VERSION_NAME")
-        if (customVersionName != null) versionName = customVersionName
-
-        versionNumber = "${project.version}"
-
-        versionType = Boolean.parseBoolean(System.getenv("VERSION_IS_PRERELEASE")) ? "beta" : "release"
-
-        if (rootProject.mod_version.contains("beta")) versionType = "beta"
-        if (rootProject.mod_version.contains("alpha")) versionType = "alpha"
-
-        // Files
-        //TODO: uploadFile = remapJar.archiveFile
-        additionalFiles = [sourcesJar.archiveFile]
-
-
-        // Project info
-        syncBodyFrom = rootProject.file("README.md").text
-        def changelogEnv = System.getenv("VERSION_CHANGELOG")
-        if (changelogEnv != null) changelog = changelogEnv
-
-        dependencies {
-            required.project "monkeylib538"
-        }
-    }
-    tasks.modrinth.dependsOn(tasks.modrinthSyncBody)
-}
-
-configure(subprojects.findAll { it.name == "paper" }) {
-    apply plugin: "com.gradleup.shadow"
-    apply plugin: "com.modrinth.minotaur"
-    apply plugin: "io.github.dexman545.outlet"
-    apply plugin: "io.papermc.paperweight.userdev"
-    apply plugin: "xyz.jpenilla.run-paper"
-
-    outlet {
-        maintainPropertiesFile = false
-        mcVersionRange = project.supported_minecraft_versions
-        allowedReleaseTypes = [ReleaseType.RELEASE]
-    }
-
-    paperweight.reobfArtifactConfiguration = ReobfArtifactConfiguration.getMOJANG_PRODUCTION()
-
-    repositories {
-        maven {
-            name = 'PaperMC'
-            url = 'https://repo.papermc.io/repository/maven-public/'
-            content {
-                includeGroup "io.papermc.paper"
-            }
-        }
-    }
-
-    configurations {
-        common {
-            canBeResolved = true
-            canBeConsumed = false
-        }
-        api.extendsFrom common
-    }
-
-    dependencies {
-        compileOnly "io.papermc.paper:paper-api:${project.paper_version}"
-
-        paperweight.paperDevBundle project.paper_version
-
-        common project(path: ":common", configuration: "shadow")
-
-        /* todo: monke not have paper yetttttttt
-        // Whatever the heck this is for monkeylib
-        modRuntimeOnly("top.offsetmonkey538.monkeylib538:monkeylib538-fabric-1.20.5:${rootProject.monkeylib538_version}+1.20.5") {
-            exclude(group: "io.papermc.paper")
-            exclude(group: "top.offsetmonkey538.monkeylib538:monkeylib538-fabric")
-        }
-        modCompileOnly("top.offsetmonkey538.monkeylib538:monkeylib538-fabric:${rootProject.monkeylib538_version}") {
-            exclude(group: "net.fabricmc.fabric-api")
-        }
-         */
-    }
-    tasks.build.dependsOn(shadowJar)
-
-    processResources {
-        final Map properties = [
-                "modVersion":              rootProject.mod_version,
-                "currentMonkeylibVersion": project.monkeylib538_version,
-                "lowestMinecraftVersion":  outlet.mcVersions().first() // here's hoping outlet does this in order
-        ]
-        inputs.properties(properties)
-        filesMatching("paper-plugin.yml") {
-            expand(properties)
-        }
-    }
-
-    tasks.runServer {
-        minecraftVersion(project.minecraft_version)
-        jvmArgs "-DmeshEnableExamples=true"
-    }
-
-    modrinth {
-        // Main properties
-        token = System.getenv("MODRINTH_TOKEN")
-        projectId = "mesh-lib"
-        gameVersions = outlet.mcVersions()
-        loaders = ["paper"]
-
-        // Version stuff
-        def customVersionName = System.getenv("VERSION_NAME")
-        if (customVersionName != null) versionName = customVersionName
-
-        versionNumber = "${project.version}"
-
-        versionType = Boolean.parseBoolean(System.getenv("VERSION_IS_PRERELEASE")) ? "beta" : "release"
-
-        if (rootProject.mod_version.contains("beta")) versionType = "beta"
-        if (rootProject.mod_version.contains("alpha")) versionType = "alpha"
-
-        // Files
-        uploadFile = shadowJar
-        additionalFiles = [sourcesJar.archiveFile]
-
-
-        // Project info
-        syncBodyFrom = rootProject.file("README.md").text
-        def changelogEnv = System.getenv("VERSION_CHANGELOG")
-        if (changelogEnv != null) changelog = changelogEnv
-
-        dependencies {
-            required.project "monkeylib538"
-        }
-    }
-    tasks.modrinth.dependsOn(tasks.modrinthSyncBody)
 }
