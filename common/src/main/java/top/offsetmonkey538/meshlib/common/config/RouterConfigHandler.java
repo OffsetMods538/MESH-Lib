@@ -65,10 +65,10 @@ public final class RouterConfigHandler {
         }
 
         final Consumer<CommandContext<Object>> finalAllHandler = allHandler;
-        return literal(MOD_ID).then(exampleCommand).then(literal("all").executes(context -> {
+        return literal(MOD_ID).then(exampleCommand.then(literal("all").executes(context -> {
             finalAllHandler.accept(context);
         return 1;
-        }));
+        })));
     }
 
     private static int runCommand(final Map.Entry<String, HttpRouter> exampleRouter, final CommandContext<Object> context) {
