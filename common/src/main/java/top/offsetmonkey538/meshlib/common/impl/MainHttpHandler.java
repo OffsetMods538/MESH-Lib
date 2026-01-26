@@ -2,7 +2,9 @@ package top.offsetmonkey538.meshlib.common.impl;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
-import io.netty.handler.codec.http.*;
+import io.netty.handler.codec.http.FullHttpRequest;
+import io.netty.handler.codec.http.HttpHeaderNames;
+import io.netty.handler.codec.http.HttpResponseStatus;
 import top.offsetmonkey538.meshlib.common.api.handler.HttpHandler;
 import top.offsetmonkey538.meshlib.common.api.router.HttpRouter;
 import top.offsetmonkey538.meshlib.common.api.router.HttpRouterRegistry;
@@ -16,12 +18,10 @@ import static top.offsetmonkey538.meshlib.common.MESHLib.LOGGER;
 import static top.offsetmonkey538.meshlib.common.MESHLib.MOD_ID;
 import static top.offsetmonkey538.meshlib.common.api.util.HttpResponseUtil.sendError;
 
-/**
- * Main HTTP handler for MESH.
- * <p>
- * Forwards the requests to {@link HttpHandler HttpHandler}s registered in {@link HttpRouterRegistry}
+/*
+ * Forwards the requests to HttpHandler's registered in HttpRouterRegistry
  */
-public class MainHttpHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
+public final class MainHttpHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, FullHttpRequest request) throws Exception {
@@ -32,7 +32,6 @@ public class MainHttpHandler extends SimpleChannelInboundHandler<FullHttpRequest
 
         HttpRouter router = null;
         List<String> matchedRouterIDs = new ArrayList<>(0);
-        //noinspection deprecation
         for (Map.Entry<String,HttpRouter> possibleRouter : ((HttpRouterRegistryImpl) HttpRouterRegistry.INSTANCE).iterable()) {
             if (!possibleRouter.getValue().rule().matches(request)) continue;
 

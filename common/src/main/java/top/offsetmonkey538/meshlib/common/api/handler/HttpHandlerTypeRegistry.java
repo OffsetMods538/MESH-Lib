@@ -1,10 +1,9 @@
 package top.offsetmonkey538.meshlib.common.api.handler;
 
-import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.NotNull;
 import top.offsetmonkey538.meshlib.common.api.router.HttpRouterRegistry;
 import top.offsetmonkey538.meshlib.common.impl.router.HttpHandlerTypeRegistryImpl;
-import top.offsetmonkey538.offsetconfig538.api.event.Event;
+import top.offsetmonkey538.offsetutils538.api.annotation.Internal;
+import top.offsetmonkey538.offsetutils538.api.event.Event;
 
 import java.util.function.Function;
 
@@ -16,21 +15,21 @@ public interface HttpHandlerTypeRegistry {
     /**
      * Instance
      */
-    @ApiStatus.Internal
-    @SuppressWarnings("DeprecatedIsStillUsed")
-    @Deprecated // Marking it as internal isn't enough cause I also need to prevent usage from other places in my code
+    @Internal
     HttpHandlerTypeRegistry INSTANCE = new HttpHandlerTypeRegistryImpl();
 
     /**
      * Internal method for clearing the registry, no touch!
      */
-    @ApiStatus.Internal
+    @Internal
     static void clear() {
         INSTANCE.clearImpl();
     }
 
     void clearImpl();
-    <D, H extends HttpHandler> void register(@NotNull final String type, @NotNull final Class<D> dataType, @NotNull final Class<H> handlerType, @NotNull final Function<H, D> handlerToData, @NotNull final Function<D, H> dataToHandler);
+    <D, H extends HttpHandler> void register(final String type, final Class<D> dataType, final Class<H> handlerType, final Function<H, D> handlerToData, final Function<D, H> dataToHandler);
+    HttpHandlerTypeRegistryImpl.HttpHandlerDefinition<?,?> get(final String type) throws IllegalArgumentException;
+    HttpHandlerTypeRegistryImpl.HttpHandlerDefinition<?,?> get(final Class<? extends HttpHandler> type) throws IllegalArgumentException;
 
 
     /**
@@ -58,7 +57,7 @@ public interface HttpHandlerTypeRegistry {
         /**
          * Internal method for invoking the event without providing the registry, no touch!
          */
-        @ApiStatus.Internal
+        @Internal
         default void invoke() {
             register(INSTANCE);
         }
@@ -68,6 +67,6 @@ public interface HttpHandlerTypeRegistry {
          *
          * @param registry the registry to register to
          */
-        void register(final @NotNull HttpHandlerTypeRegistry registry);
+        void register(final HttpHandlerTypeRegistry registry);
     }
 }

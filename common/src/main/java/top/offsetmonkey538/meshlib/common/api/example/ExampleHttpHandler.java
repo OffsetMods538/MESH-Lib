@@ -1,13 +1,12 @@
-package top.offsetmonkey538.meshlib.common.example;
+package top.offsetmonkey538.meshlib.common.api.example;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.FullHttpRequest;
-import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.NotNull;
 import top.offsetmonkey538.meshlib.common.api.handler.HttpHandler;
 import top.offsetmonkey538.meshlib.common.api.handler.HttpHandlerTypeRegistry;
 import top.offsetmonkey538.meshlib.common.api.rule.HttpRule;
 import top.offsetmonkey538.meshlib.common.api.util.HttpResponseUtil;
+import top.offsetmonkey538.offsetutils538.api.annotation.Internal;
 
 /**
  * An example {@link HttpHandler} implementation to learn from
@@ -15,7 +14,7 @@ import top.offsetmonkey538.meshlib.common.api.util.HttpResponseUtil;
 public record ExampleHttpHandler(String baseContent) implements HttpHandler {
 
     @Override
-    public void handleRequest(@NotNull ChannelHandlerContext ctx, @NotNull FullHttpRequest request, @NotNull HttpRule rule) throws Exception {
+    public void handleRequest(ChannelHandlerContext ctx, FullHttpRequest request, HttpRule rule) throws Exception {
         // Calculate response using super amazing and hard math™
         final String responseText = superCoolMethodForRunningTheHardAndAmazingCalculationForCalculationinatingTheResponseTM(request.uri());
 
@@ -33,7 +32,7 @@ public record ExampleHttpHandler(String baseContent) implements HttpHandler {
         registry.register("example-http", Data.class, ExampleHttpHandler.class, handler -> new Data(handler.baseContent), data -> new ExampleHttpHandler(data.content));
     }
 
-    @ApiStatus.Internal
+    @Internal
     private static final class Data {
         private String content;
 

@@ -1,10 +1,9 @@
 package top.offsetmonkey538.meshlib.common.api.rule;
 
-import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.NotNull;
 import top.offsetmonkey538.meshlib.common.api.router.HttpRouterRegistry;
 import top.offsetmonkey538.meshlib.common.impl.router.rule.HttpRuleTypeRegistryImpl;
-import top.offsetmonkey538.offsetconfig538.api.event.Event;
+import top.offsetmonkey538.offsetutils538.api.annotation.Internal;
+import top.offsetmonkey538.offsetutils538.api.event.Event;
 
 import java.util.function.Function;
 
@@ -15,21 +14,19 @@ public interface HttpRuleTypeRegistry {
     /**
      * Instance
      */
-    @ApiStatus.Internal
-    @SuppressWarnings("DeprecatedIsStillUsed")
-    @Deprecated // Marking it as internal isn't enough cause I also need to prevent usage from other places in my code
+    @Internal
     HttpRuleTypeRegistry INSTANCE = new HttpRuleTypeRegistryImpl();
 
     /**
      * Internal method for clearing the registry, no touch!
      */
-    @ApiStatus.Internal
+    @Internal
     static void clear() {
         INSTANCE.clearImpl();
     }
 
-    void clearImpl();
-    <D, R extends HttpRule> void register(@NotNull final String type, @NotNull final Class<D> dataType, @NotNull final Class<R> ruleType, @NotNull final Function<R, D> ruleToData, @NotNull final Function<D, R> dataToRule);
+    @Internal void clearImpl();
+    <D, R extends HttpRule> void register(final String type, final Class<D> dataType, final Class<R> ruleType, final Function<R, D> ruleToData, final Function<D, R> dataToRule);
 
 
     /**
@@ -57,7 +54,7 @@ public interface HttpRuleTypeRegistry {
         /**
          * Internal method for invoking the event without providing the registry, no touch!
          */
-        @ApiStatus.Internal
+        @Internal
         default void invoke() {
             register(INSTANCE);
         }
@@ -67,6 +64,6 @@ public interface HttpRuleTypeRegistry {
          *
          * @param registry the registry to register to
          */
-        void register(final @NotNull HttpRuleTypeRegistry registry);
+        void register(final HttpRuleTypeRegistry registry);
     }
 }

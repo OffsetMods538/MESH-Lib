@@ -4,8 +4,7 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.FullHttpRequest;
 import top.offsetmonkey538.meshlib.common.api.router.HttpRouterRegistry;
 import top.offsetmonkey538.meshlib.common.api.rule.HttpRule;
-import top.offsetmonkey538.meshlib.common.example.ExampleHttpHandler;
-import org.jetbrains.annotations.NotNull;
+import top.offsetmonkey538.meshlib.common.api.example.ExampleHttpHandler;
 
 /**
  * An http handler for you to implement :D
@@ -26,5 +25,5 @@ public interface HttpHandler {
      * @param rule the rule used to match this handler
      * @throws Exception when anything goes wrong
      */
-    void handleRequest(@NotNull ChannelHandlerContext ctx, @NotNull FullHttpRequest request, @NotNull HttpRule rule) throws Exception;
+    void handleRequest(ChannelHandlerContext ctx, FullHttpRequest request, HttpRule rule) throws Exception;
 }

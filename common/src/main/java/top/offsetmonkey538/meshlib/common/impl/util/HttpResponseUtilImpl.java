@@ -5,18 +5,28 @@ import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.handler.codec.http.*;
+import io.netty.handler.codec.http.DefaultFullHttpResponse;
+import io.netty.handler.codec.http.DefaultHttpResponse;
+import io.netty.handler.codec.http.FullHttpRequest;
+import io.netty.handler.codec.http.FullHttpResponse;
+import io.netty.handler.codec.http.HttpResponse;
+import io.netty.handler.codec.http.HttpResponseStatus;
+import io.netty.handler.codec.http.HttpUtil;
+import io.netty.handler.codec.http.LastHttpContent;
 import io.netty.handler.stream.ChunkedNioFile;
 import io.netty.util.CharsetUtil;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import top.offsetmonkey538.meshlib.common.api.util.HttpResponseUtil;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import static io.netty.handler.codec.http.HttpHeaderNames.*;
+import static io.netty.handler.codec.http.HttpHeaderNames.CONNECTION;
+import static io.netty.handler.codec.http.HttpHeaderNames.CONTENT_LENGTH;
+import static io.netty.handler.codec.http.HttpHeaderNames.CONTENT_TYPE;
+import static io.netty.handler.codec.http.HttpHeaderNames.LOCATION;
 import static io.netty.handler.codec.http.HttpHeaderValues.CLOSE;
 import static io.netty.handler.codec.http.HttpHeaderValues.KEEP_ALIVE;
 import static io.netty.handler.codec.http.HttpResponseStatus.OK;
@@ -25,9 +35,8 @@ import static top.offsetmonkey538.meshlib.common.MESHLib.LOGGER;
 import static top.offsetmonkey538.meshlib.common.api.util.HttpResponseUtil.sendError;
 
 public final class HttpResponseUtilImpl implements HttpResponseUtil {
-
     @Override
-    public void sendFileImpl(@NotNull ChannelHandlerContext ctx, @Nullable FullHttpRequest request, @NotNull Path fileToSend) throws IOException {
+    public void sendFileImpl(ChannelHandlerContext ctx, @Nullable FullHttpRequest request, Path fileToSend) throws IOException {
         if (!Files.exists(fileToSend) || !Files.isRegularFile(fileToSend)) {
             sendError(ctx, request, HttpResponseStatus.NOT_FOUND);
             return;
@@ -54,7 +63,7 @@ public final class HttpResponseUtilImpl implements HttpResponseUtil {
     }
 
     @Override
-    public void sendRedirectImpl(@NotNull ChannelHandlerContext ctx, @Nullable FullHttpRequest request, @NotNull HttpResponseStatus status, @NotNull String newLocation) {
+    public void sendRedirectImpl(ChannelHandlerContext ctx, @Nullable FullHttpRequest request, HttpResponseStatus status, String newLocation) {
         final FullHttpResponse response = new DefaultFullHttpResponse(HTTP_1_1, status, Unpooled.EMPTY_BUFFER);
 
         response.headers().set(LOCATION, newLocation);
@@ -63,7 +72,7 @@ public final class HttpResponseUtilImpl implements HttpResponseUtil {
     }
 
     @Override
-    public void sendStringImpl(@NotNull ChannelHandlerContext ctx, @Nullable FullHttpRequest request, @NotNull String content) {
+    public void sendStringImpl(ChannelHandlerContext ctx, @Nullable FullHttpRequest request, String content) {
         final ByteBuf byteBuf = Unpooled.copiedBuffer(content, CharsetUtil.UTF_8);
         final FullHttpResponse response = new DefaultFullHttpResponse(HTTP_1_1, HttpResponseStatus.OK, byteBuf);
 
@@ -75,7 +84,7 @@ public final class HttpResponseUtilImpl implements HttpResponseUtil {
     // TODO: Should the client be sent the reason? "Security through obscurity" and all that? A client can't really do much good with a "File /home/ubuntu/stupidServer/website/file.txt not found!" and they don't need this kind of info
     //  Then again in some cases it'd probably be good to send some more specific info to the client? hmmmmmmmmmmmmmmmmmmmmmmmm
     @Override
-    public void sendErrorImpl(@NotNull ChannelHandlerContext ctx, @Nullable FullHttpRequest request, @NotNull HttpResponseStatus status, @Nullable String reason) {
+    public void sendErrorImpl(ChannelHandlerContext ctx, @Nullable FullHttpRequest request, HttpResponseStatus status, @Nullable String reason) {
         final StringBuilder messageBuilder = new StringBuilder("Failure: ").append(status);
         if (reason != null && !reason.isBlank()) messageBuilder.append("\nReason: ").append(reason);
 
@@ -93,7 +102,7 @@ public final class HttpResponseUtilImpl implements HttpResponseUtil {
     }
 
     @Override
-    public void sendResponseImpl(@NotNull ChannelHandlerContext ctx, @Nullable FullHttpRequest request, @NotNull FullHttpResponse response) {
+    public void sendResponseImpl(@NonNull ChannelHandlerContext ctx, @Nullable FullHttpRequest request, @NonNull FullHttpResponse response) {
         final boolean isKeepAlive = request != null && HttpUtil.isKeepAlive(request);
 
         response.headers().set(CONNECTION, isKeepAlive ? KEEP_ALIVE : CLOSE);
@@ -103,7 +112,7 @@ public final class HttpResponseUtilImpl implements HttpResponseUtil {
         if (!isKeepAlive) future.addListener(ChannelFutureListener.CLOSE);
     }
 
-    private static String getContentType(final @NotNull Path file) {
+    private static String getContentType(final @NonNull Path file) {
         final String result;
 
         try {

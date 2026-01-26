@@ -1,16 +1,14 @@
 package top.offsetmonkey538.meshlib.common.api.handler.handlers;
 
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.handler.codec.http.*;
-import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.NotNull;
+import io.netty.handler.codec.http.FullHttpRequest;
 import top.offsetmonkey538.meshlib.common.api.handler.HttpHandler;
 import top.offsetmonkey538.meshlib.common.api.handler.HttpHandlerTypeRegistry;
 import top.offsetmonkey538.meshlib.common.api.rule.HttpRule;
 import top.offsetmonkey538.meshlib.common.api.util.HttpResponseUtil;
+import top.offsetmonkey538.offsetutils538.api.annotation.Internal;
 
 import java.nio.file.Path;
-
 
 public record StaticFileHandler(Path fileToServe) implements HttpHandler {
     public StaticFileHandler(final Path fileToServe) {
@@ -18,16 +16,16 @@ public record StaticFileHandler(Path fileToServe) implements HttpHandler {
     }
 
     @Override
-    public void handleRequest(@NotNull ChannelHandlerContext ctx, @NotNull FullHttpRequest request, @NotNull HttpRule rule) throws Exception {
+    public void handleRequest(ChannelHandlerContext ctx, FullHttpRequest request, HttpRule rule) throws Exception {
         HttpResponseUtil.sendFile(ctx, request, fileToServe);
     }
 
-    @ApiStatus.Internal
+    @Internal
     public static void register(final HttpHandlerTypeRegistry registry) {
         registry.register("static-file", Data.class, StaticFileHandler.class, handler -> new Data(handler.fileToServe), data -> new StaticFileHandler(Path.of(data.fileToServe)));
     }
 
-    @ApiStatus.Internal
+    @Internal
     private static final class Data {
         private String fileToServe;
 

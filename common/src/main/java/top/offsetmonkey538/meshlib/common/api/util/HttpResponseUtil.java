@@ -4,10 +4,9 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpResponseStatus;
-import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 import top.offsetmonkey538.meshlib.common.impl.util.HttpResponseUtilImpl;
+import top.offsetmonkey538.offsetutils538.api.annotation.Internal;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -19,7 +18,7 @@ public interface HttpResponseUtil {
     /**
      * Instance
      */
-    @ApiStatus.Internal
+    @Internal
     HttpResponseUtil INSTANCE = new HttpResponseUtilImpl();
 
 
@@ -31,7 +30,7 @@ public interface HttpResponseUtil {
      * @param fileToSend the path to the file to send
      * @throws IOException when io go wrong :(
      */
-    static void sendFile(@NotNull ChannelHandlerContext ctx, @Nullable FullHttpRequest request, @NotNull Path fileToSend) throws IOException {
+    static void sendFile(ChannelHandlerContext ctx, @Nullable FullHttpRequest request, Path fileToSend) throws IOException {
         INSTANCE.sendFileImpl(ctx, request, fileToSend);
     }
 
@@ -44,7 +43,7 @@ public interface HttpResponseUtil {
      * @param request the client request. Used to determine if keep-alive is to be used. Setting to null implies a non-keep-alive connection.
      * @param newLocation the new location.
      */
-    static void sendPermanentRedirect(@NotNull ChannelHandlerContext ctx, @Nullable FullHttpRequest request, @NotNull String newLocation) {
+    static void sendPermanentRedirect(ChannelHandlerContext ctx, @Nullable FullHttpRequest request, String newLocation) {
         INSTANCE.sendRedirectImpl(ctx, request, HttpResponseStatus.PERMANENT_REDIRECT, newLocation);
     }
 
@@ -55,7 +54,7 @@ public interface HttpResponseUtil {
      * @param request the client request. Used to determine if keep-alive is to be used. Setting to null implies a non-keep-alive connection.
      * @param newLocation the new location.
      */
-    static void sendTemporaryRedirect(@NotNull ChannelHandlerContext ctx, @Nullable FullHttpRequest request, @NotNull String newLocation) {
+    static void sendTemporaryRedirect(ChannelHandlerContext ctx, @Nullable FullHttpRequest request, String newLocation) {
         INSTANCE.sendRedirectImpl(ctx, request, HttpResponseStatus.TEMPORARY_REDIRECT, newLocation);
     }
 
@@ -66,7 +65,7 @@ public interface HttpResponseUtil {
      * @param request the client request. Used to determine if keep-alive is to be used. Setting to null implies a non-keep-alive connection.
      * @param content the plain text response to send
      */
-    static void sendString(@NotNull ChannelHandlerContext ctx, @Nullable FullHttpRequest request, @NotNull String content) {
+    static void sendString(ChannelHandlerContext ctx, @Nullable FullHttpRequest request, String content) {
         INSTANCE.sendStringImpl(ctx, request, content);
     }
 
@@ -79,7 +78,7 @@ public interface HttpResponseUtil {
      * @see #sendError(ChannelHandlerContext, FullHttpRequest, HttpResponseStatus, Throwable)
      * @see #sendError(ChannelHandlerContext, FullHttpRequest, HttpResponseStatus, String)
      */
-    static void sendError(@NotNull ChannelHandlerContext ctx, @Nullable FullHttpRequest request, @NotNull HttpResponseStatus status) {
+    static void sendError(ChannelHandlerContext ctx, @Nullable FullHttpRequest request, HttpResponseStatus status) {
         sendError(ctx, request, status, (String) null);
     }
 
@@ -93,7 +92,7 @@ public interface HttpResponseUtil {
      * @see #sendError(ChannelHandlerContext, FullHttpRequest, HttpResponseStatus)
      * @see #sendError(ChannelHandlerContext, FullHttpRequest, HttpResponseStatus, String)
      */
-    static void sendError(@NotNull ChannelHandlerContext ctx, @Nullable FullHttpRequest request, @NotNull HttpResponseStatus status, @NotNull Throwable reason) {
+    static void sendError(ChannelHandlerContext ctx, @Nullable FullHttpRequest request, HttpResponseStatus status, Throwable reason) {
         sendError(ctx, request, status, reason.getMessage());
     }
 
@@ -107,7 +106,7 @@ public interface HttpResponseUtil {
      * @see #sendError(ChannelHandlerContext, FullHttpRequest, HttpResponseStatus)
      * @see #sendError(ChannelHandlerContext, FullHttpRequest, HttpResponseStatus, Throwable)
      */
-    static void sendError(@NotNull ChannelHandlerContext ctx, @Nullable FullHttpRequest request, @NotNull HttpResponseStatus status, @Nullable String reason) {
+    static void sendError(ChannelHandlerContext ctx, @Nullable FullHttpRequest request, HttpResponseStatus status, @Nullable String reason) {
         INSTANCE.sendErrorImpl(ctx, request, status, reason);
     }
 
@@ -118,14 +117,14 @@ public interface HttpResponseUtil {
      * @param request the client request. Used to determine if keep-alive is to be used. Setting to null implies a non-keep-alive connection.
      * @param response the response to send
      */
-    static void sendResponse(@NotNull ChannelHandlerContext ctx, @Nullable FullHttpRequest request, @NotNull FullHttpResponse response) {
+    static void sendResponse(ChannelHandlerContext ctx, @Nullable FullHttpRequest request, FullHttpResponse response) {
         INSTANCE.sendResponseImpl(ctx, request, response);
     }
 
 
-    void sendFileImpl(@NotNull ChannelHandlerContext ctx, @Nullable FullHttpRequest request, @NotNull Path fileToSend) throws IOException;
-    void sendRedirectImpl(@NotNull ChannelHandlerContext ctx, @Nullable FullHttpRequest request, @NotNull HttpResponseStatus status, @NotNull String newLocation);
-    void sendStringImpl(@NotNull ChannelHandlerContext ctx, @Nullable FullHttpRequest request, @NotNull String content);
-    void sendErrorImpl(@NotNull ChannelHandlerContext ctx, @Nullable FullHttpRequest request, @NotNull HttpResponseStatus status, @Nullable String reason);
-    void sendResponseImpl(@NotNull ChannelHandlerContext ctx, @Nullable FullHttpRequest request, @NotNull FullHttpResponse response);
+    @Internal void sendFileImpl(ChannelHandlerContext ctx, @Nullable FullHttpRequest request, Path fileToSend) throws IOException;
+    @Internal void sendRedirectImpl(ChannelHandlerContext ctx, @Nullable FullHttpRequest request, HttpResponseStatus status, String newLocation);
+    @Internal void sendStringImpl(ChannelHandlerContext ctx, @Nullable FullHttpRequest request, String content);
+    @Internal void sendErrorImpl(ChannelHandlerContext ctx, @Nullable FullHttpRequest request, HttpResponseStatus status, @Nullable String reason);
+    @Internal void sendResponseImpl(ChannelHandlerContext ctx, @Nullable FullHttpRequest request, FullHttpResponse response);
 }

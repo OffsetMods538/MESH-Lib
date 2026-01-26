@@ -1,6 +1,5 @@
 package top.offsetmonkey538.meshlib.common.impl;
 
-import org.jetbrains.annotations.NotNull;
 import top.offsetmonkey538.meshlib.common.api.router.HttpRouter;
 import top.offsetmonkey538.meshlib.common.api.router.HttpRouterRegistry;
 
@@ -10,11 +9,11 @@ import java.util.Map;
 /**
  * Implementation of {@link HttpRouterRegistry}
  */
-public class HttpRouterRegistryImpl implements HttpRouterRegistry {
+public final class HttpRouterRegistryImpl implements HttpRouterRegistry {
     private final Map<String, HttpRouter> routers = new HashMap<>();
 
     @Override
-    public void register(@NotNull String id, @NotNull HttpRouter router) {
+    public void register(String id, HttpRouter router) {
         if (id.isEmpty()) throw new IllegalArgumentException("Id may not be empty!");
         if (routers.containsKey(id)) throw new IllegalArgumentException("Handler with id '" + id + "' already registered!");
 
@@ -26,7 +25,7 @@ public class HttpRouterRegistryImpl implements HttpRouterRegistry {
         routers.clear();
     }
 
-    public @NotNull Iterable<Map.Entry<String, HttpRouter>> iterable() {
+    public Iterable<Map.Entry<String, HttpRouter>> iterable() {
         return this.routers.entrySet();
     }
 }

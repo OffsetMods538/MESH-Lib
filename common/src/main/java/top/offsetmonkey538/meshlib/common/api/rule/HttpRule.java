@@ -15,7 +15,7 @@ public interface HttpRule {
      *
      * @param uri the uri to modify
      */
-    default  String normalizeUri(final String uri) {
+    default String normalizeUri(final String uri) {
         // no-op
         return uri;
     }

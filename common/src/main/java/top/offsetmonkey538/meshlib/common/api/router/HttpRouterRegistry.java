@@ -1,9 +1,8 @@
 package top.offsetmonkey538.meshlib.common.api.router;
 
-import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.NotNull;
 import top.offsetmonkey538.meshlib.common.impl.HttpRouterRegistryImpl;
-import top.offsetmonkey538.offsetconfig538.api.event.Event;
+import top.offsetmonkey538.offsetutils538.api.annotation.Internal;
+import top.offsetmonkey538.offsetutils538.api.event.Event;
 
 /**
  * Registry for {@link HttpRouter}s, use the {@link #HTTP_ROUTER_REGISTRATION_EVENT} event for registering your routers.
@@ -12,21 +11,19 @@ public interface HttpRouterRegistry {
     /**
      * Instance
      */
-    @ApiStatus.Internal
-    @SuppressWarnings("DeprecatedIsStillUsed")
-    @Deprecated // Marking it as internal isn't enough cause I also need to prevent usage from other places in my code
+    @Internal
     HttpRouterRegistry INSTANCE = new HttpRouterRegistryImpl();
 
     /**
      * Internal method for clearing the registry, no touch!
      */
-    @ApiStatus.Internal
+    @Internal
     static void clear() {
         INSTANCE.clearImpl();
     }
 
-    void clearImpl();
-    void register(@NotNull final String id, @NotNull final HttpRouter router);
+    @Internal void clearImpl();
+    void register(final String id, final HttpRouter router);
 
 
     /**
@@ -51,7 +48,7 @@ public interface HttpRouterRegistry {
         /**
          * Internal method for invoking the event without providing the registry, no touch!
          */
-        @ApiStatus.Internal
+        @Internal
         default void invoke() {
             register(INSTANCE);
         }
@@ -61,6 +58,6 @@ public interface HttpRouterRegistry {
          *
          * @param registry the registry to register to
          */
-        void register(final @NotNull HttpRouterRegistry registry);
+        void register(final HttpRouterRegistry registry);
     }
 }

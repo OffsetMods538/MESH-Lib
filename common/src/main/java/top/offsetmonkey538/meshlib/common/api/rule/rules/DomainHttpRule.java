@@ -2,9 +2,9 @@ package top.offsetmonkey538.meshlib.common.api.rule.rules;
 
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.HttpHeaderNames;
-import org.jetbrains.annotations.ApiStatus;
 import top.offsetmonkey538.meshlib.common.api.rule.HttpRule;
 import top.offsetmonkey538.meshlib.common.api.rule.HttpRuleTypeRegistry;
+import top.offsetmonkey538.offsetutils538.api.annotation.Internal;
 
 /**
  * @param domain i.e. map.example.com
@@ -22,14 +22,14 @@ public record DomainHttpRule(String domain) implements HttpRule {
         return host.equals(domain);
     }
 
-    @ApiStatus.Internal
+    @Internal
     public static void register(final HttpRuleTypeRegistry registry) {
         registry.register("domain", Data.class, DomainHttpRule.class, rule -> new Data(rule.domain), data -> new DomainHttpRule(data.domain));
     }
 
-    @ApiStatus.Internal
+    @Internal
     private static final class Data {
-        private String domain;
+        private String domain = "";
 
         @SuppressWarnings("unused")
         // Pretty sure this public no-args needs to exist cause jankson wants to create instances

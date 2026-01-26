@@ -10,8 +10,6 @@ import top.offsetmonkey538.meshlib.common.platform.PlatformUtil;
 public final class PlatformUtilImpl implements PlatformUtil {
     private static final Key HANDLER_KEY = Key.key("meshlib", "meshlib_vanilla_handler");
 
-    private static MESHLibInitializer plugin;
-
     @Override
     public void enableVanillaHandlerImpl() {
         if (ChannelInitializeListenerHolder.hasListener(HANDLER_KEY)) return;
@@ -23,20 +21,10 @@ public final class PlatformUtilImpl implements PlatformUtil {
         ChannelInitializeListenerHolder.removeListener(HANDLER_KEY);
     }
 
-    public static void setPlugin(MESHLibInitializer plugin) {
-        PlatformUtilImpl.plugin = plugin;
-    }
-
-    public static MESHLibInitializer getPlugin() {
-        return plugin;
-    }
-
-
 
     public static final class MESHLibInitializer extends JavaPlugin {
         @Override
         public void onEnable() {
-            PlatformUtilImpl.setPlugin(this);
             MESHLib.initialize();
         }
     }

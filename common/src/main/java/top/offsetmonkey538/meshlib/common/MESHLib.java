@@ -12,15 +12,15 @@ import top.offsetmonkey538.meshlib.common.api.rule.rules.DomainHttpRule;
 import top.offsetmonkey538.meshlib.common.api.rule.rules.PathHttpRule;
 import top.offsetmonkey538.meshlib.common.config.MESHLibConfig;
 import top.offsetmonkey538.meshlib.common.config.RouterConfigHandler;
-import top.offsetmonkey538.meshlib.common.example.ExampleMain;
+import top.offsetmonkey538.meshlib.common.api.example.ExampleMain;
 import top.offsetmonkey538.meshlib.common.platform.PlatformUtil;
 import top.offsetmonkey538.monkeylib538.common.api.command.CommandRegistrationApi;
 import top.offsetmonkey538.monkeylib538.common.api.command.ConfigCommandApi;
 import top.offsetmonkey538.monkeylib538.common.api.lifecycle.ServerLifecycleApi;
 import top.offsetmonkey538.monkeylib538.common.api.log.MonkeyLibLogger;
-import top.offsetmonkey538.offsetconfig538.api.config.ConfigHolder;
-import top.offsetmonkey538.offsetconfig538.api.config.ConfigManager;
-import top.offsetmonkey538.offsetconfig538.api.event.OffsetConfig538Events;
+import top.offsetmonkey538.offsetutils538.api.config.ConfigHolder;
+import top.offsetmonkey538.offsetutils538.api.config.ConfigManager;
+import top.offsetmonkey538.offsetutils538.api.config.event.JanksonConfigurationEvent;
 
 import java.util.ServiceLoader;
 
@@ -49,7 +49,7 @@ public final class MESHLib {
         ConfigCommandApi.registerConfigCommand(CONFIG, MESHLib::reload, MOD_ID, "config");
         CommandRegistrationApi.registerCommand(RouterConfigHandler.createExampleConfigCommand());
 
-        OffsetConfig538Events.JANKSON_CONFIGURATION_EVENT.listen(HttpRouter::configureJankson);
+        JanksonConfigurationEvent.JANKSON_CONFIGURATION_EVENT.listen(HttpRouter::configureJankson);
 
         HttpRuleTypeRegistry.HTTP_RULE_REGISTRATION_EVENT.listen(DomainHttpRule::register);
         HttpRuleTypeRegistry.HTTP_RULE_REGISTRATION_EVENT.listen(PathHttpRule::register);
@@ -60,7 +60,7 @@ public final class MESHLib {
 
         HttpRouterRegistry.HTTP_ROUTER_REGISTRATION_EVENT.listen(RouterConfigHandler::init);
 
-        ServerLifecycleApi.runOnServerStarting(MESHLib::reload);
+        ServerLifecycleApi.STARTING.listen(MESHLib::reload);
     }
 
     // TODO: move somewhere under api so others can invoke a reload? For example git pack manager after reloading its config cause that's where the rule for it will be stored.
@@ -84,7 +84,8 @@ public final class MESHLib {
 
 
     public static <T> T load(Class<T> clazz) {
-        return ServiceLoader.load(clazz, clazz.getClassLoader())
+        LOGGER.info("Loading service for: %s", clazz);
+        return ServiceLoader.load(clazz, MESHLib.class.getClassLoader())
                 .findFirst()
                 .orElseThrow(() -> new RuntimeException("Failed to load service for " + clazz.getName()));
     }

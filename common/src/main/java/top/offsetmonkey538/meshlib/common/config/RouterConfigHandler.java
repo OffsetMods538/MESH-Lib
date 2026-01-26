@@ -8,8 +8,7 @@ import blue.endless.jankson.api.SyntaxError;
 import com.google.common.collect.ImmutableMap;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Unmodifiable;
+import org.jspecify.annotations.Nullable;
 import top.offsetmonkey538.meshlib.common.api.handler.HttpHandler;
 import top.offsetmonkey538.meshlib.common.api.handler.handlers.StaticContentHandler;
 import top.offsetmonkey538.meshlib.common.api.handler.handlers.StaticDirectoryHandler;
@@ -21,6 +20,7 @@ import top.offsetmonkey538.meshlib.common.api.rule.rules.DomainHttpRule;
 import top.offsetmonkey538.meshlib.common.api.rule.rules.PathHttpRule;
 import top.offsetmonkey538.monkeylib538.common.api.command.CommandAbstractionApi;
 import top.offsetmonkey538.monkeylib538.common.api.platform.LoaderUtil;
+import top.offsetmonkey538.offsetutils538.api.annotation.Unmodifiable;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -151,11 +151,11 @@ public final class RouterConfigHandler {
         }
     }
 
-    private static @NotNull Jankson configureJankson() {
+    private static Jankson configureJankson() {
         return HttpRouter.configureJankson(Jankson.builder()).build();
     }
 
-    private static @Unmodifiable Map<String, HttpRouter> loadRouters(final @NotNull List<Path> configFiles, final @NotNull Jankson jankson) throws IllegalArgumentException {
+    private static @Unmodifiable Map<String, HttpRouter> loadRouters(final List<Path> configFiles, final Jankson jankson) throws IllegalArgumentException {
         final ImmutableMap.Builder<String, HttpRouter> resultBuilder = ImmutableMap.builder();
 
         for (final Path path : configFiles) {
@@ -183,7 +183,7 @@ public final class RouterConfigHandler {
     }
 
     @SuppressWarnings("DuplicateThrows")
-    private static HttpRouter loadRouter(final @NotNull String id, final @NotNull Path path, final @NotNull Jankson jankson) throws IOException, SyntaxError, Exception {
+    private static HttpRouter loadRouter(final String id, final Path path, final Jankson jankson) throws IOException, SyntaxError, Exception {
         final JsonObject json = jankson.load(Files.newInputStream(path));
 
         try {
@@ -194,13 +194,11 @@ public final class RouterConfigHandler {
         }
     }
 
-    /**
-     * Exists because jankson requires a no-arg constructor to create an instance and then modify its fields, which wouldn't be possible with the record {@link HttpRouter}
-     */
+    // Exists because jankson requires a no-arg constructor to create an instance and then modify its fields, which wouldn't be possible with the record {@link HttpRouter}
     @SuppressWarnings({"unused", "FieldMayBeFinal"})
     private static class JanksonHttpRouter {
-        private HttpRule rule = null;
-        private HttpHandler handler = null;
+        private @Nullable HttpRule rule = null;
+        private @Nullable HttpHandler handler = null;
 
         public JanksonHttpRouter() {
 

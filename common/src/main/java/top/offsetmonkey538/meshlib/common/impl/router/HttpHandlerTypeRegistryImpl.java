@@ -1,6 +1,5 @@
 package top.offsetmonkey538.meshlib.common.impl.router;
 
-import org.jetbrains.annotations.NotNull;
 import top.offsetmonkey538.meshlib.common.api.handler.HttpHandler;
 import top.offsetmonkey538.meshlib.common.api.handler.HttpHandlerTypeRegistry;
 import top.offsetmonkey538.meshlib.common.api.rule.HttpRuleTypeRegistry;
@@ -12,7 +11,7 @@ import java.util.function.Function;
 /**
  * Implementation of {@link HttpRuleTypeRegistry}
  */
-public class HttpHandlerTypeRegistryImpl implements HttpHandlerTypeRegistry {
+public final class HttpHandlerTypeRegistryImpl implements HttpHandlerTypeRegistry {
     private final Map<String, HttpHandlerDefinition<?,?>> handlersById = new HashMap<>();
     private final Map<Class<? extends HttpHandler>, HttpHandlerDefinition<?,?>> handlersByType = new HashMap<>();
 
@@ -23,7 +22,7 @@ public class HttpHandlerTypeRegistryImpl implements HttpHandlerTypeRegistry {
     }
 
     @Override
-    public <D, H extends HttpHandler> void register(@NotNull final String type, @NotNull final Class<D> dataType, @NotNull final Class<H> handlerType, @NotNull final Function<H, D> handlerToData, @NotNull final Function<D, H> dataToHandler) {
+    public <D, H extends HttpHandler> void register(final String type, final Class<D> dataType, final Class<H> handlerType, final Function<H, D> handlerToData, final Function<D, H> dataToHandler) {
         if (type.isEmpty()) throw new IllegalArgumentException("Id may not be empty!");
         if (handlersById.containsKey(type)) throw new IllegalArgumentException("Handler type with id '" + type + "' already registered!");
         if (handlersByType.containsKey(handlerType)) throw new IllegalArgumentException("Handler type for type '" + handlerType + "' already registered!");

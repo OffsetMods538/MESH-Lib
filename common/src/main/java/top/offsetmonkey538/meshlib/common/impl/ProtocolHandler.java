@@ -11,11 +11,11 @@ import io.netty.handler.stream.ChunkedWriteHandler;
 import static top.offsetmonkey538.meshlib.common.MESHLib.LOGGER;
 import static top.offsetmonkey538.meshlib.common.MESHLib.MOD_ID;
 
-/**
+/*
  * Checks if a request is HTTP and either forwards it to {@link MainHttpHandler} if it <i>is</i> an HTTP request
  * and to the Minecraft handler otherwise.
  */
-public class ProtocolHandler extends ChannelInboundHandlerAdapter {
+public final class ProtocolHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object request) throws Exception {

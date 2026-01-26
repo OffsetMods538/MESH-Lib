@@ -1,4 +1,4 @@
-package top.offsetmonkey538.meshlib.common.example;
+package top.offsetmonkey538.meshlib.common.api.example;
 
 import top.offsetmonkey538.meshlib.common.api.handler.HttpHandlerTypeRegistry;
 import top.offsetmonkey538.meshlib.common.api.router.HttpRouter;

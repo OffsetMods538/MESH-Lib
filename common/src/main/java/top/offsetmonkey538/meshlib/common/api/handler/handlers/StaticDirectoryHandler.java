@@ -5,13 +5,17 @@ import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.handler.codec.http.*;
+import io.netty.handler.codec.http.DefaultFullHttpResponse;
+import io.netty.handler.codec.http.FullHttpRequest;
+import io.netty.handler.codec.http.FullHttpResponse;
+import io.netty.handler.codec.http.HttpResponseStatus;
+import io.netty.handler.codec.http.HttpUtil;
+import io.netty.handler.codec.http.LastHttpContent;
 import io.netty.util.CharsetUtil;
-import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.NotNull;
 import top.offsetmonkey538.meshlib.common.api.handler.HttpHandler;
 import top.offsetmonkey538.meshlib.common.api.handler.HttpHandlerTypeRegistry;
 import top.offsetmonkey538.meshlib.common.api.rule.HttpRule;
+import top.offsetmonkey538.offsetutils538.api.annotation.Internal;
 
 import java.io.IOException;
 import java.net.URI;
@@ -24,13 +28,16 @@ import java.text.StringCharacterIterator;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 
-import static io.netty.handler.codec.http.HttpHeaderNames.*;
+import static io.netty.handler.codec.http.HttpHeaderNames.CONNECTION;
+import static io.netty.handler.codec.http.HttpHeaderNames.CONTENT_LENGTH;
+import static io.netty.handler.codec.http.HttpHeaderNames.CONTENT_TYPE;
 import static io.netty.handler.codec.http.HttpHeaderValues.CLOSE;
 import static io.netty.handler.codec.http.HttpHeaderValues.KEEP_ALIVE;
 import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 import static top.offsetmonkey538.meshlib.common.MESHLib.LOGGER;
-import static top.offsetmonkey538.meshlib.common.api.util.HttpResponseUtil.*;
-
+import static top.offsetmonkey538.meshlib.common.api.util.HttpResponseUtil.sendError;
+import static top.offsetmonkey538.meshlib.common.api.util.HttpResponseUtil.sendFile;
+import static top.offsetmonkey538.meshlib.common.api.util.HttpResponseUtil.sendPermanentRedirect;
 
 public record StaticDirectoryHandler(Path baseDir, boolean allowDirectoryList) implements HttpHandler {
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
@@ -41,7 +48,7 @@ public record StaticDirectoryHandler(Path baseDir, boolean allowDirectoryList) i
     }
 
     @Override
-    public void handleRequest(@NotNull ChannelHandlerContext ctx, @NotNull FullHttpRequest request, @NotNull HttpRule rule) throws Exception {
+    public void handleRequest(ChannelHandlerContext ctx, FullHttpRequest request, HttpRule rule) throws Exception {
         final String rawPath = new URI(rule.normalizeUri(request.uri())).getPath();
         final Path requestedPath;
         try {
@@ -169,18 +176,18 @@ public record StaticDirectoryHandler(Path baseDir, boolean allowDirectoryList) i
         builder.append("%.1f %ciB".formatted(value / 1024.0, charIterator.current()));
     }
 
-    @ApiStatus.Internal
+    @Internal
     public static void register(final HttpHandlerTypeRegistry registry) {
         registry.register("static-directory", Data.class, StaticDirectoryHandler.class, handler -> new Data(handler.baseDir, handler.allowDirectoryList), data -> new StaticDirectoryHandler(Path.of(data.baseDir), data.allowDirectoryList));
     }
 
-    @ApiStatus.Internal
+    @Internal
     private static final class Data {
-        private String baseDir;
+        private String baseDir = "";
         private boolean allowDirectoryList;
 
-        @SuppressWarnings("unused")
         // Pretty sure this public no-args needs to exist cause jankson wants to create instances
+        @SuppressWarnings("unused")
         public Data() {
 
         }
