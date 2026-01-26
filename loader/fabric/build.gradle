@@ -13,7 +13,7 @@ allprojects {
             extra = ["discord": "https://discord.offsetmonkey538.top"]
         }
         environment = Environment.SERVER
-        serverEntrypoint("top.offsetmonkey538.meshlib.platform.fabric.FabricPlatformMain")
+        serverEntrypoint("top.offsetmonkey538.meshlib.fabric.MESHLibInitializer")
         mixin("mesh-lib.modded.mixins.json")
 
         depends("fabric-api", "*")

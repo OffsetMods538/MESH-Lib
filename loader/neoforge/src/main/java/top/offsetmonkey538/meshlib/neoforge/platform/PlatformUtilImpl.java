@@ -1,8 +1,8 @@
 package top.offsetmonkey538.meshlib.neoforge.platform;
 
-import top.offsetmonkey538.meshlib.common.platform.PlatformMain;
+import top.offsetmonkey538.meshlib.common.platform.PlatformUtil;
 
-public final class NeoforgePlatformMain implements PlatformMain {
+public final class PlatformUtilImpl implements PlatformUtil {
     public static boolean isVanillaHandlerEnabled = false;
 
     @Override
@@ -13,10 +13,5 @@ public final class NeoforgePlatformMain implements PlatformMain {
     @Override
     public void disableVanillaHandlerImpl() {
         isVanillaHandlerEnabled = false;
-    }
-
-    // dis on for loading the PlatformMain service
-    public NeoforgePlatformMain() {
-
     }
 }

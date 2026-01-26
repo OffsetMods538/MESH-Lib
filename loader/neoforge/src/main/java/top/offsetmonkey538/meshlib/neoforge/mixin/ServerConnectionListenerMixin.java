@@ -6,7 +6,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import top.offsetmonkey538.meshlib.common.impl.ProtocolHandler;
-import top.offsetmonkey538.meshlib.neoforge.platform.NeoforgePlatformMain;
+import top.offsetmonkey538.meshlib.neoforge.platform.PlatformUtilImpl;
 
 import static top.offsetmonkey538.meshlib.common.MESHLib.MOD_ID;
 
@@ -22,7 +22,7 @@ public abstract class ServerConnectionListenerMixin {
     )
     private void meshlib$addHttpHandler(Channel channel, CallbackInfo ci) {
         // This method is executed every time a new connection is started. Thus, I can just not add to the vanilla server when that's disabled
-        if (!NeoforgePlatformMain.isVanillaHandlerEnabled) return;
+        if (!PlatformUtilImpl.isVanillaHandlerEnabled) return;
         channel.pipeline().addFirst(MOD_ID, new ProtocolHandler());
     }
 }

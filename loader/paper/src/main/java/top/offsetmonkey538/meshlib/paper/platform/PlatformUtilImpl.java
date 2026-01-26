@@ -5,12 +5,12 @@ import net.kyori.adventure.key.Key;
 import org.bukkit.plugin.java.JavaPlugin;
 import top.offsetmonkey538.meshlib.common.MESHLib;
 import top.offsetmonkey538.meshlib.common.impl.ProtocolHandler;
-import top.offsetmonkey538.meshlib.common.platform.PlatformMain;
+import top.offsetmonkey538.meshlib.common.platform.PlatformUtil;
 
-public final class PaperPlatformMain implements PlatformMain {
+public final class PlatformUtilImpl implements PlatformUtil {
     private static final Key HANDLER_KEY = Key.key("meshlib", "meshlib_vanilla_handler");
 
-    private static MeshLibPlugin plugin;
+    private static MESHLibInitializer plugin;
 
     @Override
     public void enableVanillaHandlerImpl() {
@@ -23,20 +23,20 @@ public final class PaperPlatformMain implements PlatformMain {
         ChannelInitializeListenerHolder.removeListener(HANDLER_KEY);
     }
 
-    public static void setPlugin(MeshLibPlugin plugin) {
-        PaperPlatformMain.plugin = plugin;
+    public static void setPlugin(MESHLibInitializer plugin) {
+        PlatformUtilImpl.plugin = plugin;
     }
 
-    public static MeshLibPlugin getPlugin() {
+    public static MESHLibInitializer getPlugin() {
         return plugin;
     }
 
 
 
-    public static final class MeshLibPlugin extends JavaPlugin {
+    public static final class MESHLibInitializer extends JavaPlugin {
         @Override
         public void onEnable() {
-            PaperPlatformMain.setPlugin(this);
+            PlatformUtilImpl.setPlugin(this);
             MESHLib.initialize();
         }
     }

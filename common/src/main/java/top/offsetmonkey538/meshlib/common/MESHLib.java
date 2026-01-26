@@ -13,7 +13,7 @@ import top.offsetmonkey538.meshlib.common.api.rule.rules.PathHttpRule;
 import top.offsetmonkey538.meshlib.common.config.MESHLibConfig;
 import top.offsetmonkey538.meshlib.common.config.RouterConfigHandler;
 import top.offsetmonkey538.meshlib.common.example.ExampleMain;
-import top.offsetmonkey538.meshlib.common.platform.PlatformMain;
+import top.offsetmonkey538.meshlib.common.platform.PlatformUtil;
 import top.offsetmonkey538.monkeylib538.common.api.command.CommandRegistrationApi;
 import top.offsetmonkey538.monkeylib538.common.api.command.ConfigCommandApi;
 import top.offsetmonkey538.monkeylib538.common.api.lifecycle.ServerLifecycleApi;
@@ -43,7 +43,7 @@ public final class MESHLib {
 
 
     public static void initialize() {
-        PlatformMain.enableVanillaHandler();
+        PlatformUtil.enableVanillaHandler();
         ExampleMain.onInitialize();
 
         ConfigCommandApi.registerConfigCommand(CONFIG, MESHLib::reload, MOD_ID, "config");

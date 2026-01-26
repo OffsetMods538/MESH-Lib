@@ -5,11 +5,11 @@ import org.jetbrains.annotations.ApiStatus;
 import static top.offsetmonkey538.meshlib.common.MESHLib.load;
 
 @ApiStatus.Internal
-public interface PlatformMain {
+public interface PlatformUtil {
 
     @SuppressWarnings("DeprecatedIsStillUsed")
     @Deprecated // Only for use in this class
-    PlatformMain INSTANCE = load(PlatformMain.class);
+    PlatformUtil INSTANCE = load(PlatformUtil.class);
 
     static void enableVanillaHandler() {
         INSTANCE.enableVanillaHandlerImpl();
