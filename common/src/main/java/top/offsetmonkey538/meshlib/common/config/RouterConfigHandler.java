@@ -65,7 +65,7 @@ public final class RouterConfigHandler {
         }
 
         final Consumer<CommandContext<Object>> finalAllHandler = allHandler;
-        return literal("mesh-lib").then(exampleCommand).then(literal("all").executes(context -> {
+        return literal(MOD_ID).then(exampleCommand).then(literal("all").executes(context -> {
             finalAllHandler.accept(context);
         return 1;
         }));

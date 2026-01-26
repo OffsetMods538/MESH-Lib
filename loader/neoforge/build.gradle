@@ -13,7 +13,7 @@ allprojects {
                 required("monkeylib538", "[${rootProject.monkeylib538_version},)")
             }
         }
-        mixin("mesh-lib.modded.mixins.json")
+        mixin("meshlib.modded.mixins.json")
     }
 
     dependencies {

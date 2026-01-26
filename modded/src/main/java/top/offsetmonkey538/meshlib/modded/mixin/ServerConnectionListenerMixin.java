@@ -1,4 +1,4 @@
-package top.offsetmonkey538.meshlib.neoforge.mixin;
+package top.offsetmonkey538.meshlib.modded.mixin;
 
 import io.netty.channel.Channel;
 import org.spongepowered.asm.mixin.Mixin;
@@ -6,7 +6,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import top.offsetmonkey538.meshlib.common.impl.ProtocolHandler;
-import top.offsetmonkey538.meshlib.neoforge.platform.PlatformUtilImpl;
+import top.offsetmonkey538.meshlib.modded.platform.PlatformUtilImpl;
 
 import static top.offsetmonkey538.meshlib.common.MESHLib.MOD_ID;
 

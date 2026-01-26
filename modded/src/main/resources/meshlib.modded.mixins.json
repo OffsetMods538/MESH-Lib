@@ -1,0 +1,11 @@
+{
+  "required": true,
+  "package": "top.offsetmonkey538.meshlib.modded.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "server": [
+    "ServerConnectionListenerMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

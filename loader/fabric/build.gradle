@@ -14,7 +14,7 @@ allprojects {
         }
         environment = Environment.SERVER
         serverEntrypoint("top.offsetmonkey538.meshlib.fabric.MESHLibInitializer")
-        mixin("mesh-lib.modded.mixins.json")
+        mixin("meshlib.modded.mixins.json")
 
         depends("fabric-api", "*")
         depends("monkeylib538", ">=${rootProject.monkeylib538_version}")

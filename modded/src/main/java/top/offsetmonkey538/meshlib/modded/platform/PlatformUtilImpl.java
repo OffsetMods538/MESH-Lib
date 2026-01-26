@@ -1,4 +1,4 @@
-package top.offsetmonkey538.meshlib.fabric.platform;
+package top.offsetmonkey538.meshlib.modded.platform;
 
 import top.offsetmonkey538.meshlib.common.platform.PlatformUtil;
 
