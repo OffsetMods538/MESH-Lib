@@ -27,6 +27,8 @@ subprojects {
 
     dependencies {
         implementation "top.offsetmonkey538.monkeylib538:monkeylib538-neoforge-${project.monkeylib538_suffix}:${rootProject.monkeylib538_version}+neoforge+${project.monkeylib538_suffix}"
+
+        includeRuntime "io.netty:netty-codec-http:${rootProject.netty_version}"
     }
 
     modrinth {

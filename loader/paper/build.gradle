@@ -24,6 +24,12 @@ allprojects {
 }
 
 subprojects {
+	dependencies {
+		runtimeOnly("io.netty:netty-codec-http:${rootProject.netty_version}") {
+			transitive = false
+		}
+	}
+
 	tasks.runServer {
 		jvmArgs "-DmeshEnableExamples=true"
 		downloadPlugins {

@@ -37,6 +37,8 @@ subprojects {
         modImplementation("top.offsetmonkey538.monkeylib538:monkeylib538-fabric-${project.monkeylib538_suffix}:${rootProject.monkeylib538_version}+fabric+${project.monkeylib538_suffix}") {
             exclude(group: "net.fabricmc.fabric-api")
         }
+
+        includeRuntime "io.netty:netty-codec-http:${rootProject.netty_version}"
     }
 
     modrinth {
