@@ -2,9 +2,9 @@ package top.offsetmonkey538.meshlib.common.api.handler;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.FullHttpRequest;
+import top.offsetmonkey538.meshlib.common.api.example.ExampleHttpHandler;
 import top.offsetmonkey538.meshlib.common.api.router.HttpRouterRegistry;
 import top.offsetmonkey538.meshlib.common.api.rule.HttpRule;
-import top.offsetmonkey538.meshlib.common.api.example.ExampleHttpHandler;
 
 /**
  * An http handler for you to implement :D

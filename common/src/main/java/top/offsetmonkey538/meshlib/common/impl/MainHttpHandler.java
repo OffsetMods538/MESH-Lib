@@ -5,7 +5,6 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.HttpHeaderNames;
 import io.netty.handler.codec.http.HttpResponseStatus;
-import top.offsetmonkey538.meshlib.common.api.handler.HttpHandler;
 import top.offsetmonkey538.meshlib.common.api.router.HttpRouter;
 import top.offsetmonkey538.meshlib.common.api.router.HttpRouterRegistry;
 
