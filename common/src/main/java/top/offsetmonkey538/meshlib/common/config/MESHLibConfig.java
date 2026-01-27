@@ -1,6 +1,7 @@
 package top.offsetmonkey538.meshlib.common.config;
 
 import blue.endless.jankson.Comment;
+import org.jspecify.annotations.Nullable;
 import top.offsetmonkey538.monkeylib538.common.api.platform.LoaderUtil;
 import top.offsetmonkey538.offsetutils538.api.config.Config;
 
@@ -10,9 +11,9 @@ import static top.offsetmonkey538.meshlib.common.MESHLib.MOD_ID;
 
 public final class MESHLibConfig implements Config {
     @Comment("Used to figure out if mesh lib should inject into vanilla or not. Required as external port may differ from that's defined in server.properties")
-    public String minecraftServerExternalPort = null;
+    public @Nullable Integer minecraftServerExternalPort = null;
     @Comment("Port the http server will bind to")
-    public String httpPort = null;
+    public @Nullable Integer httpPort = null;
 
 
     @Override
