@@ -1,6 +1,5 @@
 package top.offsetmonkey538.meshlib.common;
 
-import com.google.common.base.Stopwatch;
 import top.offsetmonkey538.meshlib.common.api.MESHLibApi;
 import top.offsetmonkey538.meshlib.common.api.example.ExampleMain;
 import top.offsetmonkey538.meshlib.common.api.handler.HttpHandlerTypeRegistry;
@@ -24,9 +23,6 @@ import top.offsetmonkey538.offsetutils538.api.config.ConfigManager;
 import top.offsetmonkey538.offsetutils538.api.config.event.JanksonConfigurationEvent;
 import top.offsetmonkey538.offsetutils538.api.log.OffsetLogger;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
 import java.util.ServiceLoader;
 
 public final class MESHLib {

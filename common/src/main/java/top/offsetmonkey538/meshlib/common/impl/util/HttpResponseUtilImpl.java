@@ -15,7 +15,6 @@ import io.netty.handler.codec.http.HttpUtil;
 import io.netty.handler.codec.http.LastHttpContent;
 import io.netty.handler.stream.ChunkedNioFile;
 import io.netty.util.CharsetUtil;
-import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import top.offsetmonkey538.meshlib.common.api.util.HttpResponseUtil;
 
@@ -102,7 +101,7 @@ public final class HttpResponseUtilImpl implements HttpResponseUtil {
     }
 
     @Override
-    public void sendResponseImpl(@NonNull ChannelHandlerContext ctx, @Nullable FullHttpRequest request, @NonNull FullHttpResponse response) {
+    public void sendResponseImpl(ChannelHandlerContext ctx, @Nullable FullHttpRequest request, FullHttpResponse response) {
         final boolean isKeepAlive = request != null && HttpUtil.isKeepAlive(request);
 
         response.headers().set(CONNECTION, isKeepAlive ? KEEP_ALIVE : CLOSE);
@@ -112,7 +111,7 @@ public final class HttpResponseUtilImpl implements HttpResponseUtil {
         if (!isKeepAlive) future.addListener(ChannelFutureListener.CLOSE);
     }
 
-    private static String getContentType(final @NonNull Path file) {
+    private static String getContentType(final Path file) {
         final String result;
 
         try {
