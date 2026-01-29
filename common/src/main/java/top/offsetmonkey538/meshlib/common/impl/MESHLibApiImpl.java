@@ -49,9 +49,9 @@ public final class MESHLibApiImpl implements MESHLibApi {
 
         // Initialize
         if (Objects.equals(CONFIG.get().minecraftServerExternalPort, CONFIG.get().httpPort)) {
-            LOGGER.info("Initializing MESH Lib on vanilla port %s...", CONFIG.get().minecraftServerExternalPort);
+            LOGGER.info("Initializing MESH Lib on vanilla port %s...", CONFIG.get().httpPort);
             PlatformUtil.enableVanillaHandler();
-            LOGGER.info("MESH Lib initialized on vanilla port %s!", CONFIG.get().minecraftServerExternalPort);
+            LOGGER.info("MESH Lib initialized on vanilla port %s!", CONFIG.get().httpPort);
         } else {
             LOGGER.info("Initializing MESH Lib on custom port %s...", CONFIG.get().httpPort);
             NettyServer.start();
