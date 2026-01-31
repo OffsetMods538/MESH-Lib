@@ -4,12 +4,18 @@ plugins {
 
 allprojects {
 	dependencies {
-		modCompileOnly "top.offsetmonkey538.monkeylib538:monkeylib538-modded:${rootProject.monkeylib538_version}+modded"
+		modCompileOnly("top.offsetmonkey538.monkeylib538:monkeylib538-modded:${rootProject.monkeylib538_version}+modded") {
+			exclude(group: "net.kyori")
+		}
+
+		modCompileOnly "net.kyori:adventure-platform-mod-shared-fabric-repack:${project.adventure_version}"
 	}
 }
 
 subprojects {
 	dependencies {
-		modCompileOnly "top.offsetmonkey538.monkeylib538:monkeylib538-modded-${project.monkeylib538_suffix}:${rootProject.monkeylib538_version}+modded+${project.monkeylib538_suffix}"
+		modCompileOnly("top.offsetmonkey538.monkeylib538:monkeylib538-modded-${project.monkeylib538_suffix}:${rootProject.monkeylib538_version}+modded+${project.monkeylib538_suffix}") {
+			exclude(group: "net.kyori")
+		}
 	}
 }

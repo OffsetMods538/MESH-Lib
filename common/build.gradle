@@ -13,9 +13,13 @@ repositories {
 }
 
 dependencies {
-    compileOnlyApi "top.offsetmonkey538.monkeylib538:monkeylib538-common:${rootProject.monkeylib538_version}+common"
+    compileOnlyApi("top.offsetmonkey538.monkeylib538:monkeylib538-common:${rootProject.monkeylib538_version}+common") {
+        exclude(group: "net.kyori")
+    }
     compileOnlyApi "io.netty:netty-codec-http:${rootProject.netty_version}"
     compileOnlyApi "io.netty:netty-transport-classes-epoll:${rootProject.netty_version}"
     compileOnly "com.google.guava:guava:${rootProject.guava_version}"
     compileOnly "com.mojang:brigadier:${rootProject.brigadier_version}"
+
+    compileOnlyApi "net.kyori:adventure-api:${project.adventure_api_version}"
 }

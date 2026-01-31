@@ -10,6 +10,7 @@ allprojects {
         mod(rootProject.neo_mod_id) {
             authors = "OffsetMonkey538"
             dependencies {
+                required("adventure_platform_neoforge")
                 required("monkeylib538", "[${rootProject.monkeylib538_version},)")
             }
         }
@@ -17,7 +18,10 @@ allprojects {
     }
 
     dependencies {
-        compileOnly "top.offsetmonkey538.monkeylib538:monkeylib538-neoforge:${rootProject.monkeylib538_version}+neoforge"
+        compileOnly("top.offsetmonkey538.monkeylib538:monkeylib538-neoforge:${rootProject.monkeylib538_version}+neoforge") {
+            exclude(group: "net.kyori")
+        }
+        implementation "net.kyori:adventure-platform-neoforge:${project.adventure_version}"
     }
 }
 
@@ -26,13 +30,16 @@ subprojects {
     outlet.allowedReleaseTypes = Set.of(ReleaseType.RELEASE)
 
     dependencies {
-        implementation "top.offsetmonkey538.monkeylib538:monkeylib538-neoforge-${project.monkeylib538_suffix}:${rootProject.monkeylib538_version}+neoforge+${project.monkeylib538_suffix}"
+        implementation("top.offsetmonkey538.monkeylib538:monkeylib538-neoforge-${project.monkeylib538_suffix}:${rootProject.monkeylib538_version}+neoforge+${project.monkeylib538_suffix}") {
+            exclude(group: "net.kyori")
+        }
 
         includeRuntime "io.netty:netty-codec-http:${rootProject.netty_version}"
     }
 
     modrinth {
         dependencies {
+            required.project "adventure-platform-mod"
             required.project "monkeylib538"
         }
     }
