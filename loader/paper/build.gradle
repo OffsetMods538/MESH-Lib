@@ -25,7 +25,7 @@ allprojects {
 
 subprojects {
 	dependencies {
-		runtimeOnly("io.netty:netty-codec-http:${rootProject.netty_version}") {
+		include runtimeOnly("io.netty:netty-codec-http:${rootProject.netty_version}") {
 			transitive = false
 		}
 	}
