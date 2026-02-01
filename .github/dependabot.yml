@@ -9,3 +9,13 @@ updates:
       master-actions:
         patterns:
           - "*"
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    target-branch: "docs/master"
+    groups:
+      docs-actions:
+        patterns:
+          - "*"
