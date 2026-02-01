@@ -14,6 +14,9 @@ importers:
       astro:
         specifier: ^5.6.1
         version: 5.17.1(rollup@4.57.1)(typescript@5.9.3)
+      astro-ai-robots-txt:
+        specifier: ^0.1.2
+        version: 0.1.2(astro@5.17.1(rollup@4.57.1)(typescript@5.9.3))
       sharp:
         specifier: ^0.34.2
         version: 0.34.5
@@ -672,6 +675,12 @@ packages:
   astring@1.9.0:
     resolution: {integrity: sha512-LElXdjswlqjWrPpJFg1Fx4wpkOCxj1TDHlSV4PlaRxHGWko024xICaa97ZkMfs6DRKlCguiAI+rbXv5GWwXIkg==}
     hasBin: true
+
+  astro-ai-robots-txt@0.1.2:
+    resolution: {integrity: sha512-3BRy9WgBw6r71w26pfw8fLHp2P4D7HjcbdRQZLWSVq3olx5fPjEGAKzmEqVxQW2QqEUbURIhc+/DM08AVyhu4g==}
+    engines: {node: ^18.17.1 || ^20.3.0 || >=21.0.0}
+    peerDependencies:
+      astro: ^5.4.3
 
   astro-expressive-code@0.41.6:
     resolution: {integrity: sha512-l47tb1uhmVIebHUkw+HEPtU/av0G4O8Q34g2cbkPvC7/e9ZhANcjUUciKt9Hp6gSVDdIuXBBLwJQn2LkeGMOAw==}
@@ -2379,6 +2388,10 @@ snapshots:
   array-iterate@2.0.1: {}
 
   astring@1.9.0: {}
+
+  astro-ai-robots-txt@0.1.2(astro@5.17.1(rollup@4.57.1)(typescript@5.9.3)):
+    dependencies:
+      astro: 5.17.1(rollup@4.57.1)(typescript@5.9.3)
 
   astro-expressive-code@0.41.6(astro@5.17.1(rollup@4.57.1)(typescript@5.9.3)):
     dependencies:
