@@ -31,17 +31,7 @@ export default defineConfig({
 				{icon: 'discord', label: 'Discord', href: 'https://discord.offsetmonkey538.top'}
 			],
 			sidebar: [
-				{
-					label: 'Guides',
-					items: [
-						// Each item here is one entry in the navigation menu.
-						{ label: 'Example Guide', slug: 'guides/example' },
-					],
-				},
-				{
-					label: 'Reference',
-					autogenerate: { directory: 'reference' },
-				},
+				{label: 'Getting Started', slug: 'getting_started'}
 			],
 		}),
 		aiRobotsTxt()

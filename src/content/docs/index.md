@@ -2,7 +2,7 @@
 title: MESH Lib
 template: splash
 hero:
-  tagline: Allows easily hosting an HTTP server on Minecraft. Either on the same port as or separate from the server itself.
+  tagline: Allows easily hosting an HTTP server on Minecraft. Works on 1.21.1+ Fabric, NeoForge and PaperMC.
   image:
     file: ../../assets/icon.svg
   actions:
@@ -21,4 +21,5 @@ hero:
 
 # About
 
-blah blah blah
+This mod allows hosting an HTTP server on Minecraft. This can be done on either the same port as the Minecraft server, or on a separate one.  
+It also acts as a kind of reverse-proxy, allowing routing between different handlers based on the requested path or domain.
