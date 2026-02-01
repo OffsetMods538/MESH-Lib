@@ -31,7 +31,19 @@ export default defineConfig({
 				{icon: 'discord', label: 'Discord', href: 'https://discord.offsetmonkey538.top'}
 			],
 			sidebar: [
-				{label: 'Getting Started', slug: 'getting_started'}
+				{label: 'Getting Started', slug: 'getting_started'},
+				{
+					label: 'Reference',
+					items: [
+						{label: 'Router', slug: 'reference/router'},
+						{label: 'Rules', slug: 'reference/rules'},
+						{label: 'Handlers', slug: 'reference/handlers'},
+					]
+				},
+				{
+					label: 'Examples',
+					autogenerate: { directory: 'example' },
+				},
 			],
 		}),
 		aiRobotsTxt()
