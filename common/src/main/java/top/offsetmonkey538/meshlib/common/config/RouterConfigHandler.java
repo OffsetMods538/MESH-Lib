@@ -8,6 +8,10 @@ import blue.endless.jankson.api.SyntaxError;
 import com.google.common.collect.ImmutableMap;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.ClickEvent;
+import net.kyori.adventure.text.event.HoverEvent;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.jspecify.annotations.Nullable;
 import top.offsetmonkey538.meshlib.common.api.handler.HttpHandler;
 import top.offsetmonkey538.meshlib.common.api.handler.handlers.StaticContentHandler;
@@ -87,7 +91,18 @@ public final class RouterConfigHandler {
             return 0;
         }
 
-        CommandAbstractionApi.sendMessage(context, "Created example config at '%s'!", routerPath);
+        CommandAbstractionApi.sendText(context, Component
+                .text("Created example config at '")
+                .append(Component
+                        .text(routerPath.toString())
+                        .style(style -> style
+                                .hoverEvent(HoverEvent.showText(Component.text("Click to copy")))
+                                .clickEvent(ClickEvent.copyToClipboard(routerPath.toString()))
+                                .decorate(TextDecoration.UNDERLINED)
+                        )
+                )
+                .append(Component.text("'!"))
+        );
         return 1;
     }
 
