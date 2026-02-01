@@ -8,6 +8,7 @@ import top.offsetmonkey538.meshlib.common.api.router.HttpRouterRegistry;
 import top.offsetmonkey538.meshlib.common.api.rule.HttpRuleTypeRegistry;
 import top.offsetmonkey538.meshlib.common.netty.NettyServer;
 import top.offsetmonkey538.meshlib.common.platform.PlatformUtil;
+import top.offsetmonkey538.monkeylib538.common.api.platform.LoaderUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,7 +41,6 @@ public final class MESHLibApiImpl implements MESHLibApi {
         // Check if config is OK
         final List<String> errors = new ArrayList<>();
         if (CONFIG.get().httpPort == null) errors.add("Field 'httpPort' not set!");
-        if (CONFIG.get().minecraftServerExternalPort == null) errors.add("Field 'minecraftServerExternalPort' not set!");
         if (!errors.isEmpty()) {
             LOGGER.error("There were problems with the config for MESH Lib, mod will be disabled, see below for more details!");
             errors.stream().map(string -> "    " + string).forEach(LOGGER::error);
@@ -48,7 +48,7 @@ public final class MESHLibApiImpl implements MESHLibApi {
         }
 
         // Initialize
-        if (Objects.equals(CONFIG.get().minecraftServerExternalPort, CONFIG.get().httpPort)) {
+        if (Objects.equals(LoaderUtil.getVanillaServerPort(), CONFIG.get().httpPort)) {
             LOGGER.info("Initializing MESH Lib on vanilla port %s...", CONFIG.get().httpPort);
             PlatformUtil.enableVanillaHandler();
             LOGGER.info("MESH Lib initialized on vanilla port %s!", CONFIG.get().httpPort);
