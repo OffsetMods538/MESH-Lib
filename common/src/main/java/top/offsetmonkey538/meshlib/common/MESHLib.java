@@ -18,6 +18,7 @@ import top.offsetmonkey538.meshlib.common.platform.PlatformUtil;
 import top.offsetmonkey538.monkeylib538.common.api.command.CommandRegistrationApi;
 import top.offsetmonkey538.monkeylib538.common.api.command.ConfigCommandApi;
 import top.offsetmonkey538.monkeylib538.common.api.lifecycle.ServerLifecycleApi;
+import top.offsetmonkey538.monkeylib538.common.api.telemetry.TelemetryRegistry;
 import top.offsetmonkey538.offsetutils538.api.config.ConfigHolder;
 import top.offsetmonkey538.offsetutils538.api.config.ConfigManager;
 import top.offsetmonkey538.offsetutils538.api.config.event.JanksonConfigurationEvent;
@@ -44,6 +45,8 @@ public final class MESHLib {
 
 
     public static void initialize() {
+        TelemetryRegistry.register(MOD_ID);
+
         PlatformUtil.enableVanillaHandler();
         ExampleMain.onInitialize();
 
