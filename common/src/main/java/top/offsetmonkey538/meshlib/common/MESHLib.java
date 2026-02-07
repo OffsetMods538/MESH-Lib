@@ -64,7 +64,7 @@ public final class MESHLib {
 
         HttpRouterRegistry.HTTP_ROUTER_REGISTRATION_EVENT.listen(RouterConfigHandler::init);
 
-        ServerLifecycleApi.STARTING.listen(MESHLibApi::reload);
+        ServerLifecycleApi.STARTED.listen(MESHLibApi::reload);
     }
 
     public static void disableAllHandlers() {
