@@ -22,8 +22,6 @@ public final class MESHLibApiImpl implements MESHLibApi {
     public void reloadImpl() {
         LOGGER.info("Reloading MESH Lib...");
         final Stopwatch fullStopwatch = Stopwatch.createStarted();
-        disableAllHandlers();
-
         final Stopwatch stageStopwatch = Stopwatch.createStarted();
         HttpHandlerTypeRegistry.clear();
         HttpRuleTypeRegistry.clear();
@@ -47,18 +45,25 @@ public final class MESHLibApiImpl implements MESHLibApi {
             return;
         }
 
+        LOGGER.info("MESH Lib reloaded in %s!", fullStopwatch.stop());
+    }
+
+    @Override
+    public void initializeImpl() {
+        LOGGER.info("Initializing MESH Lib...");
+        final Stopwatch stopwatch = Stopwatch.createStarted();
+        disableAllHandlers();
+
         // Initialize
         if (Objects.equals(LoaderUtil.getVanillaServerPort(), CONFIG.get().httpPort)) {
             LOGGER.info("Initializing MESH Lib on vanilla port %s...", CONFIG.get().httpPort);
             PlatformUtil.enableVanillaHandler();
-            LOGGER.info("MESH Lib initialized on vanilla port %s!", CONFIG.get().httpPort);
+            LOGGER.info("MESH Lib initialized on vanilla port %s in %s!", CONFIG.get().httpPort, stopwatch.stop());
         } else {
             LOGGER.info("Initializing MESH Lib on custom port %s...", CONFIG.get().httpPort);
             NettyServer.start();
-            LOGGER.info("MESH Lib initialized on custom port %s!", CONFIG.get().httpPort);
+            LOGGER.info("MESH Lib initialized on custom port %s in %s!", CONFIG.get().httpPort, stopwatch.stop());
         }
-
-        LOGGER.info("MESH Lib reloaded in %s!", fullStopwatch.stop());
     }
 
     @Override

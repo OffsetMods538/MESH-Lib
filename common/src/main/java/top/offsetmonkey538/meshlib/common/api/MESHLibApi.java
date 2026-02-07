@@ -19,6 +19,13 @@ public interface MESHLibApi {
     }
 
     /**
+     * Initializes.
+     */
+    static void initialize() {
+        INSTANCE.initializeImpl();
+    }
+
+    /**
      * Provides the external port as defined in the MESH Lib config.
      * <p>{@code null} value indicates that MESH Lib has not been set up correctly and isn't running.</p>
      *
@@ -30,5 +37,6 @@ public interface MESHLibApi {
 
 
     @Internal void reloadImpl();
+    @Internal void initializeImpl();
     @Internal @Nullable Integer getExternalPortImpl();
 }

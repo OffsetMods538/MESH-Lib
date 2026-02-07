@@ -50,7 +50,10 @@ public final class MESHLib {
         PlatformUtil.enableVanillaHandler();
         ExampleMain.onInitialize();
 
-        ConfigCommandApi.registerConfigCommand(CONFIG, MESHLibApi::reload, MOD_ID, "config");
+        ConfigCommandApi.registerConfigCommand(CONFIG, () -> {
+            MESHLibApi.reload();
+            MESHLibApi.initialize();
+        }, MOD_ID, "config");
         CommandRegistrationApi.registerCommand(RouterConfigHandler.createExampleConfigCommand());
 
         JanksonConfigurationEvent.JANKSON_CONFIGURATION_EVENT.listen(HttpRouter::configureJankson);
@@ -64,7 +67,8 @@ public final class MESHLib {
 
         HttpRouterRegistry.HTTP_ROUTER_REGISTRATION_EVENT.listen(RouterConfigHandler::init);
 
-        ServerLifecycleApi.STARTED.listen(MESHLibApi::reload);
+        ServerLifecycleApi.STARTING.listen(MESHLibApi::reload);
+        ServerLifecycleApi.STARTED.listen(MESHLibApi::initialize);
     }
 
     public static void disableAllHandlers() {
