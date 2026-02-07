@@ -19,6 +19,8 @@ import static top.offsetmonkey538.meshlib.common.MESHLib.LOGGER;
 import static top.offsetmonkey538.meshlib.common.MESHLib.disableAllHandlers;
 
 public final class MESHLibApiImpl implements MESHLibApi {
+    private static boolean enabled = true;
+
     public void reloadImpl() {
         LOGGER.info("Reloading MESH Lib...");
         final Stopwatch fullStopwatch = Stopwatch.createStarted();
@@ -42,7 +44,7 @@ public final class MESHLibApiImpl implements MESHLibApi {
         if (!errors.isEmpty()) {
             LOGGER.error("There were problems with the config for MESH Lib, mod will be disabled, see below for more details!");
             errors.stream().map(string -> "    " + string).forEach(LOGGER::error);
-            return;
+            enabled = false;
         }
 
         LOGGER.info("MESH Lib reloaded in %s!", fullStopwatch.stop());
@@ -50,6 +52,11 @@ public final class MESHLibApiImpl implements MESHLibApi {
 
     @Override
     public void initializeImpl() {
+        if (!enabled) {
+            LOGGER.info("MESH Lib not enabled, not initializing!");
+            return;
+        }
+
         LOGGER.info("Initializing MESH Lib...");
         final Stopwatch stopwatch = Stopwatch.createStarted();
         disableAllHandlers();
