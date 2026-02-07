@@ -1,0 +1,57 @@
+import dex.plugins.outlet.v2.util.ReleaseType
+import xyz.jpenilla.resourcefactory.fabric.Environment
+
+plugins {
+    id 'multiloader-fabric'
+}
+
+allprojects {
+    fabricModJson {
+        mitLicense()
+        author("OffsetMonkey538")
+        contact {
+            extra = ["discord": "https://discord.offsetmonkey538.top"]
+        }
+        environment = Environment.SERVER
+        serverEntrypoint("top.offsetmonkey538.meshlib.fabric.MESHLibInitializer")
+        mixin("meshlib.modded.mixins.json")
+
+        depends("fabric-api", "*")
+        depends("adventure-platform-fabric", "*")
+        depends("monkeylib538", ">=${rootProject.monkeylib538_version}")
+    }
+
+    // Gotta have this here cause I can't import it in buildSrc
+    outlet.allowedReleaseTypes = Set.of(ReleaseType.RELEASE)
+
+    dependencies {
+        modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fapi_version}"
+
+        modCompileOnly("top.offsetmonkey538.monkeylib538:monkeylib538-fabric:${rootProject.monkeylib538_version}+fabric") {
+            exclude(group: "net.fabricmc.fabric-api")
+            exclude(group: "net.kyori")
+        }
+        modImplementation("net.kyori:adventure-platform-fabric:${project.adventure_version}") {
+            exclude(group: "net.fabricmc.fabric-api")
+        }
+    }
+}
+
+subprojects {
+    dependencies {
+        modImplementation("top.offsetmonkey538.monkeylib538:monkeylib538-fabric-${project.monkeylib538_suffix}:${rootProject.monkeylib538_version}+fabric+${project.monkeylib538_suffix}") {
+            exclude(group: "net.fabricmc.fabric-api")
+            exclude(group: "net.kyori")
+        }
+
+        includeRuntime "io.netty:netty-codec-http:${rootProject.netty_version}"
+    }
+
+    modrinth {
+        dependencies {
+            required.project "fabric-api"
+            required.project "adventure-platform-mod"
+            required.project "monkeylib538"
+        }
+    }
+}

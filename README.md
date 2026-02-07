@@ -56,7 +56,7 @@ This class has to implement the `HttpHandler` interface, this will look somethin
 public class MyHttpHandler implements HttpHandler {
 
     @Override
-    public void handleRequest(@NotNull ChannelHandlerContext ctx, @NotNull FullHttpRequest request) throws Exception {
+    public void handleRequest(@NonNull ChannelHandlerContext ctx, @NonNull FullHttpRequest request) throws Exception {
         // Logic will go here
     }
 }
@@ -64,7 +64,7 @@ public class MyHttpHandler implements HttpHandler {
 
 Now we'll need to actually implement the handler. You can google "HTTP Netty" for more info on how to handle HTTP requests with Netty.
 ```java
-public void handleRequest(@NotNull ChannelHandlerContext ctx, @NotNull FullHttpRequest request) throws Exception {
+public void handleRequest(@NonNull ChannelHandlerContext ctx, @NonNull FullHttpRequest request) throws Exception {
     // Write "Hello, World!" to a buffer, encoded in UTF-8
     final ByteBuf content = Unpooled.copiedBuffer("Hello, World!", StandardCharsets.UTF_8);
     // Create a response with said buffer

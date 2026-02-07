@@ -1,101 +1,73 @@
-import dex.plugins.outlet.v2.util.ReleaseType
-
 plugins {
-	id 'fabric-loom' version '1.9-SNAPSHOT' apply false
-	id 'io.github.dexman545.outlet' version '1.6.1' apply false
-	id 'com.modrinth.minotaur' version '2.+' apply false
-	id 'maven-publish'
+    id 'multiloader-root'
+    id 'java'
+    id 'java-library'
+    id 'net.neoforged.moddev'           version "${neoforged_moddev}"            apply false
+    id 'fabric-loom'                    version "${fabric_loom}"                 apply false
+    id 'io.papermc.paperweight.userdev' version "${papermc_paperweight_userdev}" apply false
+    id 'xyz.jpenilla.run-paper'         version "${jpenilla_run_task}"           apply false
+    id 'com.gradleup.shadow'            version "${gradleup_shadow}"             apply false
+    id 'xyz.jpenilla.resource-factory'  version "${jpenilla_resource_factory}"   apply false
+    id 'io.github.dexman545.outlet'     version "${dexman_outlet}"               apply false
+    id 'com.modrinth.minotaur'          version "${modrinth_minotaur}"           apply false
+    id 'hamburg.janove.elevator-music'  version "0.1"
 }
 
-ext {
-	debugVersion = System.currentTimeMillis()
-}
-
-allprojects {
-	group = "top.offsetmonkey538.meshlib"
-}
+//elevatorMusic {
+//    if (Boolean.parseBoolean(System.getenv("DISABLE_MUSIC"))) return
+//    waitMusic = file("${rootProject.projectDir}/veryImportant/music.wav")
+//    successSound = file("${rootProject.projectDir}/veryImportant/done.wav")
+//}
 
 subprojects {
-	apply plugin: "maven-publish"
-	apply plugin: "java"
-	apply plugin: "java-library"
+    apply plugin: "java-library"
 
-	archivesBaseName = "mesh-lib-${project.nameSuffix}"
-	version = "${rootProject.mod_version}+${rootProject.minecraft_version}"
+    repositories {
+        mavenCentral()
+        mavenLocal()
+        exclusiveContent {
+            forRepository {
+                maven {
+                    name = "OffsetMods538"
+                    url = "https://maven.offsetmonkey538.top/releases"
+                }
+            }
+            filter {
+                includeGroupAndSubgroups "top.offsetmonkey538"
+            }
+        }
+    }
 
-	tasks.named("javadoc", Javadoc) {
-		options.addFileOption('-add-stylesheet', rootProject.file("javadoc-stylesheet.css"))
-	}
-
-	java {
-		withSourcesJar()
-		withJavadocJar()
-	}
-
-	jar {
-		from("${rootProject.projectDir}/LICENSE") {
-			rename { "${it}" }
-		}
-	}
-
-	dependencies {
-		compileOnly "org.jetbrains:annotations:24.0.0"
-		compileOnly "org.slf4j:slf4j-api:2.0.16"
-	}
-
-	publishing {
-		repositories {
-			maven {
-				name = "OffsetMonkey538"
-				url = "https://maven.offsetmonkey538.top/releases"
-				credentials {
-					username = providers.gradleProperty("OffsetMonkey538Username").getOrElse(System.getenv("MAVEN_USERNAME"))
-					password = providers.gradleProperty("OffsetMonkey538Password").getOrElse(System.getenv("MAVEN_PASSWORD"))
-				}
-				authentication {
-					basic(BasicAuthentication)
-				}
-			}
-		}
-		publications {
-			maven(MavenPublication) {
-				artifactId = project.archivesBaseName
-
-				from(components["java"])
-			}
-		}
-	}
-	tasks.publishMavenPublicationToMavenLocal.doLast {
-		if (System.getenv("IS_DEBUG") == "true") System.out.println("Version: " + version)
-	}
+    dependencies {
+        compileOnlyApi "org.jspecify:jspecify:${rootProject.jspecify_version}"
+    }
 }
 
-configure(subprojects.findAll { it.name != "common" }) {
-	apply plugin: 'com.modrinth.minotaur'
-	apply plugin: 'io.github.dexman545.outlet'
+configure(subprojects.findAll { it.hasProperty("project_name") }) {
+    apply plugin: "maven-publish"
 
-	if (System.getenv("IS_DEBUG") == "true") version = "${version}-${rootProject.debugVersion}"
-
-	outlet {
-		mcVersionRange = rootProject.supported_minecraft_versions
-		allowedReleaseTypes = Set.of(ReleaseType.RELEASE)
-	}
-
-	modrinth {
-		token = System.getenv("MODRINTH_TOKEN")
-		projectId = "mesh-lib"
-		def customVersionName = System.getenv("VERSION_NAME")
-		if (customVersionName != null) versionName = customVersionName
-		versionNumber = "${project.version}"
-		versionType = "alpha"
-		def isPreRelease = System.getenv("VERSION_IS_PRERELEASE")
-		versionType = !"false".equals(isPreRelease) ? "beta" : "release"
-		additionalFiles = [sourcesJar.archiveFile]
-		gameVersions = outlet.mcVersions()
-		syncBodyFrom = rootProject.file("README.md").text
-		def changelogEnv = System.getenv("VERSION_CHANGELOG")
-		if (changelogEnv != null) changelog = changelogEnv
-	}
-
-	tasks.modrinth.dependsOn(tasks.modrinthSyncBody)
+    publishing {
+        repositories {
+            maven {
+                name = "OffsetMonkey538"
+                url = "https://maven.offsetmonkey538.top/releases"
+                credentials {
+                    username = providers.gradleProperty("OffsetMonkey538Username").getOrElse(System.getenv("MAVEN_USERNAME"))
+                    password = providers.gradleProperty("OffsetMonkey538Password").getOrElse(System.getenv("MAVEN_PASSWORD"))
+                }
+                authentication {
+                    basic(BasicAuthentication)
+                }
+            }
+        }
+        publications {
+            register("maven", MavenPublication) {
+                afterEvaluate {
+                    artifactId base.archivesName.get()
+                }
+                groupId "top.offsetmonkey538.meshlib"
+                from components.java
+            }
+        }
+    }
 }

@@ -1,14 +1,25 @@
 plugins {
-	id 'com.gradleup.shadow' version '9.0.0-beta4'
-	id 'maven-publish'
+    id 'multiloader-base'
 }
 
 repositories {
-	mavenCentral()
+    maven {
+        name = "Mojang Libraries"
+        url = "https://libraries.minecraft.net"
+        content {
+            includeGroup "com.mojang"
+        }
+    }
 }
 
 dependencies {
-	// Netty
-	api "io.netty:netty-codec-http:${project.netty_version}"
+    compileOnlyApi("top.offsetmonkey538.monkeylib538:monkeylib538-common:${rootProject.monkeylib538_version}+common") {
+        exclude(group: "net.kyori")
+    }
+    compileOnlyApi "io.netty:netty-codec-http:${rootProject.netty_version}"
+    compileOnlyApi "io.netty:netty-transport-classes-epoll:${rootProject.netty_version}"
+    compileOnly "com.google.guava:guava:${rootProject.guava_version}"
+    compileOnly "com.mojang:brigadier:${rootProject.brigadier_version}"
+
+    compileOnlyApi "net.kyori:adventure-api:${project.adventure_api_version}"
 }
-tasks.build.dependsOn(shadowJar)
