@@ -35,7 +35,7 @@ public final class MESHLib {
 	/**
 	 * String modid for this mod
 	 */
-	public static final String MOD_ID = "meshlib";
+	public static final String MOD_ID = "mesh-lib";
 	/**
 	 * Logger instance used by this mod
 	 */

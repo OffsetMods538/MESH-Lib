@@ -15,7 +15,7 @@ allprojects {
                 required("monkeylib538", "[${rootProject.monkeylib538_version},)")
             }
         }
-        mixin("meshlib.modded.mixins.json")
+        mixin("mesh-lib.modded.mixins.json")
     }
 
     // Gotta have this here cause I can't import it in buildSrc

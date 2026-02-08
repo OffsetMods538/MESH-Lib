@@ -15,7 +15,7 @@ allprojects {
         }
         environment = Environment.SERVER
         serverEntrypoint("top.offsetmonkey538.meshlib.fabric.MESHLibInitializer")
-        mixin("meshlib.modded.mixins.json")
+        mixin("mesh-lib.modded.mixins.json")
 
         depends("fabric-api", "*")
         depends("adventure-platform-fabric", "*")
