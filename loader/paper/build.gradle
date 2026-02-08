@@ -3,6 +3,7 @@ import xyz.jpenilla.resourcefactory.paper.PaperPluginYaml
 
 plugins {
 	id 'multiloader-paper'
+	id 'multiloader-modrinth-publish' apply false
 }
 
 allprojects {
@@ -24,6 +25,8 @@ allprojects {
 }
 
 subprojects {
+	apply plugin: "multiloader-modrinth-publish"
+
 	dependencies {
 		include runtimeOnly("io.netty:netty-codec-http:${rootProject.netty_version}") {
 			transitive = false
@@ -38,6 +41,9 @@ subprojects {
 	}
 
 	modrinth {
+		loaders = ["paper"]
+		uploadFile = shadowJar
+
 		dependencies {
 			required.project "monkeylib538"
 		}
