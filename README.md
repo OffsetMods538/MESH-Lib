@@ -1,6 +1,9 @@
 # MESH Lib
-[![discord-singular](https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/social/discord-singular_vector.svg)](https://discord.offsetmonkey538.top/)
-[![modrinth](https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/available/modrinth_vector.svg)](https://modrinth.com/mod/mesh-lib)  
+[![Chat with me on Discord](https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/social/discord-singular_vector.svg)](https://discord.offsetmonkey538.top/)
+[![Available on Modrinth](https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/available/modrinth_vector.svg)](https://modrinth.com/mod/mesh-lib)
+[![Available on GitHub](https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/available/github_vector.svg)](https://github.com/OffsetMods538/MESH-Lib)  
+[![Requires MonkeyLib538](https://raw.githubusercontent.com/OffsetMods538/MonkeyLib538/master/images/requires_badge.svg)](https://modrinth.com/mod/monkeylib538)  
+[![Read the Documentation](https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/documentation/ghpages_vector.svg)](https://mesh-lib.docs.offsetmonkey538.top/)
 
 This mod allows hosting an HTTP server on Minecraft. Both running on the same port as the Minecraft server and using a separate one are supported.  
 It also acts as a kind of reverse-proxy, allowing routing between different handlers based on the requested path or domain.
